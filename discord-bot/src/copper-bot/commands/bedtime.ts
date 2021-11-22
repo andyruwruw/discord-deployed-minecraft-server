@@ -10,7 +10,7 @@ import { Command } from './command';
  * @param {Message} message Orignal message for command.
  * @param {string[]} args Arguments passed for command
  */
-const callback = (message: Message, args: string[]) => {
+const callback = (args: string[], message: Message) => {
 }
 
 export const Bedtime = new Command(

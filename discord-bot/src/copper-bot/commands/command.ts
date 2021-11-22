@@ -1,6 +1,9 @@
 // Packages
 import { Message } from 'discord.js';
 
+// Local Imports
+import { getMessageComponents } from '../../helpers';
+
 /**
  * Defines a command
  */
@@ -37,6 +40,18 @@ export class Command {
    * @returns {boolean} Whether the message is this command.
    */
   isCommand(message: Message): boolean {
-    return false;
+    return getMessageComponents(message).key === this.key;
   }
+
+  /**
+   * Executes the callback and returns a promise.
+   *
+   * @param {Message} message Message containing the command.
+   * @returns {Promise<void>} Promise of the callback.
+   */
+  async execute(message: Message): Promise<void> {
+    const { args } = getMessageComponents(message);
+
+    return await this.callback(args, message);
+  };
 }
