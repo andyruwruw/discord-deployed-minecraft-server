@@ -1,5 +1,7 @@
 // Packages
-import { Message } from 'discord.js';
+import { ApplicationCommandType } from 'discord-api-types';
+import { Message, ApplicationCommandData, ApplicationCommandOptionData } from 'discord.js';
+import { ApplicationCommandTypes } from 'discord.js/typings/enums';
 
 // Local Imports
 import { getMessageComponents } from '../../helpers';
@@ -8,10 +10,9 @@ import { getMessageComponents } from '../../helpers';
  * Defines a command
  */
 export class Command {
-  key: String;
-  description: String;
-  args: String[];
-  callback: Function;
+  commandStructure: ApplicationCommandData;
+  name: string;
+  description: string;
 
   /**
    * Instantiates a new command.
@@ -22,36 +23,39 @@ export class Command {
    * @param callback Callback function to execute when the command is called.
    */
   constructor(
-    key: String,
-    description: String,
-    args: String[],
-    callback: Function
+    name: string,
+    description: string,
   ) {
-    this.key = key;
+    this.name = name;
     this.description = description;
-    this.args = args;
-    this.callback = callback;
+
+    this.commandStructure = {
+      name: this.name,
+      description: this.description,
+    }
+
+    console.log(this.commandStructure);
   }
 
-  /**
-   * Returns whether a message is this command.
-   *
-   * @param {Message} message Discord message object.
-   * @returns {boolean} Whether the message is this command.
-   */
-  isCommand(message: Message): boolean {
-    return getMessageComponents(message).key === this.key;
-  }
+  // /**
+  //  * Returns whether a message is this command.
+  //  *
+  //  * @param {Message} message Discord message object.
+  //  * @returns {boolean} Whether the message is this command.
+  //  */
+  // isCommand(message: Message): boolean {
+  //   return getMessageComponents(message).key === this.key;
+  // }
 
-  /**
-   * Executes the callback and returns a promise.
-   *
-   * @param {Message} message Message containing the command.
-   * @returns {Promise<void>} Promise of the callback.
-   */
-  async execute(message: Message): Promise<void> {
-    const { args } = getMessageComponents(message);
+  // /**
+  //  * Executes the callback and returns a promise.
+  //  *
+  //  * @param {Message} message Message containing the command.
+  //  * @returns {Promise<void>} Promise of the callback.
+  //  */
+  // async execute(message: Message): Promise<void> {
+  //   const { args } = getMessageComponents(message);
 
-    return await this.callback(args, message);
-  };
+  //   return await this.callback(args, message);
+  // };
 }

@@ -1,8 +1,5 @@
-// // Packages
-// import { Message } from 'discord.js';
-
-// // Local Imports
-// import { Command } from './command';
+// Local Imports
+import { Command } from './command';
 
 // /**
 //  * Callback for the wakeup command which starts up the server.
@@ -13,9 +10,7 @@
 // const callback = (args: string[], message: Message) => {
 // }
 
-// export const Wakeup = new Command(
-//   'wakeup',
-//   'Starts up the server.',
-//   [],
-//   callback,
-// );
+export const Pog = new Command(
+  'pog',
+  'Replies with Champ.',
+);
