@@ -4,11 +4,6 @@
   "description": "Discord Deployed Minecraft Server",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "lint": "eslint \"{src}/**/*.{js,ts}\" --fix",
-    "prep-lambdas": "npm-run-all --parallel --print-label --silent prep-lambda:*",
-    "prep-lambda": "cross-env-shell \"ncc build src/$npm_config_directory/$npm_config_subdirectory/$npm_config_handler.ts -o $npm_config_handler -m -C && mv $npm_config_handler/index.js ./$npm_config_handler.js && rm -r $npm_config_handler && cross-zip $npm_config_handler.js $npm_config_handler.zip && rm $npm_config_handler.js\"",
-    "test": "jest --colors"
   },
   "repository": {
     "type": "git",
@@ -28,19 +23,5 @@
   },
   "homepage": "https://github.com/andyruwruw/discord-deployed-minecraft-server#readme",
   "dependencies": {
-    "aws-sdk": "^2.1033.0",
-    "dotenv": "^10.0.0",
-    "tslib": "^2.3.1",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "cross-env": "^7.0.3",
-    "cross-zip-cli": "^1.0.0",
-    "eslint": "^8.3.0",
-    "jest": "^27.3.1",
-    "npm-run-all": "^4.1.5",
-    "rimraf": "^3.0.2",
-    "ts-jest": "^27.0.7",
-    "typescript": "^4.5.2"
   }
 }
