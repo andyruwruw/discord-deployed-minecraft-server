@@ -3,9 +3,15 @@ import { ClientUser, Message } from 'discord.js';
 
 // Local Imports
 import { CopperBot } from '../copper-bot';
-import { CommandList } from '../copper-bot/commands';
 
-export const isCommand = (message: Message, client: CopperBot): boolean => {
+/**
+ * Returns whether the Copper Bot was mentioned.
+ *
+ * @param {Message} message Message in question.
+ * @param {CopperBot} client Bot client.
+ * @returns {boolean} Whether the Copper Bot was mentioned
+ */
+export const isMention = (message: Message, client: CopperBot): boolean => {
   // Prevents bot from checking other bots or itself.
   if (message.author.bot) {
     return false;
@@ -16,13 +22,5 @@ export const isCommand = (message: Message, client: CopperBot): boolean => {
     return false;
   }
 
-  if (message.mentions.has((client.user as ClientUser).id)) {
-    for (let command of CommandList) {
-      if (command.isCommand(message)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
+  return message.mentions.has((client.user as ClientUser).id);
 }
