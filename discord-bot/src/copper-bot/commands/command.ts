@@ -10,6 +10,12 @@ import { getMessageComponents } from '../../helpers';
  * Defines a command
  */
 export class Command {
+
+  // FIX: Need to figure out how to add the optional fields and how to use their correct datatypes
+  // Tried with the ...() implementation and that seemed not to work well
+
+  // PLANS: Need to add the response to this 
+
   commandStructure: ApplicationCommandData;
   name: string;
   description: string;

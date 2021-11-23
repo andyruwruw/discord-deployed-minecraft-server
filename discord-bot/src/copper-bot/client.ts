@@ -80,6 +80,8 @@ export class CopperBot extends Client {
 
     const {commandName, options} = interaction;
 
+    // Handling here is temporary, will make responses contained in command itself
+
     if (commandName === 'ping') {
       interaction.reply({
         content: 'pong',
