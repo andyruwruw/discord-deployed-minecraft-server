@@ -15,6 +15,7 @@ export const getMessageComponents = (message: Message): MessageComponents => {
   ] = message.content.split(' ');
 
   return {
+    mention,
     key: key.toLowerCase(),
     args: args.map(arg => arg.toLowerCase()),
   };

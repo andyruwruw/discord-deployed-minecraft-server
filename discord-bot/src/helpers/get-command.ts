@@ -2,7 +2,7 @@
 import { Message } from 'discord.js';
 
 // Local Imports
-import { CommandList, Command } from 'src/copper-bot/commands';
+import { CommandList, Command } from '../copper-bot/commands';
 
 /**
  * Returns command in message.
