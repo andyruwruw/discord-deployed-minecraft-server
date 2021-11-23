@@ -1,6 +1,6 @@
 // Packages
 import { ScriptServer } from "@scriptserver/core";
-import { server as WebSocketServer } from 'websocket';
+import { IUtf8Message, Message, request, server as WebSocketServer } from 'websocket';
 
 // Local Imports
 import { generateMinecraftServer } from "./minecraft-server";
@@ -17,6 +17,7 @@ export class Server {
     this.minecraftServer = generateMinecraftServer();
     this.websocket = websocket;
 
+    // Adding websocket event listeners.
     this.websocket.on('request', this.handleRequest);
   }
 
@@ -32,7 +33,7 @@ export class Server {
    *
    * @param request 
    */
-  handleRequest(request: any) {
+  handleRequest(request: request) {
     const connection = request.accept(undefined, request.origin);
     
     connection.on('message', this.handleMessage);
@@ -45,9 +46,9 @@ export class Server {
    *
    * @param message 
    */
-  handleMessage(message: any) {
+  handleMessage(message: Message) {
     try {
-      const data = JSON.parse(message.utf8Data);
+      const data = JSON.parse((message as IUtf8Message).utf8Data);
 
       if (data.type === 'command') {
         this.minecraftServer.javaServer.send(data.command);
