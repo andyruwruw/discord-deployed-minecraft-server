@@ -3,7 +3,7 @@ import { ScriptServer } from '@scriptserver/core';
 import { connection } from 'websocket';
 
 // Local Imports
-import { Message } from './message';
+import { CopperBotResponse } from './response';
 
 /**
  * Returns position of a player back to discord bot.
@@ -36,4 +36,4 @@ const callback = async (minecraftServer: ScriptServer, socketConnection: connect
   }
 };
 
-export const Status = new Message('status', callback);
+export const PlayerPosition = new CopperBotResponse('get-player-position', callback);

@@ -3,9 +3,9 @@ import { ScriptServer } from "@scriptserver/core";
 import { connection } from "websocket";
 
 /**
- * Defines a message.
+ * Defines a response.
  */
-export class Message {
+export class Response {
   type: string;
   callback: Function
 
@@ -18,10 +18,10 @@ export class Message {
   }
 
   /**
-   * Whether a message matches this message type.
+   * Whether a message matches this response type.
    *
    * @param {string} type Type from incoming message.
-   * @returns Whether a message matches this message type.
+   * @returns Whether a message matches this response type.
    */
   isMatch(type: string): boolean {
     return this.type === type;
