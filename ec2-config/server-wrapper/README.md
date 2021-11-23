@@ -1,12 +1,12 @@
 # Server Wrapper
 
-The server wrapper runs the Minecraft Server for us, adding an API on top of it to interact with the server through websockets.
+The server wrapper is a javascript wrapper around the Minecraft Server, adding an API for us to interact with the Minecraft Server through websocket requests.
 
-The ability to run a Java server with Javascript is thanks to [garrettjoecox/scriptserver](https://github.com/garrettjoecox/scriptserver), and should work for whatever **server.jar** we choose regardless of version.
+The ability to run a Minecraft Java Server with Javascript is thanks to [garrettjoecox/scriptserver](https://github.com/garrettjoecox/scriptserver), and should work for whatever Minecraft **server.jar** we choose, regardless of version.
 
-The websocket server will be connected to our discord bot. If you're not familiar to websockets, it simply ensures that that the discord bot can send requests to our server, but also the server can send requests to the discord bot.
+The websocket server will be connected to our discord bot. If you're not familiar with websockets, it allows the discord bot to send our server requests, and the server to send requests to the discord bot.
 
-This allows us to ping the discord bot when server logs appear, and output them to a channel and allow ops to issue commands.
+This allows the minecraft server to send events back to discord, such as server logs which we can display in a channel.
 
 # Table of Contents
 
