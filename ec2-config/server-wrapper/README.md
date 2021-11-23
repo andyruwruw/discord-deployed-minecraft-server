@@ -121,9 +121,9 @@ Git will automatically ignore all minecraft server related files and the **dist*
 # Tasks
 
 - [ ] Websocket authentication, ensure the only connection the discord bot can recieve is the discord bot.
-- [ ] When sent a websocket message `'status'`, the server should return how many players are online.
-- [ ] When sent a websocket message `'get-player-position'` and a player name, the server should return that player's current position in minecraft to the discord bot.
-- [ ] When sent a websocket message `'command'`, the server should issue that command in the minecraft server terminal.
+- [x] When sent a websocket message `'status'`, the server should return how many players are online.
+- [x] When sent a websocket message `'get-player-position'` and a player name, the server should return that player's current position in minecraft to the discord bot.
+- [x] When sent a websocket message `'command'`, the server should issue that command in the minecraft server terminal.
 - [ ] When the server has a new output, the server should send that output to the discord bot.
 - [ ] The server should keep track of how long people are online, when the log off, the server should send how long they were online to the discord bot. (Sexy stats)
 - [ ] On player join, send their name to the discord bot. (Roles for active players)
