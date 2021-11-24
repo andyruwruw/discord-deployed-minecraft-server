@@ -5,16 +5,16 @@ import { Status } from './status';
 import { PlayerPosition } from './player-position';
 
 /**
- * List of messages that can be sent to the server.
+ * List of responses that can be sent to the server.
  */
-export const Messages = () => {
-  const messages: Record<string,ServerResponse> = {};
+export const Responses = () => {
+  const responses: Record<string,ServerResponse> = {};
 
-  messages[Command.type] = Command;
-  messages[Status.type] = Status;
-  messages[PlayerPosition.type] = PlayerPosition;
+  responses[Command.type] = Command;
+  responses[Status.type] = Status;
+  responses[PlayerPosition.type] = PlayerPosition;
 
-  return messages;
+  return responses;
 }
 
 export default ServerResponse;
