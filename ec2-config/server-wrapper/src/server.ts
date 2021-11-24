@@ -1,10 +1,11 @@
 // Packages
 import { ScriptServer } from "@scriptserver/core";
-import { server as WebSocketServer } from 'websocket';
+import { connection, IUtf8Message, Message, request, server as WebSocketServer } from 'websocket';
 
 // Local Imports
 import { generateMinecraftServer } from "./minecraft-server";
 import websocket from './web-socket/index';
+import ServerResponse, { Responses } from "./responses";
 
 /**
  * Maintains the minecraft and websocket server instances and their interactions.
@@ -17,6 +18,7 @@ export class Server {
     this.minecraftServer = generateMinecraftServer();
     this.websocket = websocket;
 
+    // Adding websocket event listeners.
     this.websocket.on('request', this.handleRequest);
   }
 
@@ -32,12 +34,16 @@ export class Server {
    *
    * @param request 
    */
-  handleRequest(request: any) {
-    const connection = request.accept(undefined, request.origin);
+  handleRequest(request: request) {
+    const socketConnection = request.accept(undefined, request.origin);
     
-    connection.on('message', this.handleMessage);
+    socketConnection.on('message', (message: Message) => {
+      this.handleMessage(socketConnection, message);
+    });
   
-    connection.on('close', this.handleClose);
+    socketConnection.on('close', (reasonCode: any, description: any) => {
+      this.handleClose(socketConnection, reasonCode, description);
+    });
   }
 
   /**
@@ -45,12 +51,14 @@ export class Server {
    *
    * @param message 
    */
-  handleMessage(message: any) {
+  handleMessage(socketConnection: connection, message: Message) {
     try {
-      const data = JSON.parse(message.utf8Data);
+      const data = JSON.parse((message as IUtf8Message).utf8Data);
+      const responses = Responses();
 
-      if (data.type === 'command') {
-        this.minecraftServer.javaServer.send(data.command);
+      if (data.type in responses) {
+        const messageType: ServerResponse = responses[data.type];
+        messageType.execute(this.minecraftServer, socketConnection, data.args);
       }
     } catch (error) {
       console.error(error);
@@ -59,11 +67,12 @@ export class Server {
 
   /**
    * Handles the close of a websocket connection.
+   * This event means the discord bot has gone offline while a server remains up. This would be catastrophic?
    *
    * @param reasonCode 
    * @param description 
    */
-  handleClose(reasonCode: any, description: any) {
+  handleClose(socketConnection: connection, reasonCode: any, description: any) {
     console.log(reasonCode, description);
   }
 }
