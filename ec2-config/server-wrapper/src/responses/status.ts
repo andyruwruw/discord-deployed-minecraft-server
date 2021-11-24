@@ -3,7 +3,7 @@ import { ScriptServer } from '@scriptserver/core';
 import { connection } from 'websocket';
 
 // Local Imports
-import { CopperBotResponse } from './response';
+import { ServerResponse } from './response';
 
 /**
  * Returns status of the server back to discord bot.
@@ -25,4 +25,4 @@ const callback = async (minecraftServer: ScriptServer, socketConnection: connect
   }
 };
 
-export const Status = new CopperBotResponse('status', callback);
+export const Status = new ServerResponse('status', callback);

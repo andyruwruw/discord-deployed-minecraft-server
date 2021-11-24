@@ -5,7 +5,7 @@ import { connection } from "websocket";
 /**
  * Defines a response.
  */
-export class Response {
+export class ServerResponse {
   type: string;
   callback: Function
 

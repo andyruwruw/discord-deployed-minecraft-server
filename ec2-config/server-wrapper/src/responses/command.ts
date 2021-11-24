@@ -3,7 +3,7 @@ import { ScriptServer } from '@scriptserver/core';
 import { connection } from 'websocket';
 
 // Local Imports
-import { CopperBotResponse } from './response';
+import { ServerResponse } from './response';
 
 /**
  * Runs a command string on the server terminal.
@@ -20,4 +20,4 @@ const callback = async (minecraftServer: ScriptServer, socketConnection: connect
   }
 };
 
-export const Command = new CopperBotResponse('command', callback);
+export const Command = new ServerResponse('command', callback);

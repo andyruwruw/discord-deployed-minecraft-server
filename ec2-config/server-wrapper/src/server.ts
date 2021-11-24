@@ -5,7 +5,7 @@ import { connection, IUtf8Message, Message, request, server as WebSocketServer }
 // Local Imports
 import { generateMinecraftServer } from "./minecraft-server";
 import websocket from './web-socket/index';
-import CopperBotResponse, { Messages } from "./messages";
+import ServerResponse, { Responses } from "./responses";
 
 /**
  * Maintains the minecraft and websocket server instances and their interactions.
@@ -54,10 +54,10 @@ export class Server {
   handleMessage(socketConnection: connection, message: Message) {
     try {
       const data = JSON.parse((message as IUtf8Message).utf8Data);
+      const responses = Responses();
 
-      const messageType: CopperBotResponse = Messages()[data.type];
-
-      if (messageType) {
+      if (data.type in responses) {
+        const messageType: ServerResponse = responses[data.type];
         messageType.execute(this.minecraftServer, socketConnection, data.args);
       }
     } catch (error) {
@@ -67,6 +67,7 @@ export class Server {
 
   /**
    * Handles the close of a websocket connection.
+   * This event means the discord bot has gone offline while a server remains up. This would be catastrophic?
    *
    * @param reasonCode 
    * @param description 
