@@ -1,5 +1,5 @@
 // Packages
-import { ScriptServer } from "@scriptserver/core";
+import { JavaServer, ScriptServer } from "@scriptserver/core";
 import { connection, IUtf8Message, Message, request, server as WebSocketServer } from 'websocket';
 
 // Local Imports
@@ -13,13 +13,28 @@ import ServerResponse, { Responses } from "./responses";
 export class Server {
   minecraftServer: ScriptServer;
   websocket: WebSocketServer;
+  javaServer: JavaServer;
 
   constructor() {
     this.minecraftServer = generateMinecraftServer();
+    this.javaServer = this.minecraftServer.javaServer;
     this.websocket = websocket;
+    
+    
 
     // Adding websocket event listeners.
     this.websocket.on('request', this.handleRequest);
+    
+    // Adding MC event listeners
+    this.javaServer.on('login', (event: { player: string; ip: string; }) => {
+       this.handleLogin(event); });
+    this.javaServer.on('logout', (event: { player: string; reason: string; }) => { 
+      this.handleLogout(event); });
+    this.javaServer.on('chat', (event: { player: string; message: string; }) => { 
+      this.handleChat(event) });
+    this.javaServer.on('achievement', (event: { player: string; achievement: string; }) => { 
+      this.handleAchievement(event); });
+
   }
 
   /**
@@ -34,6 +49,10 @@ export class Server {
    *
    * @param request 
    */
+
+
+
+
   handleRequest(request: request) {
     const socketConnection = request.accept(undefined, request.origin);
     
@@ -63,6 +82,27 @@ export class Server {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  /**
+   * Handles MC Events.
+   * @param event
+   *
+   */
+
+  handleLogin(event: {player: string; ip: string;}) {
+    console.log(event.player + " logged in.");
+  }
+
+  handleLogout(event: {player: string; reason: string;}) {
+    console.log(event.player + " logged out.");
+  }
+
+  handleChat(event: {player: string; message: string;}) {
+    console.log(event.player + " said " + event.message);
+  }
+  handleAchievement(event: {player: string; achievement: string}) {
+    console.log(event.player + " achieved " + event.achievement);
   }
 
   /**
