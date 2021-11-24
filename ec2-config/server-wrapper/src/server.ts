@@ -6,6 +6,7 @@ import { connection, IUtf8Message, Message, request, server as WebSocketServer }
 import { generateMinecraftServer } from "./minecraft-server";
 import websocket from './web-socket/index';
 import ServerResponse, { Responses } from "./responses";
+import { playerLogin, playerLogout, getCurrentPlaytime } from "./minecraft-server/active-players";
 
 /**
  * Maintains the minecraft and websocket server instances and their interactions.
@@ -51,8 +52,6 @@ export class Server {
    */
 
 
-
-
   handleRequest(request: request) {
     const socketConnection = request.accept(undefined, request.origin);
     
@@ -91,11 +90,14 @@ export class Server {
    */
 
   handleLogin(event: {player: string; ip: string;}) {
-    console.log(event.player + " logged in.");
+    playerLogin(event.player);
+    // send data to discord bot 
+   
   }
 
   handleLogout(event: {player: string; reason: string;}) {
-    console.log(event.player + " logged out.");
+    const milliseconds_played = playerLogout(event.player);
+    console.log(event.player +" played for "+milliseconds_played+" milliseconds.");
   }
 
   handleChat(event: {player: string; message: string;}) {
