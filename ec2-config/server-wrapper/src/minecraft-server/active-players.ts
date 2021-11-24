@@ -1,8 +1,5 @@
 // Initialize dictionary of active players
-
-
 let active_players: { [username: string]: number} = {};
-
 
 // Add logged in players to the dictionary. 
 export function playerLogin(username: string) { 
@@ -33,4 +30,3 @@ export function playerLogout(username: string) {
 export function getCurrentPlaytime(username: string) {
     return Date.now() - active_players[username];
 }
-

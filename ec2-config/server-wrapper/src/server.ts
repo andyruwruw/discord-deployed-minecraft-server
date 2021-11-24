@@ -20,8 +20,6 @@ export class Server {
     this.minecraftServer = generateMinecraftServer();
     this.javaServer = this.minecraftServer.javaServer;
     this.websocket = websocket;
-    
-    
 
     // Adding websocket event listeners.
     this.websocket.on('request', this.handleRequest);
@@ -35,7 +33,6 @@ export class Server {
       this.handleChat(event) });
     this.javaServer.on('achievement', (event: { player: string; achievement: string; }) => { 
       this.handleAchievement(event); });
-
   }
 
   /**
@@ -50,7 +47,6 @@ export class Server {
    *
    * @param request 
    */
-
 
   handleRequest(request: request) {
     const socketConnection = request.accept(undefined, request.origin);
@@ -92,7 +88,6 @@ export class Server {
   handleLogin(event: {player: string; ip: string;}) {
     playerLogin(event.player);
     // send data to discord bot 
-   
   }
 
   handleLogout(event: {player: string; reason: string;}) {
