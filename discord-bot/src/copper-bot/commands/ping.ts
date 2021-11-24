@@ -1,5 +1,5 @@
 // Packages
-import { Message } from 'discord.js';
+import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
 
 // Local Imports
 import { Command } from './command';
@@ -13,7 +13,13 @@ import { Command } from './command';
 // const callback = (args: string[], message: Message) => {
 // }
 
-export const Ping = new Command(
-  'ping',
-  'Replies with pong.',
-);
+export const Ping = new Command({
+  name: 'ping',
+  description: 'Replies with pong.',
+  options: [{
+    type: ApplicationCommandOptionTypes.NUMBER,
+    name: 'pongs',
+    description: 'number of pongs to send',
+    required: true
+  }]
+});

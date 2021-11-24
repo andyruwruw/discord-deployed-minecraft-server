@@ -2,13 +2,11 @@
 import {
   Client,
   ClientOptions,
-  Message,
   Interaction,
 } from 'discord.js';
 
 // Local Imports
 import { READY_RESPONSE_STRING } from '../config';
-// import { getCommand, isMention } from '../helpers';
 import { CommandList, Command } from '../copper-bot/commands';
 
 // Our little buddy
@@ -22,7 +20,6 @@ export class CopperBot extends Client {
     super(options);
 
     this.on('ready', this.handleConnect);
-    // this.on('message', this.handleMessage);
     this.on('interactionCreate', this.handleInteraction);
   }
 
@@ -53,21 +50,6 @@ export class CopperBot extends Client {
     }
   }
 
-  // /**
-  //  * Handles messages recieved by the bot.
-  //  *
-  //  * @param {Message} message Message in question.
-  //  */
-  // handleMessage(message: Message) {
-  //   if (isMention(message, this)) {
-  //     const command = getCommand(message);
-
-  //     if (command) {
-  //       command.execute(message);
-  //     }
-  //   }
-  // }
-
   /**
    * Handles commands recieved by the bot.
    *
@@ -84,7 +66,7 @@ export class CopperBot extends Client {
 
     if (commandName === 'ping') {
       interaction.reply({
-        content: 'pong',
+        content: 'pong'.repeat(options.getNumber('pongs')!),
         ephemeral: true, // If true, only user who sent request sees response
       });
     } else if (commandName === "pog") {

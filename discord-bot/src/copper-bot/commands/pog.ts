@@ -1,4 +1,5 @@
 // Local Imports
+import { ApplicationCommandTypes } from 'discord.js/typings/enums';
 import { Command } from './command';
 
 // /**
@@ -10,7 +11,7 @@ import { Command } from './command';
 // const callback = (args: string[], message: Message) => {
 // }
 
-export const Pog = new Command(
-  'pog',
-  'Replies with Champ.',
-);
+export const Pog = new Command({
+  name: 'pog',
+  description: 'Replies with Champ.',
+});

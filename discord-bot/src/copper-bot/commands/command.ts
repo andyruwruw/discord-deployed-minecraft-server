@@ -1,10 +1,7 @@
 // Packages
-import { ApplicationCommandType } from 'discord-api-types';
-import { Message, ApplicationCommandData, ApplicationCommandOptionData } from 'discord.js';
+import { ApplicationCommandOptionData } from 'discord.js';
+import { ApplicationCommandData } from 'discord.js';
 import { ApplicationCommandTypes } from 'discord.js/typings/enums';
-
-// Local Imports
-import { getMessageComponents } from '../../helpers';
 
 /**
  * Defines a command
@@ -14,54 +11,40 @@ export class Command {
   // FIX: Need to figure out how to add the optional fields and how to use their correct datatypes
   // Tried with the ...() implementation and that seemed not to work well
 
-  // PLANS: Need to add the response to this 
+  // PLANS: Need to add the response to either this class or seperate (responses)
+  // Should be easy to handle either way
 
   commandStructure: ApplicationCommandData;
+  
   name: string;
   description: string;
+  type: ApplicationCommandTypes;
+  options: any[] = [];
 
-  /**
-   * Instantiates a new command.
-   *
-   * @param key Identifier of the command.
-   * @param description Description of the command.
-   * @param args Arguments the command takes.
-   * @param callback Callback function to execute when the command is called.
-   */
-  constructor(
-    name: string,
-    description: string,
-  ) {
+
+  constructor({
+    name = '',
+    description = '',
+    type = ApplicationCommandTypes.CHAT_INPUT,
+    options = [] as any,
+  }) {
     this.name = name;
     this.description = description;
+    this.type = type;
+    this.options = options;
+
+    // Only chat commands can have descriptions
+    if (this.type != ApplicationCommandTypes.CHAT_INPUT) {
+      this.description = '';
+    }
 
     this.commandStructure = {
       name: this.name,
       description: this.description,
+      type: this.type,
+      options: this.options,
     }
 
     console.log(this.commandStructure);
   }
-
-  // /**
-  //  * Returns whether a message is this command.
-  //  *
-  //  * @param {Message} message Discord message object.
-  //  * @returns {boolean} Whether the message is this command.
-  //  */
-  // isCommand(message: Message): boolean {
-  //   return getMessageComponents(message).key === this.key;
-  // }
-
-  // /**
-  //  * Executes the callback and returns a promise.
-  //  *
-  //  * @param {Message} message Message containing the command.
-  //  * @returns {Promise<void>} Promise of the callback.
-  //  */
-  // async execute(message: Message): Promise<void> {
-  //   const { args } = getMessageComponents(message);
-
-  //   return await this.callback(args, message);
-  // };
 }
