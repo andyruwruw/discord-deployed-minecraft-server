@@ -19,6 +19,10 @@ interface ChatEvent extends PlayerEvent {
   message: string;
 }
 
+interface AchievementEvent extends PlayerEvent {
+  achievement: string;
+}
+
 enum SocketState {
   OPEN = 'open',
   CLOSED = 'closed',
