@@ -1,5 +1,5 @@
 // Packages
-import { ApplicationCommandData, ApplicationCommandOptionData, CacheType, CommandInteractionOptionResolver } from 'discord.js';
+import { ApplicationCommandData, ApplicationCommandOptionData, CacheType, CommandInteractionOptionResolver, User } from 'discord.js';
 import { ApplicationCommandTypes } from 'discord.js/typings/enums';
 
 export class Command {
@@ -31,6 +31,7 @@ export class Command {
    * @param options Options object given from the interaction, used to parse user input
    */
   generateResponse(
+    user: User,
     options: Omit<CommandInteractionOptionResolver<CacheType>, "getMessage" | "getFocused">
   ) { }
 }

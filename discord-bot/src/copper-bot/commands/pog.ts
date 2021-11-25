@@ -1,5 +1,5 @@
 // Local Imports
-import { CacheType, CommandInteractionOptionResolver } from 'discord.js';
+import { CacheType, CommandInteractionOptionResolver, User } from 'discord.js';
 import { Command } from './command';
 
 export class Pog extends Command {
@@ -11,6 +11,7 @@ export class Pog extends Command {
   }
 
   generateResponse(
+    user: User,
     options: Omit<CommandInteractionOptionResolver<CacheType>, "getMessage" | "getFocused">
   ) {
     return 'Champ';

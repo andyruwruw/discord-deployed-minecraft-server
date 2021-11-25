@@ -58,12 +58,12 @@ export class CopperBot extends Client {
       return;
     }
 
-    const {commandName, options} = interaction;
+    const {commandName, user, options} = interaction;
 
     for (let command of CommandList) {
       if (command.commandStructure.name === commandName) {
         interaction.reply({
-          content: command.generateResponse(options),
+          content: command.generateResponse(user, options),
           ephemeral: true,
         });
       }

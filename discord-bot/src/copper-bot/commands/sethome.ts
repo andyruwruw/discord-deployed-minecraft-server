@@ -1,5 +1,5 @@
 // Packages
-import { CacheType, CommandInteractionOptionResolver } from 'discord.js';
+import { CacheType, CommandInteractionOptionResolver, User } from 'discord.js';
 import { ApplicationCommandOptionTypes, ApplicationCommandTypes } from 'discord.js/typings/enums';
 // Local Imports
 import { Command } from './command';
@@ -20,6 +20,7 @@ export class SetHome extends Command {
   }
 
   generateResponse(
+    user: User,
     options: Omit<CommandInteractionOptionResolver<CacheType>, "getMessage" | "getFocused">
   ) {
     let username = options.getString('username');
