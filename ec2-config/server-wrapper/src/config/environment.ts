@@ -10,3 +10,5 @@ export const RCON_PORT = process.env.RCON_PORT;
 export const SERVER_JAR_DIR = process.env.SERVER_JAR_DIR;
 
 export const SERVER_JAR_NAME = process.env.SERVER_JAR_NAME;
+
+export const WEBSOCKET_PORT = process.env.WEBSOCKET_PORT;

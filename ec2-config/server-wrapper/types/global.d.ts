@@ -1,3 +1,8 @@
+interface ServerConfig {
+  overrideMinecraftServer?: any,
+  overrideWebSocketServer?: any,
+}
+
 interface PlayerEvent {
   player: string;
 }
@@ -13,3 +18,14 @@ interface LogoutEvent extends PlayerEvent {
 interface ChatEvent extends PlayerEvent {
   message: string;
 }
+
+interface AchievementEvent extends PlayerEvent {
+  achievement: string;
+}
+
+enum SocketState {
+  OPEN = 'open',
+  CLOSED = 'closed',
+  PEER_REQUESTED_CLOSE = 'peer_requested_close',
+  ENDING = 'ending',
+};
