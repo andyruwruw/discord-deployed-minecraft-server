@@ -12,48 +12,54 @@ import {
 import { generateMinecraftServer } from './minecraft-server';
 import { generateWebSocketServer } from './web-socket/index';
 import ServerResponse, { Responses } from './web-socket/responses';
-import { 
-  playerLogin,
-  playerLogout,
-  getCurrentPlaytime,
-} from './minecraft-server/helpers/active-players';
-import { handleLoginEvent } from './minecraft-server/responses';
+import { playerLogout } from './minecraft-server/helpers/active-players';
+import { handleLoginEvent, LoginEvent, ChatEvent, AchievementEvent, LogoutEvent } from './minecraft-server/responses';
+
+export interface ServerConfig {
+  minecraftServer?: any,
+  webSocketServer?: any,
+  webSocketPort?: number,
+};
 
 /**
  * Maintains the minecraft and websocket server instances and their interactions.
  */
 export class Server {
+  ready: boolean = false;
   minecraftServer: ScriptServer;
   websocket: WebSocketServer;
   socketConnection?: connection;
 
   constructor(config: ServerConfig = {}) {
-    this.minecraftServer = 'overrideMinecraftServer' in config ? config.overrideMinecraftServer : generateMinecraftServer();
-    this.websocket = 'overrideWebSocketServer' in config ? config.overrideWebSocketServer : generateWebSocketServer();
+    this.minecraftServer = 'minecraftServer' in config ? config.minecraftServer : generateMinecraftServer();
+    this.websocket = 'webSocketServer' in config ? config.webSocketServer : generateWebSocketServer('webSocketPort' in config ? config.webSocketPort : undefined);
 
     // Adding websocket event listeners.
-    this.websocket.on('request', this.handleRequest);
+    this.websocket.on('request', (request: request) => this.handleRequest(request));
     
     // Adding MC event listeners
-    this.minecraftServer.javaServer.on('login', this.handleLogin);
-    this.minecraftServer.javaServer.on('logout', this.handleLogout);
-    this.minecraftServer.javaServer.on('chat', this.handleChat);
-    this.minecraftServer.javaServer.on('achievement', this.handleAchievement);
+    this.minecraftServer.javaServer.on('login', (event: LoginEvent) => this.handleLogin(event));
+    this.minecraftServer.javaServer.on('logout', (event: LogoutEvent) => this.handleLogout(event));
+    this.minecraftServer.javaServer.on('chat', (event: ChatEvent) => this.handleChat(event));
+    this.minecraftServer.javaServer.on('achievement', (event: AchievementEvent) => this.handleAchievement(event));
+
+    this.ready = true;
   }
 
   /**
    * Starts the Minecraft server.
    */
-  start() {
+  start(): void {
     this.minecraftServer.start();
   }
 
   /**
    * Stops the minecraft server.
    */
-  stop() {
+  stop(): void {
     this.minecraftServer.stop();
-    // this.socketConnection?.close(503, 'Server Stopped');
+    this.websocket.closeAllConnections();
+    this.websocket.shutDown();
   }
 
   /**
@@ -62,14 +68,12 @@ export class Server {
    * @param request 
    */
 
-  handleRequest(request: request) {
+   handleRequest(request: request): void {
     this.socketConnection = request.accept(undefined, request.origin);
-    
-    this.socketConnection.on('message', this.handleMessage);
+
+    this.socketConnection.on('message', (message: Message) => this.handleMessage(message));
   
-    this.socketConnection.on('close', (reasonCode: any, description: any) => {
-      this.handleClose(reasonCode, description);
-    });
+    this.socketConnection.on('close', (code: number, description: string) =>  this.handleClose(code, description));
   }
 
   /**
@@ -77,7 +81,7 @@ export class Server {
    *
    * @param message 
    */
-  handleMessage(message: Message) {
+  handleMessage = (message: Message): void => {
     try {
       const data = JSON.parse((message as IUtf8Message).utf8Data);
       const responses = Responses();
@@ -96,7 +100,7 @@ export class Server {
    *
    * @param {LoginEvent} event The login event.
    */
-  handleLogin(event: LoginEvent) {
+  handleLogin(event: LoginEvent): void {
     handleLoginEvent(event);
   }
 
@@ -105,7 +109,7 @@ export class Server {
    *
    * @param {LogoutEvent} event The logout event.
    */
-  handleLogout(event: LogoutEvent) {
+  handleLogout(event: LogoutEvent): void {
     const millisecondsPlayed = playerLogout(event.player);
 
     console.log(`${event.player} played for ${millisecondsPlayed} milliseconds`);
@@ -116,7 +120,7 @@ export class Server {
    *
    * @param {ChatEvent} event The chat event.
    */
-  handleChat(event: ChatEvent) {
+  handleChat(event: ChatEvent): void {
     console.log(event.player + ' said ' + event.message);
   }
 
@@ -125,7 +129,7 @@ export class Server {
    *
    * @param {AchievementEvent} event The achievement event.
    */
-  handleAchievement(event: AchievementEvent) {
+  handleAchievement(event: AchievementEvent): void {
     console.log(event.player + ' achieved ' + event.achievement);
   }
 
@@ -136,7 +140,7 @@ export class Server {
    * @param {number} reasonCode Reason for close.
    * @param {string} description Reason for close.
    */
-  handleClose(reasonCode: number, description: string) {
+  handleClose(reasonCode: number, description: string): void {
     console.log(reasonCode, description);
   }
 }

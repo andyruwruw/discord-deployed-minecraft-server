@@ -1,16 +1,18 @@
+// Packages
 import { ScriptServer } from '@scriptserver/core';
 import { useEssentials } from '@scriptserver/essentials';
 import { useEvent } from '@scriptserver/event';
 import { useUtil } from '@scriptserver/util';
 import { useCommand } from '@scriptserver/command';
 
+// Local Imports
 import {
+  MINECRAFT_ARGS,
   RCON_PASSWORD,
   RCON_PORT,
   SERVER_JAR_DIR,
   SERVER_JAR_NAME,
-} from '../config/environment';
-import { MINECRAFT_ARGS } from 'src/config';
+} from '../config';
 
 /**
  * Generates a ScriptServer instance.

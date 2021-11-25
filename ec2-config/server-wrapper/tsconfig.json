@@ -13,17 +13,16 @@
     "baseUrl": ".",
     "lib": [
       "es2020",
-      "dom"
+      "dom",
     ],
     "forceConsistentCasingInFileNames": true,
-    "outDir": "dist"
+    "outDir": "dist",
   },
   "include": [
     "src/**/*.ts",
     "tests/**/*.ts",
-    "types/**/*.d.ts",
   ],
   "exclude": [
-    "node_modules"
-  ]
+    "node_modules",
+  ],
 }

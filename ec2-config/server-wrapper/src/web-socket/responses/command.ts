@@ -10,11 +10,11 @@ import { ServerResponse } from './response';
  *
  * @param {ScriptServer} minecraftServer Instance of the running minecraft server.
  * @param {connection} socketConnection Connection with discord bot.
- * @param {string} command Command as string to be run.
+ * @param {Array<any>} args Command as string to be run.
  */
-const callback = async (minecraftServer: ScriptServer, socketConnection: connection, command: string) => {
+const callback = async (minecraftServer: ScriptServer, socketConnection: connection, args: Array<any>) => {
   try {
-    minecraftServer.javaServer.send(command)
+    minecraftServer.javaServer.send(args[0])
   } catch (error) {
     throw error;
   }

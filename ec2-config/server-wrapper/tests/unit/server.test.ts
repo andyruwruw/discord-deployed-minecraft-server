@@ -1,14 +1,21 @@
 // Packages
 import {
-  client as WebSocketClient,
   connection,
+  request,
   server as WebSocketServer,
 } from 'websocket';
+import { Socket } from 'net';
+import {
+  IncomingMessage,
+  Server as HttpServer,
+} from 'http';
 
 // Local Imports
 import { Server } from '../../src/server';
 import { MockMinecraftServer } from '../utils/mock-minecraft-server';
-import { WEBSOCKET_PORT } from '../../src/config/environment';
+import { MockConnection, MockRequest, MockWebSocketServer } from '../utils/mock-web-socket-server';
+
+const PORT = 3002;
 
 /**
  * A test suite for the server class.
@@ -22,7 +29,9 @@ describe('Server Class', () => {
   beforeAll(async () => {
     // Creates a server with a mock minecraft server.
     server = new Server({
-      overrideMinecraftServer: new MockMinecraftServer(),
+      minecraftServer: new MockMinecraftServer(),
+      webSocketServer: new MockWebSocketServer(),
+      // webSocketPort: PORT,
     });
   });
 
@@ -42,7 +51,7 @@ describe('Server Class', () => {
       expect(server.minecraftServer).toBeInstanceOf(MockMinecraftServer);
 
       expect(server.websocket).toBeDefined();
-      expect(server.websocket).toBeInstanceOf(WebSocketServer);
+      expect(server.websocket).toBeInstanceOf(MockWebSocketServer);
     });
   });
 
@@ -66,15 +75,15 @@ describe('Server Class', () => {
     });
   });
 
-  // describe('handleRequest()', () => {
-  //   test('should be called on attempted connection', async () => {
-  //     // Creates a mock websocket client.
-  //     const client = new WebSocketClient();
-  //     client.connect(`ws://localhost:${WEBSOCKET_PORT}`);
+  describe('handleRequest()', () => {
+    test('should save socket connection', async () => {
+      const request = new MockRequest();
+      server.websocket.emit('request', request);
 
-  //     // Checks that connection was made.
-  //     expect(server.socketConnection).toBeDefined();
-  //     expect(server.socketConnection).toBeInstanceOf(connection);
-  //   });
-  // });
+      // Checks that connection was made
+      expect(request.accept.mock.calls.length).toBe(1);
+      expect(server.socketConnection).toBeDefined();
+      expect(server.socketConnection).toBeInstanceOf(MockConnection);
+    });
+  });
 });

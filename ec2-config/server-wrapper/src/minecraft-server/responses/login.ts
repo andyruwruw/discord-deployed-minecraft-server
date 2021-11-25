@@ -1,4 +1,9 @@
 import { playerLogin } from '../helpers/active-players';
+import { PlayerEvent } from './index';
+
+export interface LoginEvent extends PlayerEvent {
+  ip: string;
+};
 
 /**
  * Handles a minecraft login.
