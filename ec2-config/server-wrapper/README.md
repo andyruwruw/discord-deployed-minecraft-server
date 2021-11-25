@@ -133,7 +133,6 @@ Git will automatically ignore all minecraft server related files and the **dist*
   - [ ] Spawn 10 Zombies on a non-afk player.
   - [ ] Player a creeper sound effect to a player.
 
-
 # References
 
 - [websocket](https://github.com/theturtle32/WebSocket-Node/blob/HEAD/docs/index.md)
