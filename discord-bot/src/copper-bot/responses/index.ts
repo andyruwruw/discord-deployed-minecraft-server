@@ -1,1 +1,0 @@
-export { CopperBotResponse } from './response';
