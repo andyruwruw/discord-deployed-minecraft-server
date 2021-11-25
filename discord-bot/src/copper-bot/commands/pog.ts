@@ -1,6 +1,5 @@
 // Local Imports
 import { CacheType, CommandInteractionOptionResolver } from 'discord.js';
-import { ApplicationCommandTypes } from 'discord.js/typings/enums';
 import { Command } from './command';
 
 export class Pog extends Command {

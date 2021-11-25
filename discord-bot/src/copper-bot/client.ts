@@ -2,12 +2,12 @@
 import {
   Client,
   ClientOptions,
-  Interaction,
+  Interaction
 } from 'discord.js';
-
 // Local Imports
 import { READY_RESPONSE_STRING } from '../config';
-import { CommandList, Command } from '../copper-bot/commands';
+import { CommandList } from '../copper-bot/commands';
+
 
 // Our little buddy
 export class CopperBot extends Client {
@@ -29,7 +29,6 @@ export class CopperBot extends Client {
   handleConnect() {
     console.log(READY_RESPONSE_STRING);
 
-    // Trying to setup SLASH commands
     // To get guildId right click server icon or name and at bottom copy id
     const guildId = "911933603691233300";
     const guild = this.guilds.cache.get(guildId);
@@ -38,8 +37,8 @@ export class CopperBot extends Client {
 
     if (guild) {
       commandRegister = guild.commands;
-    } else if (this.application) {
-      commandRegister = this.application.commands;
+    } else {
+      commandRegister = this.application?.commands;
     }
 
     if (commandRegister) {

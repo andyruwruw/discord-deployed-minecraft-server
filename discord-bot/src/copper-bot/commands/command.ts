@@ -1,8 +1,5 @@
 // Packages
-import { typeAlias } from '@babel/types';
-import { ApplicationCommand, ApplicationCommandOptionData, ApplicationCommandType, BaseMessageComponentOptions, CacheType, ChatInputApplicationCommandData, CommandInteractionOptionResolver, FileOptions, InteractionReplyOptions, Message, MessageEmbed, MessageMentionOptions } from 'discord.js';
-import { Interaction } from 'discord.js';
-import { ApplicationCommandData } from 'discord.js';
+import { ApplicationCommandData, ApplicationCommandOptionData, CacheType, CommandInteractionOptionResolver } from 'discord.js';
 import { ApplicationCommandTypes } from 'discord.js/typings/enums';
 
 export class Command {
@@ -35,5 +32,5 @@ export class Command {
    */
   generateResponse(
     options: Omit<CommandInteractionOptionResolver<CacheType>, "getMessage" | "getFocused">
-  ) {}
+  ) { }
 }

@@ -1,10 +1,10 @@
 // Packages
 
-import { CacheType, CommandInteractionOptionResolver, Interaction, InteractionReplyOptions } from 'discord.js';
+import { CacheType, CommandInteractionOptionResolver } from 'discord.js';
 import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
-
 // Local Imports
 import { Command } from './command';
+
 
 // /**
 //  * Callback for the wakeup command which starts up the server.
