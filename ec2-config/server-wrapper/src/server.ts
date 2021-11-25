@@ -1,11 +1,17 @@
 // Packages
-import { ScriptServer } from "@scriptserver/core";
-import { connection, IUtf8Message, Message, request, server as WebSocketServer } from 'websocket';
+import { ScriptServer } from '@scriptserver/core';
+import {
+  connection,
+  IUtf8Message,
+  Message,
+  request,
+  server as WebSocketServer,
+} from 'websocket';
 
 // Local Imports
-import { generateMinecraftServer } from "./minecraft-server";
-import websocket from './web-socket/index';
-import ServerResponse, { Responses } from "./responses";
+import { generateMinecraftServer } from './minecraft-server';
+import { generateWebSocketServer } from './web-socket/index';
+import ServerResponse, { Responses } from './responses';
 
 /**
  * Maintains the minecraft and websocket server instances and their interactions.
@@ -13,10 +19,11 @@ import ServerResponse, { Responses } from "./responses";
 export class Server {
   minecraftServer: ScriptServer;
   websocket: WebSocketServer;
+  socketConnection?: connection;
 
-  constructor() {
-    this.minecraftServer = generateMinecraftServer();
-    this.websocket = websocket;
+  constructor(config: ServerConfig = {}) {
+    this.minecraftServer = 'overrideMinecraftServer' in config ? config.overrideMinecraftServer : generateMinecraftServer();
+    this.websocket = 'overrideWebSocketServer' in config ? config.overrideWebSocketServer : generateWebSocketServer();
 
     // Adding websocket event listeners.
     this.websocket.on('request', this.handleRequest);
@@ -30,20 +37,24 @@ export class Server {
   }
 
   /**
+   * Stops the minecraft server.
+   */
+  stop() {
+    this.minecraftServer.stop();
+    // this.socketConnection?.close(503, 'Server Stopped');
+  }
+
+  /**
    * Handles incoming websocket connection requests.
    *
    * @param request 
    */
   handleRequest(request: request) {
-    const socketConnection = request.accept(undefined, request.origin);
+    this.socketConnection = request.accept(undefined, request.origin);
     
-    socketConnection.on('message', (message: Message) => {
-      this.handleMessage(socketConnection, message);
-    });
+    this.socketConnection.on('message', this.handleMessage);
   
-    socketConnection.on('close', (reasonCode: any, description: any) => {
-      this.handleClose(socketConnection, reasonCode, description);
-    });
+    this.socketConnection.on('close', this.handleClose);
   }
 
   /**
@@ -51,14 +62,14 @@ export class Server {
    *
    * @param message 
    */
-  handleMessage(socketConnection: connection, message: Message) {
+  handleMessage(message: Message) {
     try {
       const data = JSON.parse((message as IUtf8Message).utf8Data);
       const responses = Responses();
 
       if (data.type in responses) {
         const messageType: ServerResponse = responses[data.type];
-        messageType.execute(this.minecraftServer, socketConnection, data.args);
+        messageType.execute(this.minecraftServer, this.socketConnection as connection, data.args);
       }
     } catch (error) {
       console.error(error);
@@ -72,7 +83,7 @@ export class Server {
    * @param reasonCode 
    * @param description 
    */
-  handleClose(socketConnection: connection, reasonCode: any, description: any) {
+  handleClose(reasonCode: any, description: any) {
     console.log(reasonCode, description);
   }
 }

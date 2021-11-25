@@ -2,13 +2,26 @@
 import http from 'http';
 import { server as WebSocketServer } from 'websocket';
 
-// Creates http server for websocket.
-const server = http.createServer();
+// Local Imports
+import { WEBSOCKET_PORT } from '../config/environment';
 
-// Creates an instance of a websocket server for two way communication.
-const websocket = new WebSocketServer({
-  httpServer: server,
-  disableNagleAlgorithm: false,
-});
+/**
+ * Creates and starts a new websocket server.
+ *
+ * @returns {WebSocketServer}
+ */
+export const generateWebSocketServer = (): WebSocketServer => {
+  // Creates http server for websocket.
+  const server = http.createServer();
 
-export default websocket;
+  // Start the server.
+  server.listen(parseInt(WEBSOCKET_PORT as string, 10), () => {
+    console.log(`Websocket server listening on port ${WEBSOCKET_PORT}`);
+  });
+
+  // Creates an instance of a websocket server for two way communication.
+  return new WebSocketServer({
+    httpServer: server,
+    autoAcceptConnections: false,
+  });
+};
