@@ -14,11 +14,9 @@ import { Command } from './command';
 //  */
 // const callback = (args: string[], message: Message) => {
 // }
-
 export class Ping extends Command {
   constructor() {
-    super();
-    super.setCommand(
+    super(
       'ping',
       'Replies with pong.',
       undefined,
@@ -29,8 +27,8 @@ export class Ping extends Command {
         required: true
       }]
     );
-    console.log(super.getCommand());
   }
+
 
   generateResponse(
     options: Omit<CommandInteractionOptionResolver<CacheType>, "getMessage" | "getFocused">

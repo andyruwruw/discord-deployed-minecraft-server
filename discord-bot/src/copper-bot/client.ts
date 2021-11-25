@@ -44,7 +44,7 @@ export class CopperBot extends Client {
 
     if (commandRegister) {
       for (let command of CommandList) {
-        commandRegister.create(command.getCommand());
+        commandRegister.create(command.commandStructure);
       }
     }
   }
@@ -62,7 +62,7 @@ export class CopperBot extends Client {
     const {commandName, options} = interaction;
 
     for (let command of CommandList) {
-      if (command.getCommand().name === commandName) {
+      if (command.commandStructure.name === commandName) {
         interaction.reply({
           content: command.generateResponse(options),
           ephemeral: true,

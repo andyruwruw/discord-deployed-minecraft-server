@@ -5,45 +5,22 @@ import { Interaction } from 'discord.js';
 import { ApplicationCommandData } from 'discord.js';
 import { ApplicationCommandTypes } from 'discord.js/typings/enums';
 
-/**
- * Defines a command
- */
-// interface CopperCommandData {
-//   name: string,
-//   description: string,
-//   type?: ApplicationCommandType,
-//   options?: ApplicationCommandOptionData[],
-//   defaultPermission?: boolean
-// }
 export class Command {
-
-  // FIX: Need to figure out how to add the optional fields and how to use their correct datatypes
-  // Tried with the ...() implementation and that seemed not to work well
-
-  // PLANS: Need to add the response to either this class or seperate (responses)
-  // Should be easy to handle either way
   commandStructure: ApplicationCommandData;
-  responseStructure: InteractionReplyOptions;
-
-  constructor() {
-    this.commandStructure = {} as ApplicationCommandData;
-    this.responseStructure = {} as InteractionReplyOptions;
-  }
 
   /**
-   * Sets up the command
    * 
-   * @param {string} name Name of command that is used to call it
-   * @param {string} description Description of what the command does
-   * @param {ApplicationCommandType} [type] Either CHAT_INPUT (in chat), USER (in context menu of bot), MESSAGE (in context menu of message)
-   * @param {ApplicationCommandOptionData[]} [options] Options for the command that automatically parse and validate user input
+   * @param name Name of slash command
+   * @param description Description of command
+   * @param type Type of the command, either a chat command (/{name}), user command (bot context menu), message command (message context menu)
+   * @param options Fields to take in and parse user input
    */
-  setCommand(
+  constructor(
     name: string,
     description: string,
     type?: ApplicationCommandTypes,
     options?: ApplicationCommandOptionData[],
-  ): void {
+  ) {
     this.commandStructure = {
       name: name,
       description: description,
@@ -52,10 +29,10 @@ export class Command {
     }
   }
 
-  getCommand(): ApplicationCommandData {
-    return this.commandStructure;
-  }
-
+  /**
+   * 
+   * @param options Options object given from the interaction, used to parse user input
+   */
   generateResponse(
     options: Omit<CommandInteractionOptionResolver<CacheType>, "getMessage" | "getFocused">
   ) {}
