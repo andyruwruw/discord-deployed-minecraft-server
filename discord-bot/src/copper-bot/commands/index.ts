@@ -10,6 +10,6 @@ export { Command } from './command';
 export const CommandList = [
   // Wakeup,
   // Bedtime,
-  Ping,
-  Pog
+  new Ping(),
+  new Pog()
 ];

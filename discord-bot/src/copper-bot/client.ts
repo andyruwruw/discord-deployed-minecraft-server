@@ -36,7 +36,6 @@ export class CopperBot extends Client {
 
     let commandRegister;
 
-    // Can't use optional chaining sadge
     if (guild) {
       commandRegister = guild.commands;
     } else if (this.application) {
@@ -45,7 +44,7 @@ export class CopperBot extends Client {
 
     if (commandRegister) {
       for (let command of CommandList) {
-        commandRegister.create(command.commandStructure);
+        commandRegister.create(command.getCommand());
       }
     }
   }
@@ -53,7 +52,7 @@ export class CopperBot extends Client {
   /**
    * Handles commands recieved by the bot.
    *
-   * @param {Inteaction} interaction Interaction in question.
+   * @param {Interaction} interaction Interaction in question.
    */
   async handleInteraction(interaction: Interaction) {
     if (!interaction.isCommand()) {
@@ -62,18 +61,13 @@ export class CopperBot extends Client {
 
     const {commandName, options} = interaction;
 
-    // Handling here is temporary, will make responses contained in command itself
-
-    if (commandName === 'ping') {
-      interaction.reply({
-        content: 'pong'.repeat(options.getNumber('pongs')!),
-        ephemeral: true, // If true, only user who sent request sees response
-      });
-    } else if (commandName === "pog") {
-      interaction.reply({
-        content: 'Champ',
-        ephemeral: true,
-      });
+    for (let command of CommandList) {
+      if (command.getCommand().name === commandName) {
+        interaction.reply({
+          content: command.generateResponse(options),
+          ephemeral: true,
+        });
+      }
     }
   }
 }
