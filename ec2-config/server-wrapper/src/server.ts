@@ -5,8 +5,9 @@ import { connection, IUtf8Message, Message, request, server as WebSocketServer }
 // Local Imports
 import { generateMinecraftServer } from "./minecraft-server";
 import websocket from './web-socket/index';
-import ServerResponse, { Responses } from "./responses";
-import { playerLogin, playerLogout, getCurrentPlaytime } from "./minecraft-server/active-players";
+import ServerResponse, { Responses } from "./web-socket/responses";
+import { playerLogin, playerLogout, getCurrentPlaytime } from "./minecraft-server/helpers/active-players";
+import { handleLoginEvent } from "./minecraft-server/responses";
 
 /**
  * Maintains the minecraft and websocket server instances and their interactions.
@@ -14,25 +15,19 @@ import { playerLogin, playerLogout, getCurrentPlaytime } from "./minecraft-serve
 export class Server {
   minecraftServer: ScriptServer;
   websocket: WebSocketServer;
-  javaServer: JavaServer;
 
   constructor() {
     this.minecraftServer = generateMinecraftServer();
-    this.javaServer = this.minecraftServer.javaServer;
     this.websocket = websocket;
 
     // Adding websocket event listeners.
     this.websocket.on('request', this.handleRequest);
     
     // Adding MC event listeners
-    this.javaServer.on('login', (event: { player: string; ip: string; }) => {
-       this.handleLogin(event); });
-    this.javaServer.on('logout', (event: { player: string; reason: string; }) => { 
-      this.handleLogout(event); });
-    this.javaServer.on('chat', (event: { player: string; message: string; }) => { 
-      this.handleChat(event) });
-    this.javaServer.on('achievement', (event: { player: string; achievement: string; }) => { 
-      this.handleAchievement(event); });
+    this.minecraftServer.javaServer.on('login', this.handleLogin);
+    this.minecraftServer.javaServer.on('logout', this.handleLogout);
+    this.minecraftServer.javaServer.on('chat', this.handleChat);
+    this.minecraftServer.javaServer.on('achievement', this.handleAchievement);
   }
 
   /**
@@ -56,7 +51,7 @@ export class Server {
     });
   
     socketConnection.on('close', (reasonCode: any, description: any) => {
-      this.handleClose(socketConnection, reasonCode, description);
+      this.handleClose(reasonCode, description);
     });
   }
 
@@ -80,25 +75,40 @@ export class Server {
   }
 
   /**
-   * Handles MC Events.
-   * @param event
+   * Handles player login event from the minecraft server.
    *
+   * @param {LoginEvent} event The login event.
    */
-
-  handleLogin(event: {player: string; ip: string;}) {
-    playerLogin(event.player);
-    // send data to discord bot 
+  handleLogin(event: LoginEvent) {
+    handleLoginEvent(event);
   }
 
-  handleLogout(event: {player: string; reason: string;}) {
-    const milliseconds_played = playerLogout(event.player);
-    console.log(event.player +" played for "+milliseconds_played+" milliseconds.");
+  /**
+   * Handles player logout event from the minecraft server.
+   *
+   * @param {LogoutEvent} event The logout event.
+   */
+  handleLogout(event: LogoutEvent) {
+    const millisecondsPlayed = playerLogout(event.player);
+
+    console.log(`${event.player} played for ${millisecondsPlayed} milliseconds`);
   }
 
-  handleChat(event: {player: string; message: string;}) {
+  /**
+   * Handles player chat event from the minecraft server.
+   *
+   * @param {ChatEvent} event The chat event.
+   */
+  handleChat(event: ChatEvent) {
     console.log(event.player + " said " + event.message);
   }
-  handleAchievement(event: {player: string; achievement: string}) {
+
+  /**
+   * Handles player achievement event from the minecraft server.
+   *
+   * @param {AchievementEvent} event The achievement event.
+   */
+  handleAchievement(event: AchievementEvent) {
     console.log(event.player + " achieved " + event.achievement);
   }
 
@@ -106,10 +116,10 @@ export class Server {
    * Handles the close of a websocket connection.
    * This event means the discord bot has gone offline while a server remains up. This would be catastrophic?
    *
-   * @param reasonCode 
-   * @param description 
+   * @param {number} reasonCode Reason for close.
+   * @param {string} description Reason for close.
    */
-  handleClose(socketConnection: connection, reasonCode: any, description: any) {
+  handleClose(reasonCode: number, description: string) {
     console.log(reasonCode, description);
   }
 }
