@@ -4,25 +4,25 @@ import { ApplicationCommandOptionTypes, ApplicationCommandTypes } from 'discord.
 // Local Imports
 import { Command } from './command';
 
-export class Ping extends Command {
+export class Register extends Command {
   constructor() {
-    super(
-      'ping',
-      'Replies with pong.',
+    super( 
+      'register',
+      'Whitelists the specified user',
       ApplicationCommandTypes.CHAT_INPUT,
       [{
-        type: ApplicationCommandOptionTypes.NUMBER,
-        name: 'pongs',
-        description: 'number of pongs to send',
-        required: true
-      }]
+          type: ApplicationCommandOptionTypes.STRING,
+          name: 'username',
+          description: 'user to whitelist',
+          required: true,
+      }],
     );
   }
-
 
   generateResponse(
     options: Omit<CommandInteractionOptionResolver<CacheType>, "getMessage" | "getFocused">
   ) {
-    return 'pong'.repeat(options.getNumber('pongs')!);
+    let username = options.getString('username');
+    return 'registered ' + username;
   }
 }

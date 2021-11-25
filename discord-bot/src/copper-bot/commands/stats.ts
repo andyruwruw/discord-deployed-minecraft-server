@@ -4,25 +4,25 @@ import { ApplicationCommandOptionTypes, ApplicationCommandTypes } from 'discord.
 // Local Imports
 import { Command } from './command';
 
-export class Ping extends Command {
+export class Stats extends Command {
   constructor() {
-    super(
-      'ping',
-      'Replies with pong.',
+    super( 
+      'stats',
+      'shows online time and chart of activity for specified user',
       ApplicationCommandTypes.CHAT_INPUT,
       [{
-        type: ApplicationCommandOptionTypes.NUMBER,
-        name: 'pongs',
-        description: 'number of pongs to send',
-        required: true
-      }]
+          type: ApplicationCommandOptionTypes.STRING,
+          name: 'username',
+          description: 'user to get stats for',
+          required: true,
+      }],
     );
   }
-
 
   generateResponse(
     options: Omit<CommandInteractionOptionResolver<CacheType>, "getMessage" | "getFocused">
   ) {
-    return 'pong'.repeat(options.getNumber('pongs')!);
+    let username = options.getString('username');
+    return 'got stats for ' + username;
   }
 }

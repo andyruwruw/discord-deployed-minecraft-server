@@ -37,8 +37,8 @@ export class CopperBot extends Client {
 
     if (guild) {
       commandRegister = guild.commands;
-    } else {
-      commandRegister = this.application?.commands;
+    } else if (this.application) {
+      commandRegister = this.application.commands;
     }
 
     if (commandRegister) {
