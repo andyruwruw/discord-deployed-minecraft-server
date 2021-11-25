@@ -1,5 +1,5 @@
 export const MINECRAFT_ARGS = [
-  '-Xmx22000M', 
+  '-Xmx10000M', 
   '-Xms1000M',
   '-XX:+UseG1GC',
   '-XX:+ParallelRefProcEnabled',
