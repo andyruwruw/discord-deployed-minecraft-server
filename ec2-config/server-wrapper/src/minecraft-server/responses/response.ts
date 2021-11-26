@@ -3,28 +3,13 @@ import { ScriptServer } from "@scriptserver/core";
 import { connection } from "websocket";
 
 /**
- * Defines a response.
+ * Defines a minecraft response.
  */
-export class SocketResponse {
-  type: string;
+export class MinecraftResponse {
   callback: Function
 
-  constructor(
-    type: string,
-    callback: Function,
-  ) {
-    this.type = type;
+  constructor(callback: Function,) {
     this.callback = callback;
-  }
-
-  /**
-   * Whether a message matches this response type.
-   *
-   * @param {string} type Type from incoming message.
-   * @returns Whether a message matches this response type.
-   */
-  isMatch(type: string): boolean {
-    return this.type === type;
   }
 
   /**
@@ -36,11 +21,11 @@ export class SocketResponse {
   async execute(
     mincraftServer: ScriptServer,
     socketConnection: connection,
-    args: string[] = []): Promise<void> {
+    args: any[] = []): Promise<void> {
     return await this.callback(
       mincraftServer,
       socketConnection,
       ...args,
     );
   }
-}
+};

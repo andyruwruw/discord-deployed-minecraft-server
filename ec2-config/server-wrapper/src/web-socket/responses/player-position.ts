@@ -3,7 +3,9 @@ import { ScriptServer } from '@scriptserver/core';
 import { connection } from 'websocket';
 
 // Local Imports
-import { ServerResponse } from './response';
+import { SocketResponse } from './response';
+
+export const TYPE = 'player-position';
 
 /**
  * Returns position of a player back to discord bot.
@@ -18,7 +20,7 @@ const callback = async (minecraftServer: ScriptServer, socketConnection: connect
       const data = await minecraftServer.rconConnection.util.getLocation(playerName);
 
       return await socketConnection.send(JSON.stringify({
-        type: 'player-position',
+        type: TYPE,
         username: playerName,
         online: true,
         location: data,
@@ -26,7 +28,7 @@ const callback = async (minecraftServer: ScriptServer, socketConnection: connect
     }
 
     return await socketConnection.send(JSON.stringify({
-      type: 'player-position',
+      type: TYPE,
       username: playerName,
       online: false,
       location: null,
@@ -36,4 +38,4 @@ const callback = async (minecraftServer: ScriptServer, socketConnection: connect
   }
 };
 
-export const PlayerPosition = new ServerResponse('get-player-position', callback);
+export const PlayerPosition = new SocketResponse(TYPE, callback);

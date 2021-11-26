@@ -1,15 +1,36 @@
-import { playerLogin } from '../helpers/active-players';
+// Packages
+import { ScriptServer } from '@scriptserver/core';
+import { connection } from 'websocket';
+
+// Local Imports
+import { MinecraftResponse } from './response';
+import { startTrackingPlayer } from '../helpers/active-players';
 import { PlayerEvent } from './index';
+
+export const TYPE = 'login';
 
 export interface LoginEvent extends PlayerEvent {
   ip: string;
 };
 
 /**
- * Handles a minecraft login.
- * 
- * @param {LoginEvent} event The login event.
+ * Tracks player's time on server and tells discord bot the player is online.
+ *
+ * @param {ScriptServer} minecraftServer Instance of the running minecraft server.
+ * @param {connection} socketConnection Connection with discord bot.
+ * @param {LoginEvent} event Login event
  */
-export const handleLoginEvent = (event: LoginEvent) => {
-  playerLogin(event.player);
+const callback = async (minecraftServer: ScriptServer, socketConnection: connection, event: LoginEvent) => {
+  try {
+    startTrackingPlayer(event.player);
+
+    await socketConnection.send(JSON.stringify({
+      type: TYPE,
+      player: event.player,
+    }));
+  } catch (error) {
+    throw error;
+  }
 };
+
+export const Login = new MinecraftResponse(callback);

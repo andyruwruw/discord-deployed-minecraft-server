@@ -1,5 +1,5 @@
 // Local Imports
-import { ServerResponse } from './response';
+import { SocketResponse } from './response';
 import { Command } from './command';
 import { Status } from './status';
 import { PlayerPosition } from './player-position';
@@ -8,7 +8,7 @@ import { PlayerPosition } from './player-position';
  * List of responses that can be sent to the server.
  */
 export const Responses = () => {
-  const responses: Record<string,ServerResponse> = {};
+  const responses: Record<string,SocketResponse> = {};
 
   responses[Command.type] = Command;
   responses[Status.type] = Status;
@@ -17,4 +17,4 @@ export const Responses = () => {
   return responses;
 }
 
-export default ServerResponse;
+export default SocketResponse;

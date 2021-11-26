@@ -3,7 +3,9 @@ import { ScriptServer } from '@scriptserver/core';
 import { connection } from 'websocket';
 
 // Local Imports
-import { ServerResponse } from './response';
+import { SocketResponse } from './response';
+
+export const TYPE = 'command';
 
 /**
  * Runs a command string on the server terminal.
@@ -12,12 +14,12 @@ import { ServerResponse } from './response';
  * @param {connection} socketConnection Connection with discord bot.
  * @param {Array<any>} args Command as string to be run.
  */
-const callback = async (minecraftServer: ScriptServer, socketConnection: connection, args: Array<any>) => {
+const callback = async (minecraftServer: ScriptServer, socketConnection: connection, command: string) => {
   try {
-    minecraftServer.javaServer.send(args[0])
+    minecraftServer.javaServer.send(command)
   } catch (error) {
     throw error;
   }
 };
 
-export const Command = new ServerResponse('command', callback);
+export const Command = new SocketResponse(TYPE, callback);

@@ -1,13 +1,30 @@
 // Initialize dictionary of active players
-let activePlayers: { [username: string]: number} = {};
+export let activePlayers: {
+    [username: string]: number,
+} = {};
 
 /**
  * Tracks the time a player logs in.
  *
  * @param {string} username Player's username.
  */ 
-export const playerLogin = (username: string) => { 
-    activePlayers[username]= Date.now();
+export const startTrackingPlayer = (username: string): number => { 
+    activePlayers[username] = Date.now();
+
+    return activePlayers[username];
+};
+
+/**
+ * Returns the start time of the players time on the server.
+ *
+ * @param {string} username Player's username.
+ * @returns {number} Start time of the players time on the server.
+ */
+export const getStartTime = (username: string) => {
+    if (username in activePlayers) {
+        return activePlayers[username];
+    }
+    return 0;
 };
 
 /**
@@ -16,7 +33,7 @@ export const playerLogin = (username: string) => {
  * @param {string} username Player's username.
  * @returns {number} The time the player was online.
  */
-export const playerLogout = (username: string) => {
+export const stopTrackingPlayer = (username: string) => {
     if (username in activePlayers){
         const startTime = activePlayers[username];
         delete activePlayers[username]
@@ -34,4 +51,11 @@ export const playerLogout = (username: string) => {
  */
 export const getCurrentPlaytime = (username: string) => {
     return Date.now() - activePlayers[username];
+}
+
+/**
+ * Clears all current tracked players.
+ */
+export const clearAllTrackings = () => {
+    activePlayers = {};
 }

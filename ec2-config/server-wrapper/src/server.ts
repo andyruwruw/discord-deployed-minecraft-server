@@ -1,5 +1,4 @@
 // Packages
-import { ScriptServer } from '@scriptserver/core';
 import {
   connection,
   IUtf8Message,
@@ -7,13 +6,22 @@ import {
   request,
   server as WebSocketServer,
 } from 'websocket';
+import { ScriptServer } from '@scriptserver/core';
 
 // Local Imports
+import {
+  Achievement,
+  AchievementEvent,
+  Chat,
+  ChatEvent, 
+  Login,
+  LoginEvent,
+  Logout,
+  LogoutEvent,
+} from './minecraft-server/responses';
+import SocketResponse, { Responses } from './web-socket/responses';
 import { generateMinecraftServer } from './minecraft-server';
 import { generateWebSocketServer } from './web-socket/index';
-import ServerResponse, { Responses } from './web-socket/responses';
-import { playerLogout } from './minecraft-server/helpers/active-players';
-import { handleLoginEvent, LoginEvent, ChatEvent, AchievementEvent, LogoutEvent } from './minecraft-server/responses';
 
 export interface ServerConfig {
   minecraftServer?: any,
@@ -26,10 +34,18 @@ export interface ServerConfig {
  */
 export class Server {
   ready: boolean = false;
+
   minecraftServer: ScriptServer;
+
   websocket: WebSocketServer;
+
   socketConnection?: connection;
 
+  /**
+   * Starts internal servers and event listeners.
+   *
+   * @param {ServerConfig} config Configuration for server instances, mostly used for testing purposes. 
+   */
   constructor(config: ServerConfig = {}) {
     this.minecraftServer = 'minecraftServer' in config ? config.minecraftServer : generateMinecraftServer();
     this.websocket = 'webSocketServer' in config ? config.webSocketServer : generateWebSocketServer('webSocketPort' in config ? config.webSocketPort : undefined);
@@ -37,7 +53,7 @@ export class Server {
     // Adding websocket event listeners.
     this.websocket.on('request', (request: request) => this.handleRequest(request));
     
-    // Adding MC event listeners
+    // Adding minecraft event listeners.
     this.minecraftServer.javaServer.on('login', (event: LoginEvent) => this.handleLogin(event));
     this.minecraftServer.javaServer.on('logout', (event: LogoutEvent) => this.handleLogout(event));
     this.minecraftServer.javaServer.on('chat', (event: ChatEvent) => this.handleChat(event));
@@ -47,14 +63,14 @@ export class Server {
   }
 
   /**
-   * Starts the Minecraft server.
+   * Starts internal servers.
    */
   start(): void {
     this.minecraftServer.start();
   }
 
   /**
-   * Stops the minecraft server.
+   * Stops internal servers.
    */
   stop(): void {
     this.minecraftServer.stop();
@@ -65,7 +81,7 @@ export class Server {
   /**
    * Handles incoming websocket connection requests.
    *
-   * @param request 
+   * @param {request} request Websocket request.
    */
 
    handleRequest(request: request): void {
@@ -87,7 +103,7 @@ export class Server {
       const responses = Responses();
 
       if (data.type in responses) {
-        const messageType: ServerResponse = responses[data.type];
+        const messageType: SocketResponse = responses[data.type];
         messageType.execute(this.minecraftServer, this.socketConnection as connection, data.args);
       }
     } catch (error) {
@@ -101,7 +117,7 @@ export class Server {
    * @param {LoginEvent} event The login event.
    */
   handleLogin(event: LoginEvent): void {
-    handleLoginEvent(event);
+    Login.execute(this.minecraftServer, this.socketConnection as connection, [ event ]);
   }
 
   /**
@@ -110,9 +126,7 @@ export class Server {
    * @param {LogoutEvent} event The logout event.
    */
   handleLogout(event: LogoutEvent): void {
-    const millisecondsPlayed = playerLogout(event.player);
-
-    console.log(`${event.player} played for ${millisecondsPlayed} milliseconds`);
+    Logout.execute(this.minecraftServer, this.socketConnection as connection, [ event ]);
   }
 
   /**
@@ -121,7 +135,7 @@ export class Server {
    * @param {ChatEvent} event The chat event.
    */
   handleChat(event: ChatEvent): void {
-    console.log(event.player + ' said ' + event.message);
+    Chat.execute(this.minecraftServer, this.socketConnection as connection, [ event ]);
   }
 
   /**
@@ -130,7 +144,7 @@ export class Server {
    * @param {AchievementEvent} event The achievement event.
    */
   handleAchievement(event: AchievementEvent): void {
-    console.log(event.player + ' achieved ' + event.achievement);
+    Achievement.execute(this.minecraftServer, this.socketConnection as connection, [ event ]);
   }
 
   /**
@@ -141,6 +155,6 @@ export class Server {
    * @param {string} description Reason for close.
    */
   handleClose(reasonCode: number, description: string): void {
-    console.log(reasonCode, description);
+    console.log(`Connection Error ${reasonCode}: Connection with Discord Bot has closed unexpectedly, ${description}`);
   }
 }

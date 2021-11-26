@@ -1,37 +1,30 @@
-// Packages
-import {
-  connection,
-  request,
-  server as WebSocketServer,
-} from 'websocket';
-import { Socket } from 'net';
-import {
-  IncomingMessage,
-  Server as HttpServer,
-} from 'http';
-
 // Local Imports
+import {
+  MockConnection,
+  MockRequest,
+  MockWebSocketServer,
+} from '../utils/mock-web-socket-server';
 import { Server } from '../../src/server';
 import { MockMinecraftServer } from '../utils/mock-minecraft-server';
-import { MockConnection, MockRequest, MockWebSocketServer } from '../utils/mock-web-socket-server';
-
-const PORT = 3002;
 
 /**
  * A test suite for the server class.
  */
 describe('Server Class', () => {
+  let consoleSpy: jest.SpyInstance<void, [message?: any, ...optionalParams: any[]]>;
+  
   let server: Server;
 
   /**
    * Runs before all tests in test suite.
    */
   beforeAll(async () => {
+    consoleSpy = jest.spyOn(console, 'log');
+
     // Creates a server with a mock minecraft server.
     server = new Server({
       minecraftServer: new MockMinecraftServer(),
       webSocketServer: new MockWebSocketServer(),
-      // webSocketPort: PORT,
     });
   });
 
@@ -41,6 +34,7 @@ describe('Server Class', () => {
   afterAll(async () => {
     // Stops the server.
     server.stop();
+
     // Clears mock counts.
     jest.clearAllMocks();
   });

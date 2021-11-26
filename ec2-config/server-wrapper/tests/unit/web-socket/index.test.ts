@@ -1,6 +1,5 @@
 // Packages
 import { server as WebSocketServer } from 'websocket';
-import { Server as HttpServer } from 'http';
 
 // Local Imports
 import { generateWebSocketServer } from '../../../src/web-socket';
@@ -9,7 +8,16 @@ import { generateWebSocketServer } from '../../../src/web-socket';
  * A test suite for the web-socket generator.
  */
 describe('Web Socket Generator', () => {
+  let consoleSpy: jest.SpyInstance<void, [message?: any, ...optionalParams: any[]]>;
+
   let server: WebSocketServer;
+
+  /**
+   * Run before all tests in test suite.
+   */
+  beforeAll(async () => {
+    consoleSpy = jest.spyOn(console, 'log');
+  });
 
   /**
    * Runs after each tests in test suite.
@@ -18,6 +26,7 @@ describe('Web Socket Generator', () => {
     // Stops the server.
     await server.closeAllConnections();
     await server.shutDown();
+
     // Clears mock counts.
     jest.clearAllMocks();
   });
@@ -30,12 +39,17 @@ describe('Web Socket Generator', () => {
     });
 
     it('should override port', async () => {
-      const consoleSpy = jest.spyOn(console, 'log');
-
       const newPort = 4000;
       server = await generateWebSocketServer(newPort);
 
       expect(consoleSpy.mock.calls[0][0].indexOf(`${newPort}`)).toBeGreaterThan(-1);
+    });
+
+    it('should return a listening server', async () => {
+      const newPort = 4001;
+      server = await generateWebSocketServer(newPort);
+
+      expect(consoleSpy.mock.calls[0][0].indexOf(`Websocket server listening on port `)).toBeGreaterThan(-1);
     });
   });
 });
