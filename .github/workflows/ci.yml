@@ -87,11 +87,11 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install Dependencies
-        working-directory: ./server/server-wrapper
+        working-directory: ./server
         run: npm ci --prefer-offline
 
       - name: Run tests
-        working-directory: ./server/server-wrapper
+        working-directory: ./server
         run: npm run test
   
   lint-server:
@@ -115,9 +115,9 @@ jobs:
             ${{ runner.os }}-node-
   
       - name: Install Dependencies
-        working-directory: ./server/server-wrapper
+        working-directory: ./server
         run: npm ci --prefer-offline
 
       - name: Lint
-        working-directory: ./server/server-wrapper
+        working-directory: ./server
         run: npm run lint

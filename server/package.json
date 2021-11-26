@@ -32,6 +32,7 @@
     "babel-jest": "^27.3.1",
     "eslint": "^8.3.0",
     "eslint-config-airbnb-typescript": "^16.0.0",
+    "eslint-plugin-import": "^2.25.3",
     "events": "^3.3.0",
     "jest": "^27.3.1",
     "lodash.defaultsdeep": "^4.6.1",
