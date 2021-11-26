@@ -6,15 +6,15 @@ import { Command } from './command';
 
 export class Register extends Command {
   constructor() {
-    super( 
+    super(
       'register',
       'Whitelists the specified user',
       ApplicationCommandTypes.CHAT_INPUT,
       [{
-          type: ApplicationCommandOptionTypes.STRING,
-          name: 'username',
-          description: 'user to whitelist',
-          required: true,
+        type: ApplicationCommandOptionTypes.STRING,
+        name: 'username',
+        description: 'user to whitelist',
+        required: true,
       }],
     );
   }

@@ -27,7 +27,7 @@ export class Command {
   }
 
   /**
-   * 
+   * @param user User object that has username, roles, etc.
    * @param options Options object given from the interaction, used to parse user input
    */
   generateResponse(

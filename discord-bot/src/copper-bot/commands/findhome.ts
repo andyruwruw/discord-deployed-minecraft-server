@@ -6,15 +6,15 @@ import { Command } from './command';
 
 export class FindHome extends Command {
   constructor() {
-    super( 
+    super(
       'findhome',
       'gets home of specified user',
       ApplicationCommandTypes.CHAT_INPUT,
       [{
-          type: ApplicationCommandOptionTypes.STRING,
-          name: 'username',
-          description: 'user to get home of',
-          required: true,
+        type: ApplicationCommandOptionTypes.STRING,
+        name: 'username',
+        description: 'user to get home of',
+        required: true,
       }],
     );
   }

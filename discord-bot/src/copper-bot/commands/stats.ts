@@ -6,15 +6,15 @@ import { Command } from './command';
 
 export class Stats extends Command {
   constructor() {
-    super( 
+    super(
       'stats',
       'shows online time and chart of activity for specified user',
       ApplicationCommandTypes.CHAT_INPUT,
       [{
-          type: ApplicationCommandOptionTypes.STRING,
-          name: 'username',
-          description: 'user to get stats for',
-          required: true,
+        type: ApplicationCommandOptionTypes.STRING,
+        name: 'username',
+        description: 'user to get stats for',
+        required: true,
       }],
     );
   }

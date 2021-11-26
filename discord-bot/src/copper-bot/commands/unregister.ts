@@ -6,15 +6,15 @@ import { Command } from './command';
 
 export class Unregister extends Command {
   constructor() {
-    super( 
+    super(
       'unregister',
       'Bans the specified user',
       ApplicationCommandTypes.CHAT_INPUT,
       [{
-          type: ApplicationCommandOptionTypes.STRING,
-          name: 'username',
-          description: 'user to ban',
-          required: true,
+        type: ApplicationCommandOptionTypes.STRING,
+        name: 'username',
+        description: 'user to ban',
+        required: true,
       }],
     );
   }
