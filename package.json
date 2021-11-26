@@ -11,12 +11,10 @@
   "keywords": [
     "minecraft",
     "server",
-    "discord",
-    "ec2",
-    "aws"
+    "discord"
   ],
   "author": "Andrew Young",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/andyruwruw/discord-deployed-minecraft-server/issues"
   },
