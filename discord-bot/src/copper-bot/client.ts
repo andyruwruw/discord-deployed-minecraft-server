@@ -7,6 +7,7 @@ import {
 // Local Imports
 import { READY_RESPONSE_STRING } from '../config';
 import { CommandList } from '../copper-bot/commands';
+import { guildSetup } from './guildSetup';
 
 
 // Our little buddy
@@ -21,6 +22,7 @@ export class CopperBot extends Client {
 
     this.on('ready', this.handleConnect);
     this.on('interactionCreate', this.handleInteraction);
+
   }
 
   /**
@@ -46,7 +48,12 @@ export class CopperBot extends Client {
         commandRegister.create(command.commandStructure);
       }
     }
+
+    guildSetup(guild);
+
+
   }
+
 
   /**
    * Handles commands recieved by the bot.

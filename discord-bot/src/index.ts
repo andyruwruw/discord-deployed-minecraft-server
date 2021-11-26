@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 // Local Imports
 import { CopperBot } from './copper-bot';
 import { DISCORD_INTENTS } from './config';
+import { Intents } from 'discord.js';
 
 dotenv.config();
 
@@ -12,9 +13,10 @@ const {
   DISCORD_BOT_TOKEN,
 } = process.env;
 
+
 // Crafting a new Copper Bot
 const server = new CopperBot({
-  intents: DISCORD_INTENTS,
+  intents: ['GUILD_PRESENCES', 'GUILD_MEMBERS'],
 });
 
 // Logging him into Discord
