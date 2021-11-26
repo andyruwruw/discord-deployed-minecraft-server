@@ -2,9 +2,9 @@
 
 The server wrapper is a javascript wrapper around the Minecraft Server, adding an API for us to interact with the Minecraft Server through websocket requests.
 
-The ability to run a Minecraft Java Server with Javascript is thanks to [garrettjoecox/scriptserver](https://github.com/garrettjoecox/scriptserver), and should work for whatever Minecraft **server.jar** we choose, regardless of version.
+The ability to run a Minecraft Java Server with Javascript is thanks to [garrettjoecox/scriptserver](https://github.com/garrettjoecox/scriptserver), and should work for whatever Minecraft [server.jar](https://github.com/andyruwruw/discord-managed-minecraft-server/blob/main/server/server.jar) we choose, regardless of version.
 
-The websocket server will be connected to our discord bot. If you're not familiar with websockets, it allows the discord bot to send our server requests, and the server to send requests to the discord bot.
+The [websocket server](https://www.npmjs.com/package/websocket) will be connected to our discord bot. If you're not familiar with websockets, it allows the discord bot to send our server requests, and the server to send requests to the discord bot.
 
 This allows the minecraft server to send events back to discord, such as server logs which we can display in a channel.
 
@@ -22,9 +22,9 @@ Install dependencies:
 $ npm i
 ```
 
-You'll need to add a file named **.env** into the **ec2-config\server-wrapper** directory. This file is automatically ignore by git and is safe for secrets.
+You'll need to add a file named **.env** into the [server directory](https://github.com/andyruwruw/discord-managed-minecraft-server/tree/main/server). This file is automatically ignored by git.
 
-There's an **example.env** to help you know what properties it will need.
+There's an [example.env](https://github.com/andyruwruw/discord-managed-minecraft-server/blob/main/server/example.env) to help you know what properties it will need.
 
 *ec2-config\server-wrapper\\.env*:
 ```
@@ -94,13 +94,34 @@ Git will automatically ignore all minecraft server related files and the **dist*
   - **node_modules** *(Only locally)*: *NPM package files, ignored by git.*
   - **src**: *Place all code in here, try to keep files in subdirectories*
     - **config**: *Static variables*
-      - **environment**: *Access environmental variables from .env.*
+      - **index**: *Access environmental variables from .env and other constants.*
     - **minecraft-server**: *Code related to the minecraft server.*
+      - **index.ts**: *Aids in the instantiation of the script server.*
+      - **helpers**: *Additional helper functions.*
+        - **active-players.ts**: *Cache method for tracking player activity.*
+      - **responses**: *Responses to minecraft events.*
+        - **achievement.ts**: *Response to player getting an achievement in minecraft.*
+        - **chat.ts**: *Response to player sending a chat in minecraft.*
+        - **index.ts**: *Exports minecraft responses.*
+        - **login.ts**: *Response to player login in minecraft.*
+        - **logout.ts**: *Response to player logout in minecraft.*
+        - **response.ts**: *Base minecraft response class.*
     - **web-socket**: *Code related to the web-socket server.*
+      - **index.ts**: *Aids in the instantiation of the websocket server.*
+      - **responses**: *Responses to websocket events.*
+        - **command.ts**: *Response to discord bot issuing a minecraft command.*
+        - **index.ts**: *Exports websocket responses.*
+        - **player-position.ts**: *Response to discord bot querying for a player's position.*
+        - **response.ts**: *Base websocket response class.*
+        - **status.ts**: *Response to discord bot querying for server online status.*
     - **index.ts**: *Starts the server, first file run.*
     - **server.ts**: *Defines the server and interactions between the minecraft server and web-socket*
-  - **types**: *Typescript definitions, anything in here will be globally available.*
-    - **global.d.ts** *I don't really bother making separate files for definitions.*
+  - **tests**: *Tests for server.*
+    - **integration**: *Tests for end to end testing.*
+    - **unit**: *Tests for single components, match up with file names in src.*
+    - **utils**: *Additional utilities for testing.*
+      - **mock-minecraft-server.ts**: *Mocks ScriptServer with empty class with identical interface.*
+      - **mock-web-socket-server.ts**: *Mocks WebSocketServer with empty class with identical interface.*
   - **world** *(Only locally)*: *Minecraft server files, ignored by git.*
   - **.env** *(Only locally)*: *Stores secrets and environmental variables, ignored by git.*
   - **.gitignore** *Ignores files from being uploaded to git.*
@@ -121,17 +142,7 @@ Git will automatically ignore all minecraft server related files and the **dist*
 # Tasks
 
 - [ ] Websocket authentication, ensure the only connection the discord bot can recieve is the discord bot.
-- [x] When sent a websocket message `'status'`, the server should return how many players are online.
-- [x] When sent a websocket message `'get-player-position'` and a player name, the server should return that player's current position in minecraft to the discord bot.
-- [x] When sent a websocket message `'command'`, the server should issue that command in the minecraft server terminal.
 - [ ] When the server has a new output, the server should send that output to the discord bot.
-- [ ] The server should keep track of how long people are online, when the log off, the server should send how long they were online to the discord bot. (Sexy stats)
-- [ ] On player join, send their name to the discord bot. (Roles for active players)
-- [ ] A great way to bring down the cost of our server could be to offer paid commands. Nothing positive for the player, because that would be fun. But more, "$1 Spawn 10 zomies on your friend", "$1 give blindness to your friend for 30 seconds" "$1 play a creeper sound behind your friend and have them as events the discord bot can send with donations.
-  - [ ] Give blindness to a player for 30 seconds.
-  - [ ] Give nausea to a player for 30 seconds.
-  - [ ] Spawn 10 Zombies on a non-afk player.
-  - [ ] Player a creeper sound effect to a player.
 
 # References
 
