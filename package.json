@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "Discord Deployed Minecraft Server",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/andyruwruw/discord-deployed-minecraft-server.git"
@@ -21,7 +20,5 @@
   "bugs": {
     "url": "https://github.com/andyruwruw/discord-deployed-minecraft-server/issues"
   },
-  "homepage": "https://github.com/andyruwruw/discord-deployed-minecraft-server#readme",
-  "dependencies": {
-  }
+  "homepage": "https://github.com/andyruwruw/discord-deployed-minecraft-server#readme"
 }
