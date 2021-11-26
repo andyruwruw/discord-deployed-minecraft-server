@@ -10,7 +10,63 @@ env:
   node_version: '14.x'
 
 jobs:
-  test:
+  test-discord:
+    name: Test Discord Bot 🤖
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Set Up Node ${{ env.node_version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Cache NPM
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Dependencies
+        working-directory: ./discord-bot
+        run: npm ci --prefer-offline
+
+      - name: Run tests
+        working-directory: ./discord-bot
+        run: npm run test
+  
+  lint-discord:
+    name: Lint Discord Bot 🙊
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Set Up Node ${{ env.node_version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.node_version }}
+
+      - name: Cache NPM
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+  
+      - name: Install Dependencies
+        working-directory: ./discord-bot
+        run: npm ci --prefer-offline
+
+      - name: Lint
+        working-directory: ./discord-bot
+        run: npm run lint
+  
+  test-server:
     name: Test Server 📡
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +94,7 @@ jobs:
         working-directory: ./server/server-wrapper
         run: npm run test
   
-  lint:
+  lint-server:
     name: Lint Server 🛠️
     runs-on: ubuntu-latest
     steps:
