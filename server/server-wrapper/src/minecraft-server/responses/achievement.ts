@@ -10,7 +10,7 @@ export const TYPE = 'achievement';
 
 export interface AchievementEvent extends PlayerEvent {
   achievement: string;
-};
+}
 
 /**
  * Sends achievement to discord bot.
@@ -20,15 +20,11 @@ export interface AchievementEvent extends PlayerEvent {
  * @param {LoginEvent} event Login event
  */
 const callback = async (minecraftServer: ScriptServer, socketConnection: connection, event: AchievementEvent) => {
-  try {
-    await socketConnection.send(JSON.stringify({
-      type: TYPE,
-      player: event.player,
-      achievement: event.achievement,
-    }));
-  } catch (error) {
-    throw error;
-  }
+  await socketConnection.send(JSON.stringify({
+    type: TYPE,
+    player: event.player,
+    achievement: event.achievement,
+  }));
 };
 
 export const Achievement = new MinecraftResponse(callback);

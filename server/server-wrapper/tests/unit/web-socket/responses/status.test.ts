@@ -19,8 +19,6 @@ const ONLINE_DATA = {
  * A test suite for the web-socket generator.
  */
 describe('Status Event', () => {
-  let consoleSpy: jest.SpyInstance<void, [message?: any, ...optionalParams: any[]]>;
-
   let mockServer: MockMinecraftServer;
 
   let mockConnection: MockConnection;
@@ -29,8 +27,6 @@ describe('Status Event', () => {
    * Runs before all tests in test suite.
    */
   beforeAll(async () => {
-    consoleSpy = jest.spyOn(console, 'log');
-
     mockServer = new MockMinecraftServer();
     mockConnection = new MockConnection();
   });

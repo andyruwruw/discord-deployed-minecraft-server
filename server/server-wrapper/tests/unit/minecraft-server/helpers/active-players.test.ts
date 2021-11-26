@@ -5,7 +5,6 @@ import {
   getStartTime,
   stopTrackingPlayer,
   getCurrentPlaytime,
-  clearAllTrackings,
 } from '../../../../src/minecraft-server/helpers/active-players';
 
 const USERNAME = 'andyruwruw';
@@ -14,15 +13,6 @@ const USERNAME = 'andyruwruw';
  * A test suite for the web-socket generator.
  */
 describe('Active Player Tracker', () => {
-  let consoleSpy: jest.SpyInstance<void, [message?: any, ...optionalParams: any[]]>;
-
-  /**
-   * Runs before all tests in test suite.
-   */
-  beforeAll(async () => {
-    consoleSpy = jest.spyOn(console, 'log');
-  });
-
   /**
    * Runs after each tests in test suite.
    */

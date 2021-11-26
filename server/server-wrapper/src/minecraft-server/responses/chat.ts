@@ -10,7 +10,7 @@ export const TYPE = 'chat';
 
 export interface ChatEvent extends PlayerEvent {
   message: string;
-};
+}
 
 /**
  * Sends player chat to discord bot.
@@ -20,15 +20,11 @@ export interface ChatEvent extends PlayerEvent {
  * @param {LoginEvent} event Login event
  */
 const callback = async (minecraftServer: ScriptServer, socketConnection: connection, event: ChatEvent) => {
-  try {
-    await socketConnection.send(JSON.stringify({
-      type: TYPE,
-      player: event.player,
-      message: event.message,
-    }));
-  } catch (error) {
-    throw error;
-  }
+  await socketConnection.send(JSON.stringify({
+    type: TYPE,
+    player: event.player,
+    message: event.message,
+  }));
 };
 
 export const Chat = new MinecraftResponse(callback);

@@ -1,13 +1,14 @@
 // Packages
-import { ScriptServer } from "@scriptserver/core";
-import { connection } from "websocket";
+import { ScriptServer } from '@scriptserver/core';
+import { connection } from 'websocket';
 
 /**
  * Defines a response.
  */
 export class SocketResponse {
   type: string;
-  callback: Function
+
+  callback: Function;
 
   constructor(
     type: string,
@@ -37,7 +38,7 @@ export class SocketResponse {
     mincraftServer: ScriptServer,
     socketConnection: connection,
     args: string[] = []): Promise<void> {
-    return await this.callback(
+    return this.callback(
       mincraftServer,
       socketConnection,
       ...args,

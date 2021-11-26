@@ -14,17 +14,13 @@ export const TYPE = 'status';
  * @param {connection} socketConnection Connection with discord bot.
  */
 const callback = async (minecraftServer: ScriptServer, socketConnection: connection) => {
-  try {
-    const data = await minecraftServer.rconConnection.util.getOnline();
+  const data = await minecraftServer.rconConnection.util.getOnline();
 
-    await socketConnection.send(JSON.stringify({
-      type: TYPE,
-      online: data.online,
-      players: data.players,
-    }));
-  } catch (error) {
-    throw error;
-  }
+  await socketConnection.send(JSON.stringify({
+    type: TYPE,
+    online: data.online,
+    players: data.players,
+  }));
 };
 
 export const Status = new SocketResponse(TYPE, callback);

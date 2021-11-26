@@ -33,23 +33,24 @@ describe('Web Socket Generator', () => {
 
   describe('generateWebSocketServer()', () => {
     it('should return a websocket server', async () => {
-      server = await generateWebSocketServer();
+      const port = 4000;
+      server = await generateWebSocketServer(port);
 
       expect(server).toBeInstanceOf(WebSocketServer);
     });
 
     it('should override port', async () => {
-      const newPort = 4000;
-      server = await generateWebSocketServer(newPort);
+      const port = 4001;
+      server = await generateWebSocketServer(port);
 
-      expect(consoleSpy.mock.calls[0][0].indexOf(`${newPort}`)).toBeGreaterThan(-1);
+      expect(consoleSpy.mock.calls[0][0].indexOf(`${port}`)).toBeGreaterThan(-1);
     });
 
     it('should return a listening server', async () => {
-      const newPort = 4001;
-      server = await generateWebSocketServer(newPort);
+      const port = 4002;
+      server = await generateWebSocketServer(port);
 
-      expect(consoleSpy.mock.calls[0][0].indexOf(`Websocket server listening on port `)).toBeGreaterThan(-1);
+      expect(consoleSpy.mock.calls[0][0].indexOf('Websocket server listening on port ')).toBeGreaterThan(-1);
     });
   });
 });

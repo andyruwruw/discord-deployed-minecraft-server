@@ -10,15 +10,6 @@ import { MockConnection } from '../../../utils/mock-web-socket-server';
  * A test suite for the web-socket generator.
  */
 describe('Command Event', () => {
-  let consoleSpy: jest.SpyInstance<void, [message?: any, ...optionalParams: any[]]>;
-
-  /**
-   * Runs before all tests in test suite.
-   */
-  beforeAll(async () => {
-    consoleSpy = jest.spyOn(console, 'log');
-  });
-
   /**
    * Runs after each tests in test suite.
    */

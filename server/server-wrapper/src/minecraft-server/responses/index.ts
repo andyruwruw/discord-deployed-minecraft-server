@@ -11,6 +11,6 @@ export { Chat, ChatEvent } from './chat';
 
 export interface PlayerEvent {
   player: string;
-};
+}
 
 export default MinecraftResponse;

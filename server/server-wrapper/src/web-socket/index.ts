@@ -1,22 +1,9 @@
 // Packages
 import http from 'http';
-import { waitForServerState } from 'tests/utils/mock-web-socket-client';
 import { server as WebSocketServer } from 'websocket';
 
 // Local Imports
 import { WEBSOCKET_PORT } from '../config';
-
-/**
- * Creates and starts a new websocket server.
- *
- * @returns {WebSocketServer}
- */
-export const generateWebSocketServer = async (port: number | undefined = undefined): Promise<WebSocketServer> => {
-  let server: http.Server | null = null;
-  const resultingPort = port != undefined ? port : parseInt(WEBSOCKET_PORT as string, 10);
-  
-  return waitForServerToStart(server, resultingPort);
-};
 
 /**
  * Starts server and keeps checking if it is ready.
@@ -49,4 +36,16 @@ const waitForServerToStart = async (server: http.Server | null, port: number): P
       waitForServerToStart(server, port);
     }, 5);
   }); 
+};
+
+/**
+ * Creates and starts a new websocket server.
+ *
+ * @returns {WebSocketServer}
+ */
+export const generateWebSocketServer = async (port: number | undefined = undefined): Promise<WebSocketServer> => {
+  const server: http.Server | null = null;
+  const resultingPort = port != undefined ? port : parseInt(WEBSOCKET_PORT as string, 10);
+  
+  return waitForServerToStart(server, resultingPort);
 };

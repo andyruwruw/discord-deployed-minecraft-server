@@ -14,7 +14,7 @@ export const TYPE = 'logout';
 
 export interface LogoutEvent extends PlayerEvent {
   reason: string;
-};
+}
 
 /**
  * Returns time played back to discord bot along with player who left.
@@ -24,20 +24,16 @@ export interface LogoutEvent extends PlayerEvent {
  * @param {LogoutEvent} event Logout event
  */
 const callback = async (minecraftServer: ScriptServer, socketConnection: connection, event: LogoutEvent) => {
-  try {
-    const start = getStartTime(event.player);
-    const time = stopTrackingPlayer(event.player);
+  const start = getStartTime(event.player);
+  const time = stopTrackingPlayer(event.player);
 
-    await socketConnection.send(JSON.stringify({
-      type: TYPE,
-      player: event.player,
-      reason: event.reason,
-      timeSpent: time,
-      start: start,
-    }));
-  } catch (error) {
-    throw error;
-  }
+  await socketConnection.send(JSON.stringify({
+    type: TYPE,
+    player: event.player,
+    reason: event.reason,
+    timeSpent: time,
+    start: start,
+  }));
 };
 
 export const Logout = new MinecraftResponse(callback);

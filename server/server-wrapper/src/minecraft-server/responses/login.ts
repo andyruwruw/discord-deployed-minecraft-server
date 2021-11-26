@@ -11,7 +11,7 @@ export const TYPE = 'login';
 
 export interface LoginEvent extends PlayerEvent {
   ip: string;
-};
+}
 
 /**
  * Tracks player's time on server and tells discord bot the player is online.
@@ -21,16 +21,12 @@ export interface LoginEvent extends PlayerEvent {
  * @param {LoginEvent} event Login event
  */
 const callback = async (minecraftServer: ScriptServer, socketConnection: connection, event: LoginEvent) => {
-  try {
-    startTrackingPlayer(event.player);
+  startTrackingPlayer(event.player);
 
-    await socketConnection.send(JSON.stringify({
-      type: TYPE,
-      player: event.player,
-    }));
-  } catch (error) {
-    throw error;
-  }
+  await socketConnection.send(JSON.stringify({
+    type: TYPE,
+    player: event.player,
+  }));
 };
 
 export const Login = new MinecraftResponse(callback);

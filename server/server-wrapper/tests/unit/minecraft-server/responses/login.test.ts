@@ -16,16 +16,12 @@ const LOGIN_EVENT: LoginEvent = {
  * A test suite for the web-socket generator.
  */
 describe('Achievement Event', () => {
-  let consoleSpy: jest.SpyInstance<void, [message?: any, ...optionalParams: any[]]>;
-
   let mockConnection: MockConnection;
 
   /**
    * Runs before all tests in test suite.
    */
   beforeAll(async () => {
-    consoleSpy = jest.spyOn(console, 'log');
-
     mockConnection = new MockConnection();
   });
 

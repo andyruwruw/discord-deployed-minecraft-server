@@ -15,27 +15,23 @@ export const TYPE = 'player-position';
  * @param {string} playerName Name of the player.
  */
 const callback = async (minecraftServer: ScriptServer, socketConnection: connection, playerName: string) => {
-  try {
-    if (await minecraftServer.rconConnection.util.isOnline(playerName)) {
-      const data = await minecraftServer.rconConnection.util.getLocation(playerName);
+  if (await minecraftServer.rconConnection.util.isOnline(playerName)) {
+    const data = await minecraftServer.rconConnection.util.getLocation(playerName);
 
-      return await socketConnection.send(JSON.stringify({
-        type: TYPE,
-        username: playerName,
-        online: true,
-        location: data,
-      }));
-    }
-
-    return await socketConnection.send(JSON.stringify({
+    return socketConnection.send(JSON.stringify({
       type: TYPE,
       username: playerName,
-      online: false,
-      location: null,
+      online: true,
+      location: data,
     }));
-  } catch (error) {
-    throw error;
   }
+
+  return socketConnection.send(JSON.stringify({
+    type: TYPE,
+    username: playerName,
+    online: false,
+    location: null,
+  }));
 };
 
 export const PlayerPosition = new SocketResponse(TYPE, callback);

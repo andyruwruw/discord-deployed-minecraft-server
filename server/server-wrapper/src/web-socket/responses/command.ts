@@ -15,11 +15,7 @@ export const TYPE = 'command';
  * @param {Array<any>} args Command as string to be run.
  */
 const callback = async (minecraftServer: ScriptServer, socketConnection: connection, command: string) => {
-  try {
-    minecraftServer.javaServer.send(command)
-  } catch (error) {
-    throw error;
-  }
+  minecraftServer.javaServer.send(command);
 };
 
 export const Command = new SocketResponse(TYPE, callback);

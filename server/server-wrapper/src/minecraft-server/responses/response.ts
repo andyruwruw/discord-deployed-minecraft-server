@@ -1,14 +1,14 @@
 // Packages
-import { ScriptServer } from "@scriptserver/core";
-import { connection } from "websocket";
+import { ScriptServer } from '@scriptserver/core';
+import { connection } from 'websocket';
 
 /**
  * Defines a minecraft response.
  */
 export class MinecraftResponse {
-  callback: Function
+  callback: Function;
 
-  constructor(callback: Function,) {
+  constructor(callback: Function) {
     this.callback = callback;
   }
 
@@ -22,10 +22,10 @@ export class MinecraftResponse {
     mincraftServer: ScriptServer,
     socketConnection: connection,
     args: any[] = []): Promise<void> {
-    return await this.callback(
+    return this.callback(
       mincraftServer,
       socketConnection,
       ...args,
     );
   }
-};
+}

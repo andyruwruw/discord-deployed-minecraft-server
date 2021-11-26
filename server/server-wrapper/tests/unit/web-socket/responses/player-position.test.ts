@@ -1,5 +1,5 @@
 // Packages
-import { Location } from '@scriptserver/util';
+import { Location as ScriptServerLocation } from '@scriptserver/util';
 
 // Local Imports
 import {
@@ -14,7 +14,7 @@ import { MockConnection } from '../../../utils/mock-web-socket-server';
 
 const PLAYER_NAME = 'andyruwruw';
 
-const LOCATION_DATA: Location = {
+const LOCATION_DATA: ScriptServerLocation = {
   x: 0,
   y: 0,
   z: 0,
@@ -25,8 +25,6 @@ const LOCATION_DATA: Location = {
  * A test suite for the web-socket generator.
  */
 describe('Player Position Event', () => {
-  let consoleSpy: jest.SpyInstance<void, [message?: any, ...optionalParams: any[]]>;
-
   let mockServer: MockMinecraftServer;
 
   let mockConnection: MockConnection;
@@ -35,8 +33,6 @@ describe('Player Position Event', () => {
    * Runs before all tests in test suite.
    */
   beforeAll(async () => {
-    consoleSpy = jest.spyOn(console, 'log');
-
     mockServer = new MockMinecraftServer();
     mockConnection = new MockConnection();
   });

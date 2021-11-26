@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   connection,
   frame,
@@ -22,7 +23,9 @@ import EventEmitter from 'events';
  */
 export class MockWebSocketServer extends EventEmitter implements WebSocketServer {
   config?: IServerConfig | undefined;
+
   connections: connection[];
+
   pendingRequests: request[];
 
   constructor() {
@@ -53,131 +56,23 @@ export class MockWebSocketServer extends EventEmitter implements WebSocketServer
   handleConnectionClose = jest.fn();
 
   handleRequestResolved = jest.fn();
-};
-
-/**
- * Mocks request class.
- */
-export class MockRequest implements request {
-  httpRequest: IncomingMessage = new IncomingMessage(new Socket());
-
-  host: string = 'localhost';
-
-  resource: string = '';
-
-  key: string = '';
-
-  resourceURL: Url = {
-    auth: null,
-    hash: null,
-    host: null,
-    hostname: null,
-    href: '',
-    path: null,
-    pathname: null,
-    protocol: null,
-    search: null,
-    slashes: null,
-    port: null,
-    query: null,
-  };
-  
-  remoteAddress: string = '';
-
-  remoteAddresses: string[] = [];
-
-  origin: string = '';
-
-  webSocketVersion: number = 0;
-
-  requestedExtensions: any[] = [];
-
-  cookies: ICookie[] = [];
-
-  socket: Socket = new Socket();
-
-  requestedProtocols: string[] = [];
-
-  protocolFullCaseMap: { [key: string]: string; } = {};
-
-  serverConfig: IServerConfig = {
-    httpServer: new HttpServer(),
-  };
-
-  _resolved: boolean = false;
-
-  _socketIsClosing: boolean = false;
-
-  constructor() {
-  }
-
-  accept = jest.fn((
-    acceptedProtocol?: string,
-    allowedOrigin?: string,
-    cookies?: ICookie[]) => {
-    return new MockConnection();
-  });
-
-  reject = jest.fn();
-
-  on = jest.fn();
-
-  addListener = jest.fn();
-
-  readHandshake = jest.fn();
-
-  parseExtensions = jest.fn();
-
-  parseCookies = jest.fn();
-
-  _handleSocketCloseBeforeAccept = jest.fn();
-
-  _removeSocketCloseListeners = jest.fn();
-
-  _verifyResolution = jest.fn();
-
-  once = jest.fn();
-
-  removeListener = jest.fn();
-
-  off = jest.fn();
-
-  removeAllListeners = jest.fn();
-
-  setMaxListeners = jest.fn();
-
-  getMaxListeners = jest.fn();
-
-  listeners = jest.fn();
-
-  rawListeners = jest.fn();
-
-  emit = jest.fn();
-
-  listenerCount = jest.fn();
-
-  prependListener = jest.fn();
-
-  prependOnceListener = jest.fn();
-
-  eventNames = jest.fn();
 }
 
 /**
  * Mocks connection class.
  */
 export class MockConnection extends EventEmitter implements connection {
-  closeDescription: string = '';
+  closeDescription = '';
 
-  closeReasonCode: number = 0;
+  closeReasonCode = 0;
 
-  protocol: string = '';
+  protocol = '';
 
   config: IConfig = {};
 
   socket: Socket = new Socket();
 
-  maskOutgoingPackets: boolean = false;
+  maskOutgoingPackets = false;
 
   maskBytes: Buffer = new Buffer('');
 
@@ -239,39 +134,39 @@ export class MockConnection extends EventEmitter implements connection {
     toString: jest.fn(),
   };
 
-  fragmentationSize: number = 0;
+  fragmentationSize = 0;
 
   frameQueue: frame[] = [];
 
-  state: string = '';
+  state = '';
 
-  waitingForCloseResponse: boolean = false;
+  waitingForCloseResponse = false;
 
-  receivedEnd: boolean = false;
+  receivedEnd = false;
 
-  closeTimeout: number = 0;
+  closeTimeout = 0;
 
-  assembleFragments: number = 0;
+  assembleFragments = 0;
 
-  maxReceivedMessageSize: number = 0;
+  maxReceivedMessageSize = 0;
 
-  outputBufferFull: boolean = false;
+  outputBufferFull = false;
 
-  inputPaused: boolean = false;
+  inputPaused = false;
 
-  bytesWaitingToFlush: number = 0;
+  bytesWaitingToFlush = 0;
 
-  socketHadError: boolean = false;
+  socketHadError = false;
 
   extensions: IExtension[] = [];
 
-  remoteAddress: string = '';
+  remoteAddress = '';
 
-  webSocketVersion: number = 0;
+  webSocketVersion = 0;
 
-  connected: boolean = false;
+  connected = false;
 
-  _pingListenerCount: number = 0;
+  _pingListenerCount = 0;
 
   close = jest.fn();
 
@@ -334,4 +229,109 @@ export class MockConnection extends EventEmitter implements connection {
   sendCloseFrame = jest.fn();
 
   _addSocketEventListeners = jest.fn();
+}
+
+/**
+ * Mocks request class.
+ */
+export class MockRequest implements request {
+  httpRequest: IncomingMessage = new IncomingMessage(new Socket());
+
+  host = 'localhost';
+
+  resource = '';
+
+  key = '';
+
+  resourceURL: Url = {
+    auth: null,
+    hash: null,
+    host: null,
+    hostname: null,
+    href: '',
+    path: null,
+    pathname: null,
+    protocol: null,
+    search: null,
+    slashes: null,
+    port: null,
+    query: null,
+  };
+  
+  remoteAddress = '';
+
+  remoteAddresses: string[] = [];
+
+  origin = '';
+
+  webSocketVersion = 0;
+
+  requestedExtensions: any[] = [];
+
+  cookies: ICookie[] = [];
+
+  socket: Socket = new Socket();
+
+  requestedProtocols: string[] = [];
+
+  protocolFullCaseMap: { [key: string]: string; } = {};
+
+  serverConfig: IServerConfig = {
+    httpServer: new HttpServer(),
+  };
+
+  _resolved = false;
+
+  _socketIsClosing = false;
+
+  accept = jest.fn((
+    acceptedProtocol?: string,
+    allowedOrigin?: string,
+    cookies?: ICookie[]) => {
+    return new MockConnection();
+  });
+
+  reject = jest.fn();
+
+  on = jest.fn();
+
+  addListener = jest.fn();
+
+  readHandshake = jest.fn();
+
+  parseExtensions = jest.fn();
+
+  parseCookies = jest.fn();
+
+  _handleSocketCloseBeforeAccept = jest.fn();
+
+  _removeSocketCloseListeners = jest.fn();
+
+  _verifyResolution = jest.fn();
+
+  once = jest.fn();
+
+  removeListener = jest.fn();
+
+  off = jest.fn();
+
+  removeAllListeners = jest.fn();
+
+  setMaxListeners = jest.fn();
+
+  getMaxListeners = jest.fn();
+
+  listeners = jest.fn();
+
+  rawListeners = jest.fn();
+
+  emit = jest.fn();
+
+  listenerCount = jest.fn();
+
+  prependListener = jest.fn();
+
+  prependOnceListener = jest.fn();
+
+  eventNames = jest.fn();
 }
