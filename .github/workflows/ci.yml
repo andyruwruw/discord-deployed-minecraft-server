@@ -23,7 +23,6 @@ jobs:
           node-version: ${{ env.node_version }}
 
       - name: Cache NPM
-        working-directory: ./server/server-wrapper
         uses: actions/cache@v2
         with:
           path: ~/.npm
@@ -52,7 +51,6 @@ jobs:
           node-version: ${{ env.node_version }}
 
       - name: Cache NPM
-        working-directory: ./server/server-wrapper
         uses: actions/cache@v2
         with:
           path: ~/.npm
