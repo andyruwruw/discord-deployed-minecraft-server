@@ -1,9 +1,9 @@
 // Local Imports
-import { FindHome } from './findhome';
+import { FindHome } from './find-home';
 import { Ping } from './ping';
 import { Pog } from './pog';
 import { Register } from './register';
-import { SetHome } from './sethome';
+import { SetHome } from './set-home';
 import { Stats } from './stats';
 import { Unregister } from './unregister';
 

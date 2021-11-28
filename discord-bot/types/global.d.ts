@@ -4,7 +4,7 @@ interface MessageComponents {
   mention: string;
   key: string;
   args: string[];
-};
+}
 
 interface Base {
   serverId: String;
@@ -14,12 +14,12 @@ interface Base {
   y: String;
   z: String;
   created: Date,
-};
+}
 
 interface Ec2Instance {
   serverId: String;
   ec2InstanceId: String;
-};
+}
 
 interface PlayerActivity {
   serverId: String;
@@ -27,7 +27,7 @@ interface PlayerActivity {
   username: String;
   start: Date;
   end: Date;
-};
+}
 
 interface Player {
   serverId: String;
@@ -35,21 +35,21 @@ interface Player {
   username: String;
   totalHours: Number;
   role: String;
-};
+}
 
 interface ServerUptime {
   serverId: String;
   ec2InstanceId: String;
   start: Date;
   end: Date;
-};
+}
 
 interface StoreItem {
   id: String;
   quantity: String;
   priceId: String;
   priceQuanity: String;
-};
+}
 
 interface Shop {
   serverId: String;
@@ -61,5 +61,5 @@ interface Shop {
   z: String;
   description: String;
   items: Array<StoreItem>;
-};
+}
 

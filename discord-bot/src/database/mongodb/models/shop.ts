@@ -54,7 +54,7 @@ const schema = new mongoose.Schema({
         required: true,
       },
     },
-  }
+  },
 });
 
 export const ShopModel = mongoose.model('ShopModel', schema);

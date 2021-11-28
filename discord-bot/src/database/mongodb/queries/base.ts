@@ -1,17 +1,17 @@
 import { BaseModel } from '../models';
 
 export const getBasesByServer = async (serverId: string) => {
-  return await BaseModel.find({ serverId });
-}
+  return BaseModel.find({ serverId });
+};
 
 export const getBasesByPlayer = async (serverId: string, owner: string) => {
-  return await BaseModel.find({
+  return BaseModel.find({
     serverId,
     owners: {
       $in: [ owner ],
     },
   });
-}
+};
 
 /**
  * Returns whether a player has a base saved.
@@ -27,7 +27,7 @@ export const playerHasBase = async (serverId: string, owner: string) => {
       $in: [ owner ],
     },
   })).length > 0;
-}
+};
 
 export const createBase = async (
   serverId: string,
@@ -48,7 +48,7 @@ export const createBase = async (
   await base.save();
 
   return base.toObject() as Base;
-}
+};
 
 /**
  * Deletes a base from the database.
@@ -61,6 +61,6 @@ export const deleteBase = async (serverId: string, owner: string) => {
     serverId,
     owners: {
       $in: [ owner ],
-    }
+    },
   });
-}
+};

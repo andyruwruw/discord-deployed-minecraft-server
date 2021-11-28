@@ -1,5 +1,2 @@
 export class CacheDatabase {
-  constructor() {
-
-  }
 }

@@ -1,44 +1,28 @@
 // Packages
 import {
-  ApplicationCommandOptionData,
   CacheType,
   CommandInteractionOptionResolver,
   User,
 } from 'discord.js';
-import {
-  ApplicationCommandOptionTypes,
-  ApplicationCommandTypes,
-} from 'discord.js/typings/enums';
 
 // Local Imports
 import { Command } from './command';
 
-const PING_NAME = 'ping';
+const SET_HOME_NAME = 'sethome';
 
-const PING_DESCRIPTION = 'Replies with pong.';
-
-const PING_COMMAND_OPTIONS: ApplicationCommandOptionData[] = [
-  {
-    type: ApplicationCommandOptionTypes.NUMBER,
-    name: 'pongs',
-    description: 'number of pongs to send',
-    required: true,
-  },
-];
+const SET_HOME_DESCRIPTION = 'Sets your home coordinates to wherever you are in game.';
 
 /**
- * Basic discord ping command.
+ * Command to set your home.
  */
-export class Ping extends Command {
+export class SetHome extends Command {
   /**
-   * Instantiates a new Ping command.
+   * Instantiates a new SetHome command.
    */
   constructor() {
     super(
-      PING_NAME,
-      PING_DESCRIPTION,
-      ApplicationCommandTypes.CHAT_INPUT,
-      PING_COMMAND_OPTIONS,
+      SET_HOME_NAME,
+      SET_HOME_DESCRIPTION,
     );
   }
 
@@ -52,6 +36,7 @@ export class Ping extends Command {
     user: User, /* eslint-disable-line @typescript-eslint/no-unused-vars */
     options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
   ) {
-    return 'pong'.repeat(options.getNumber('pongs')!);
+    let username = options.getString('username');
+    return 'set home for ' + username;
   }
 }

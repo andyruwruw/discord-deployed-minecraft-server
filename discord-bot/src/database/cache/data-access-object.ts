@@ -1,5 +1,2 @@
 export class CacheDataAccessObject {
-  constructor() {
-    
-  }
 }

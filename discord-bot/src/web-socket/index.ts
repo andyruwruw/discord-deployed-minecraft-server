@@ -12,10 +12,12 @@ import {
  *
  * @returns {WebSocketClient} Websocket Client.
  */
-export const generateWebSocketClient = () => {
+export const generateWebSocketClient = (port: number | undefined = undefined) => {
   const client = new WebSocketClient();
 
-  client.connect(`ws://${SERVER_IP}:${SERVER_WEBSOCKET_PORT}/`, 'echo-protocol');
+  const finalPort = port != undefined ? port : parseInt(SERVER_WEBSOCKET_PORT as string, 10);
+
+  client.connect(`ws://${SERVER_IP}:${finalPort}/`, 'echo-protocol');
 
   return client;
 };
