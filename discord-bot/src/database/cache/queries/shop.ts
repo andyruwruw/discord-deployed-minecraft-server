@@ -1,10 +1,13 @@
+import { v4 as uuidv4 } from 'uuid';
+
 // Local Imports
 import {
   IShop,
   IShopItem,
   ShopQueries,
 } from '../../types';
-import { ShopModel } from '../models';
+
+export let shops: Array<IShop> = [];
 
 /**
  * Creates a new shop.
@@ -28,19 +31,21 @@ const createShop = async (
   items: Array<IShopItem> = [],
   name: string = 'Unnamed Shop',
   description: string = ''): Promise<IShop> => {
-  const shop = new ShopModel({
-    description,
+  const shop: IShop = {
+    _id: uuidv4(),
     guildId,
-    items,
     name,
     userIds,
     x,
     y,
     z,
-  });
+    description,
+    items,
+    created: new Date(),
+  };
 
-  await shop.save();
-  return shop.toObject() as IShop;
+  shops.push(shop);
+  return shop;
 };
 
 /**
@@ -50,7 +55,7 @@ const createShop = async (
  * @returns {Promise<Array<IShop>>} The shops.
  */
 const getGuildShops = async (guildId: string): Promise<Array<IShop>> => {
-  return ShopModel.find({ guildId });
+  return shops.filter((shop: IShop) => shop.guildId === guildId);
 };
 
 /**
@@ -63,12 +68,7 @@ const getGuildShops = async (guildId: string): Promise<Array<IShop>> => {
 const getUserShops = async (
   guildId: string,
   userId: string): Promise<Array<IShop>> => {
-  return ShopModel.find({
-    guildId,
-    userIds: {
-      $contains: userId,
-    },
-  });
+  return shops.filter((shop: IShop) => shop.guildId === guildId && shop.userIds.includes(userId));
 };
 
 /**
@@ -81,12 +81,12 @@ const getUserShops = async (
 const userHasShop = async (
   guildId: string,
   userId: string): Promise<boolean> => {
-  return (await ShopModel.find({
-    guildId,
-    userIds: {
-      $contains: userId,
-    },
-  })).length > 0;
+  for (let shop of shops) {
+    if (shop.guildId === guildId && shop.userIds.includes(userId)) {
+      return true;
+    }
+  }
+  return false;
 };
 
 /**
@@ -103,21 +103,11 @@ const updateShopName = async (
   userId: string,
   shopId: string,
   name: string) => {
-  const query = {
-    _id: shopId,
-    guildId,
-    userIds: {
-      $contains: userId,
-    },
-  };
+  const index = shops.findIndex((shop: IShop) => shop.guildId === guildId && shop.userIds.includes(userId) && shop._id === shopId);
 
-  const update = {
-    $set: {
-      name,
-    },
-  };
-
-  return ShopModel.updateOne(query, update);
+  if (index !== -1) {
+    shops[index].name = name;
+  }
 };
 
 /**
@@ -134,21 +124,11 @@ const updateShopDescription = async (
   userId: string,
   shopId: string,
   description: string) => {
-  const query = {
-    _id: shopId,
-    guildId,
-    userIds: {
-      $contains: userId,
-    },
-  };
+  const index = shops.findIndex((shop: IShop) => shop.guildId === guildId && shop.userIds.includes(userId) && shop._id === shopId);
 
-  const update = {
-    $set: {
-      description,
-    },
-  };
-
-  return ShopModel.updateOne(query, update);
+  if (index !== -1) {
+    shops[index].description = description;
+  }
 };
 
 /**
@@ -169,23 +149,13 @@ const updateShopCoordinates = async (
   x: number,
   y: number,
   z: number) => {
-  const query = {
-    _id: shopId,
-    guildId,
-    userIds: {
-      $contains: userId,
-    },
-  };
+  const index = shops.findIndex((shop: IShop) => shop.guildId === guildId && shop.userIds.includes(userId) && shop._id === shopId);
 
-  const update = {
-    $set: {
-      x,
-      y,
-      z,
-    },
-  };
-
-  return ShopModel.updateOne(query, update);
+  if (index !== -1) {
+    shops[index].x = x;
+    shops[index].y = y;
+    shops[index].z = z;
+  }
 };
 
 /**
@@ -202,21 +172,11 @@ const updateShopItems = async (
   userId: string,
   shopId: string,
   items: Array<IShopItem>) => {
-  const query = {
-    _id: shopId,
-    guildId,
-    userIds: {
-      $contains: userId,
-    },
-  };
+  const index = shops.findIndex((shop: IShop) => shop.guildId === guildId && shop.userIds.includes(userId) && shop._id === shopId);
 
-  const update = {
-    $set: {
-      items,
-    },
-  };
-
-  return ShopModel.updateOne(query, update);
+  if (index !== -1) {
+    shops[index].items = items;
+  }
 }
 
 /**
@@ -231,13 +191,11 @@ const deleteUserShop = async (
   guildId: string,
   userId: string,
   shopId: string) => {
-  return ShopModel.deleteOne({
-    _id: shopId,
-    guildId,
-    userIds: {
-      $contains: userId,
-    },
-  });
+  const index = shops.findIndex((shop: IShop) => shop.guildId === guildId && shop.userIds.includes(userId) && shop._id === shopId);
+
+  if (index !== -1) {
+    shops.splice(index, 1);
+  }
 };
 
 /**
@@ -250,12 +208,7 @@ const deleteUserShop = async (
 const deleteAllUserShops = async (
   guildId: string,
   userId: string) => {
-  return ShopModel.deleteMany({
-    guildId,
-    userIds: {
-      $contains: userId,
-    },
-  });
+  shops = shops.filter((shop: IShop) => shop.guildId !== guildId || !shop.userIds.includes(userId));
 };
 
 /**
@@ -265,7 +218,7 @@ const deleteAllUserShops = async (
  * @returns {Promise<Query>} Response to query.
  */
 const deleteAllGuildShops = async (guildId: string) => {
-  return ShopModel.deleteMany({ guildId });
+  shops = shops.filter((shop: IShop) => shop.guildId !== guildId);
 };
 
 export default {

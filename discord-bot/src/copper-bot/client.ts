@@ -84,7 +84,7 @@ export class CopperBot extends Client {
    * 
    * @param {Error} error Error in question.
    */
-   handleError(error: Error) {
+  handleError(error: Error) {
     logger(this, error.message);
   }
 

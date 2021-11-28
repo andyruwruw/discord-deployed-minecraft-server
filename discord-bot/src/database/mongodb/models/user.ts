@@ -15,7 +15,7 @@ const schema = new mongoose.Schema({
   },
   minecraftUsername: {
     type: String,
-    required: true,
+    default: '',
   },
   totalHours: {
     type: Number,

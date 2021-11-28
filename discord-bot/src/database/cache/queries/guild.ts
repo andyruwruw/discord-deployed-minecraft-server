@@ -3,7 +3,8 @@ import {
   IGuild,
   GuildQueries,
 } from '../../types';
-import { GuildModel } from '../models';
+
+export let guilds: Array<IGuild> = [];
 
 /**
  * Creates a new guild in the database.
@@ -12,10 +13,35 @@ import { GuildModel } from '../models';
  * @returns {Promise<IGuild>} Guild object.
  */
 const createGuild = async (guildId: string): Promise<IGuild> => {
-  const newGuild = new GuildModel({ id: guildId });
+  const guild: IGuild = {
+    id: guildId,
+    ip: 'unknown',
+    port: 3000,
+    generalChannelId: 'unknown',
+    baseChannelId: 'unknown',
+    shopsChannelId: 'unknown',
+    eventsChannelId: 'unknown',
+    commandListChannelId: 'unknown',
+    commandsChannelId: 'unknown',
+    logsChannelId: 'unknown',
+    adminRoleId: 'unknown',
+    onlineRoleId: 'unknown',
+    offlineRoleId: 'unknown',
+    playtimeLeaderRoleId: 'unknown',
+    playtimeTier1RoleId: 'unknown',
+    playtimeTier2RoleId: 'unknown',
+    playtimeTier3RoleId: 'unknown',
+    playtimeTier4RoleId: 'unknown',
+    playtimeTier5RoleId: 'unknown',
+    playtimeTier6RoleId: 'unknown',
+    playtimeTier7RoleId: 'unknown',
+    achievementsLeaderRoleId: 'unknown',
+    achievementsMaxedRoleId: 'unknown',
+    joined: new Date(),
+  };
 
-  await newGuild.save();
-  return newGuild.toObject() as IGuild;
+  guilds.push(guild);
+  return guild;
 };
 
 /**
@@ -25,7 +51,8 @@ const createGuild = async (guildId: string): Promise<IGuild> => {
  * @returns {Promise<IGuild>} Guild object.
  */
 const getGuild = async (guildId: string): Promise<IGuild> => {
-  return GuildModel.findOne({ id: guildId });
+  const matching: Array<IGuild> = guilds.filter((guild: IGuild) => guild.id === guildId);
+  return matching[matching.length - 1];
 };
 
 /**
@@ -34,7 +61,7 @@ const getGuild = async (guildId: string): Promise<IGuild> => {
  * @returns {Promise<Array<IGuild>>} Guild object.
  */
 const getGuilds = async (): Promise<Array<IGuild>> => {
-  return GuildModel.find();
+  return guilds;
 };
 
 /**
@@ -47,15 +74,11 @@ const getGuilds = async (): Promise<Array<IGuild>> => {
 const updateGuildIp = async (
   guildId: string,
   ip: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      ip,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].ip = ip;
+  }
 };
 
 /**
@@ -68,15 +91,11 @@ const updateGuildIp = async (
 const updateGuildPort = async (
   guildId: string,
   port: number) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      port,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].port = port;
+  }
 };
 
 /**
@@ -89,15 +108,11 @@ const updateGuildPort = async (
 const updateGuildGeneralChannel = async (
   guildId: string,
   channelId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      generalChannelId: channelId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].generalChannelId = channelId;
+  }
 };
 
 /**
@@ -110,15 +125,11 @@ const updateGuildGeneralChannel = async (
 const updateGuildBaseChannel = async (
   guildId: string,
   channelId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      baseChannelId: channelId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].baseChannelId = channelId;
+  }
 };
 
 /**
@@ -131,15 +142,11 @@ const updateGuildBaseChannel = async (
 const updateGuildShopsChannel = async (
   guildId: string,
   channelId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      shopsChannelId: channelId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].shopsChannelId = channelId;
+  }
 };
 
 /**
@@ -152,15 +159,11 @@ const updateGuildShopsChannel = async (
 const updateGuildEventsChannel = async (
   guildId: string,
   channelId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      eventsChannelId: channelId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].eventsChannelId = channelId;
+  }
 };
 
 /**
@@ -173,15 +176,11 @@ const updateGuildEventsChannel = async (
 const updateGuildCommandListChannel = async (
   guildId: string,
   channelId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      commandListChannelId: channelId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].commandListChannelId = channelId;
+  }
 };
 
 /**
@@ -194,15 +193,11 @@ const updateGuildCommandListChannel = async (
 const updateGuildCommandsChannel = async (
   guildId: string,
   channelId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      commandsChannelId: channelId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].commandsChannelId = channelId;
+  }
 };
 
 /**
@@ -215,15 +210,11 @@ const updateGuildCommandsChannel = async (
 const updateGuildLogsChannel = async (
   guildId: string,
   channelId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      logsChannelId: channelId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].logsChannelId = channelId;
+  }
 };
 
 /**
@@ -236,15 +227,11 @@ const updateGuildLogsChannel = async (
 const updateGuildAdminRole = async (
   guildId: string,
   roleId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      adminRoleId: roleId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].adminRoleId = roleId;
+  }
 };
 
 /**
@@ -257,15 +244,11 @@ const updateGuildAdminRole = async (
 const updateGuildOnlineRole = async (
   guildId: string,
   roleId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      onlineRoleId: roleId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].onlineRoleId = roleId;
+  }
 };
 
 /**
@@ -278,15 +261,11 @@ const updateGuildOnlineRole = async (
 const updateGuildOfflineRole = async (
   guildId: string,
   roleId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      offlineRoleId: roleId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].offlineRoleId = roleId;
+  }
 };
 
 /**
@@ -299,15 +278,11 @@ const updateGuildOfflineRole = async (
 const updateGuildPlaytimeLeaderRole = async (
   guildId: string,
   roleId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      playtimeLeaderRoleId: roleId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].playtimeLeaderRoleId = roleId;
+  }
 };
 
 /**
@@ -320,15 +295,11 @@ const updateGuildPlaytimeLeaderRole = async (
 const updateGuildPlaytimeTier1Role = async (
   guildId: string,
   roleId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      playtimeTier1RoleId: roleId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].playtimeTier1RoleId = roleId;
+  }
 };
 
 /**
@@ -341,15 +312,11 @@ const updateGuildPlaytimeTier1Role = async (
 const updateGuildPlaytimeTier2Role = async (
   guildId: string,
   roleId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      playtimeTier2RoleId: roleId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].playtimeTier2RoleId = roleId;
+  }
 };
 
 /**
@@ -362,15 +329,11 @@ const updateGuildPlaytimeTier2Role = async (
 const updateGuildPlaytimeTier3Role = async (
   guildId: string,
   roleId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      playtimeTier3RoleId: roleId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].playtimeTier3RoleId = roleId;
+  }
 };
 
 /**
@@ -383,15 +346,11 @@ const updateGuildPlaytimeTier3Role = async (
 const updateGuildPlaytimeTier4Role = async (
   guildId: string,
   roleId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      playtimeTier4RoleId: roleId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].playtimeTier4RoleId = roleId;
+  }
 };
 
 /**
@@ -404,15 +363,11 @@ const updateGuildPlaytimeTier4Role = async (
 const updateGuildPlaytimeTier5Role = async (
   guildId: string,
   roleId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      playtimeTier5RoleId: roleId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].playtimeTier5RoleId = roleId;
+  }
 };
 
 /**
@@ -425,15 +380,11 @@ const updateGuildPlaytimeTier5Role = async (
 const updateGuildPlaytimeTier6Role = async (
   guildId: string,
   roleId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      playtimeTier6RoleId: roleId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].playtimeTier6RoleId = roleId;
+  }
 };
 
 /**
@@ -446,15 +397,11 @@ const updateGuildPlaytimeTier6Role = async (
 const updateGuildPlaytimeTier7Role = async (
   guildId: string,
   roleId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      playtimeTier7RoleId: roleId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].playtimeTier7RoleId = roleId;
+  }
 };
 
 /**
@@ -467,15 +414,11 @@ const updateGuildPlaytimeTier7Role = async (
 const updateGuildAchievementsLeaderRole = async (
   guildId: string,
   roleId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      achievementsLeaderRoleId: roleId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].achievementsLeaderRoleId = roleId;
+  }
 };
 
 /**
@@ -488,15 +431,11 @@ const updateGuildAchievementsLeaderRole = async (
 const updateGuildAchievementsMaxedRole = async (
   guildId: string,
   roleId: string) => {
-  const query = { id: guildId };
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
 
-  const update = {
-    $set: {
-      achievementsMaxedRoleId: roleId,
-    },
-  };
-
-  return GuildModel.updateOne(query, update);
+  if (index !== -1) {
+    guilds[index].achievementsMaxedRoleId = roleId;
+  }
 };
 
 /**
@@ -506,7 +445,11 @@ const updateGuildAchievementsMaxedRole = async (
  * @returns {Promise<Query>} Response to query.
  */
 const deleteGuild = async (guildId: string) => {
-  return GuildModel.deleteOne({ id: guildId });
+  const index = guilds.findIndex((guild: IGuild) => guild.id === guildId);
+
+  if (index !== -1) {
+    guilds.splice(index, 1);
+  }
 };
 
 export default {

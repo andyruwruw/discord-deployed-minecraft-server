@@ -1,9 +1,13 @@
+// Packages
+import { v4 as uuidv4 } from 'uuid';
+
 // Local Imports
 import {
   IBase,
   BaseQueries,
 } from '../../types';
-import { BaseModel } from '../models';
+
+export let bases: Array<IBase> = [];
 
 /**
  * Creates a new base.
@@ -22,17 +26,19 @@ const createBase = async (
   y: number,
   z: number,
   name: string = 'Home'): Promise<IBase> => {
-  const base = new BaseModel({
+  const base: IBase = {
+    _id: uuidv4(),
     guildId,
     userIds,
     name,
     x,
     y,
     z,
-  });
+    created: new Date(),
+  };
 
-  await base.save();
-  return base.toObject() as IBase;
+  bases.push(base);
+  return base;
 };
 
 /**
@@ -42,7 +48,7 @@ const createBase = async (
  * @returns {Promise<Array<IBase>>} The bases.
  */
 const getGuildBases = async (guildId: string): Promise<Array<IBase>> => {
-  return BaseModel.find({ guildId });
+  return bases.filter((base: IBase) => base.guildId === guildId);
 };
 
 /**
@@ -55,12 +61,7 @@ const getGuildBases = async (guildId: string): Promise<Array<IBase>> => {
 const getUserBases = async (
   guildId: string,
   userId: string): Promise<Array<IBase>> => {
-  return BaseModel.find({
-    guildId,
-    userIds: {
-      $contains: userId,
-    },
-  });
+  return bases.filter((base: IBase) => base.guildId === guildId && base.userIds.includes(userId));
 };
 
 /**
@@ -73,12 +74,12 @@ const getUserBases = async (
 const userHasBase = async (
   guildId: string,
   userId: string): Promise<boolean> => {
-  return (await BaseModel.find({
-    guildId,
-    userIds: {
-      $contains: userId,
-    },
-  })).length > 0;
+  for (let base of bases) {
+    if (base.guildId === guildId && base.userIds.includes(userId)) {
+      return true;
+    }
+  }
+  return false;
 };
 
 /**
@@ -95,21 +96,11 @@ const updateBaseName = async (
   userId: string,
   baseId: string,
   name: string) => {
-  const query = {
-    _id: baseId,
-    guildId,
-    userIds: {
-      $contains: userId,
-    },
-  };
+  const index = bases.findIndex((base: IBase) => base.guildId === guildId && base.userIds.includes(userId) && base._id === baseId);
 
-  const update = {
-    $set: {
-      name,
-    },
-  };
-
-  return BaseModel.updateOne(query, update);
+  if (index !== -1) {
+    bases[index].name = name;
+  }
 };
 
 /**
@@ -130,23 +121,13 @@ const updateBaseCoordinates = async (
   x: number,
   y: number,
   z: number) => {
-  const query = {
-    _id: baseId,
-    guildId,
-    userIds: {
-      $contains: userId,
-    },
-  };
+  const index = bases.findIndex((base: IBase) => base.guildId === guildId && base.userIds.includes(userId) && base._id === baseId);
 
-  const update = {
-    $set: {
-      x,
-      y,
-      z,
-    },
-  };
-
-  return BaseModel.updateOne(query, update);
+  if (index !== -1) {
+    bases[index].x = x;
+    bases[index].y = y;
+    bases[index].z = z;
+  }
 };
 
 /**
@@ -161,15 +142,11 @@ const deleteUserBase = async (
   guildId: string,
   userId: string,
   baseId: string) => {
-  const query: Record<string, any> = {
-    _id: baseId,
-    guildId,
-    userIds: {
-      $contains: userId,
-    },
-  };
+  const index = bases.findIndex((base: IBase) => base.guildId === guildId && base.userIds.includes(userId) && base._id === baseId);
 
-  return BaseModel.deleteOne(query);
+  if (index !== -1) {
+    bases.splice(index, 1);
+  }
 };
 
 /**
@@ -182,12 +159,7 @@ const deleteUserBase = async (
 const deleteAllUserBases = async (
   guildId: string,
   userId: string) => {
-  return BaseModel.deleteMany({
-    guildId,
-    userIds: {
-      $contains: userId,
-    },
-  });
+  bases = bases.filter((base: IBase) => base.guildId !== guildId || !base.userIds.includes(userId));
 };
 
 /**
@@ -197,7 +169,7 @@ const deleteAllUserBases = async (
  * @returns {Promise<Query>} Response to query.
  */
 const deleteAllGuildBases = async (guildId: string) => {
-  return BaseModel.deleteMany({ guildId });
+  bases = bases.filter((base: IBase) => base.guildId !== guildId);
 };
 
 export default {

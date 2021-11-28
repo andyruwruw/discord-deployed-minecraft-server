@@ -3,7 +3,8 @@ import {
   IUser, 
   UserQueries,
 } from '../../types';
-import { UserModel } from '../models';
+
+export let users: Array<IUser> = [];
 
 /**
  * Creates a new user.
@@ -18,14 +19,17 @@ const createUser = async (
   username: string,
   guildId: string,
 ): Promise<IUser> => {
-  const user = new UserModel({
+  const user: IUser = {
     id,
     username,
     guildId,
-  });
+    minecraftUsername: '',
+    totalHours: 0,
+    achievements: [],
+  };
 
-  await user.save();
-  return user.toObject() as IUser;
+  users.push(user);
+  return user;
 };
 
 /**
@@ -38,10 +42,8 @@ const createUser = async (
 const getUser = async (
   guildId: string,
   userId: string): Promise<IUser> => {
-  return UserModel.findOne({
-    guildId,
-    id: userId,
-  });
+  const matching: Array<IUser> = users.filter((user: IUser) => user.guildId === guildId && user.id === userId);
+  return matching[matching.length - 1];
 };
 
 /**
@@ -54,10 +56,8 @@ const getUser = async (
 const getUserByDiscordUsername = async (
   guildId: string,
   username: string): Promise<IUser> => {
-  return UserModel.findOne({
-    guildId,
-    username,
-  });
+  const matching: Array<IUser> = users.filter((user: IUser) => user.guildId === guildId && user.username === username);
+  return matching[matching.length - 1];
 };
 
 /**
@@ -70,10 +70,8 @@ const getUserByDiscordUsername = async (
 const getUserByMinecraftUsername = async (
   guildId: string,
   minecraftUsername: string): Promise<IUser> => {
-  return UserModel.findOne({
-    guildId,
-    minecraftUsername,
-  });
+  const matching: Array<IUser> = users.filter((user: IUser) => user.guildId === guildId && user.minecraftUsername === minecraftUsername);
+  return matching[matching.length - 1];
 };
 
 /**
@@ -83,7 +81,7 @@ const getUserByMinecraftUsername = async (
  * @returns {Promise<Array<IUser>>} The users.
  */
 const getGuildUsers = async (guildId: string): Promise<Array<IUser>> => {
-  return UserModel.find({ guildId });
+  return users.filter((user: IUser) => user.guildId === guildId);
 };
 
 /**
@@ -98,18 +96,11 @@ const updateUserMinecraftUsername = async (
   guildId: string,
   userId: string,
   minecraftUsername: string) => {
-  const query = {
-    id: userId,
-    guildId,
-  };
+  const index = users.findIndex((user: IUser) => user.guildId === guildId && user.id === userId);
 
-  const update = {
-    $set: {
-      minecraftUsername,
-    },
-  };
-
-  return UserModel.updateOne(query, update);
+  if (index !== -1) {
+    users[index].minecraftUsername = minecraftUsername;
+  }
 };
 
 /**
@@ -124,18 +115,11 @@ const updateUserMinecraftUsername = async (
   guildId: string,
   userId: string,
   totalHours: number) => {
-  const query = {
-    id: userId,
-    guildId,
-  };
+  const index = users.findIndex((user: IUser) => user.guildId === guildId && user.id === userId);
 
-  const update = {
-    $set: {
-      totalHours,
-    },
-  };
-
-  return UserModel.updateOne(query, update);
+  if (index !== -1) {
+    users[index].totalHours = totalHours;
+  }
 };
 
 /**
@@ -150,18 +134,11 @@ const updateUserMinecraftUsername = async (
   guildId: string,
   userId: string,
   achievement: string) => {
-  const query = {
-    id: userId,
-    guildId,
-  };
+  const index = users.findIndex((user: IUser) => user.guildId === guildId && user.id === userId);
 
-  const update = {
-    $push: {
-      achievements: achievement,
-    },
-  };
-
-  return UserModel.updateOne(query, update);
+  if (index !== -1) {
+    users[index].achievements.push(achievement);
+  }
 };
 
 /**
@@ -174,10 +151,11 @@ const updateUserMinecraftUsername = async (
 const deleteUser = async (
   guildId: string,
   userId: string) => {
-  return UserModel.deleteOne({
-    guildId,
-    id: userId,
-  });
+  const index = users.findIndex((user: IUser) => user.guildId === guildId && user.id === userId);
+
+  if (index !== -1) {
+    users.splice(index, 1);
+  }
 };
 
 /**
@@ -187,7 +165,7 @@ const deleteUser = async (
  * @returns {Promise<Query>} Response to query.
  */
 const deleteGuildUsers = async (guildId: string) => {
-  return UserModel.deleteOne({ guildId });
+  users = users.filter((user: IUser) => user.guildId !== guildId);
 };
 
 export default {

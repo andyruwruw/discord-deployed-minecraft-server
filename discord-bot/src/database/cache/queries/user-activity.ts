@@ -1,13 +1,14 @@
 // Local Imports
+import user from 'src/database/mongodb/queries/user';
 import {
   IUserActivity,
   UserActivityQueries,
 } from '../../types';
-import { UserActivityModel } from '../models';
+
+export let userActivities: Array<IUserActivity> = [];
 
 /**
- * Creates a new user activity log.
- *
+ * 
  * @param {string} guildId Discord guild ID.
  * @param {string} userId User's Discord ID.
  * @param {Date} start Date the user logged in.
@@ -18,14 +19,15 @@ const createUserActivity = async (
   userId: string,
   start: Date,
 ): Promise<IUserActivity> => {
-  const userActivity = new UserActivityModel({
+  const userActivity: IUserActivity = {
     guildId,
     userId,
     start,
-  });
+    end: new Date(),
+  };
 
-  await userActivity.save();
-  return userActivity.toObject() as IUserActivity;
+  userActivities.push(userActivity);
+  return userActivity;
 };
 
 /**
@@ -35,7 +37,7 @@ const createUserActivity = async (
  * @returns {Promise<Array<IUserActivity>>} The user activity.
  */
 const getGuildUserActivity = async (guildId: string): Promise<Array<IUserActivity>> => {
-  return UserActivityModel.find({ guildId });
+  return userActivities.filter((userActivity: IUserActivity) => userActivity.guildId === guildId);
 };
 
 /**
@@ -48,7 +50,7 @@ const getGuildUserActivity = async (guildId: string): Promise<Array<IUserActivit
 const getUserActivity = async (
   guildId: string,
   userId: string): Promise<Array<IUserActivity>> => {
-  return UserActivityModel.find({ guildId, userId });
+  return userActivities.filter((userActivity: IUserActivity) => userActivity.guildId === guildId && userActivity.userId === userId);
 };
 
 /**
@@ -61,10 +63,7 @@ const getUserActivity = async (
  const deleteAllUserActivity = async (
   guildId: string,
   userId: string) => {
-  return UserActivityModel.deleteMany({
-    guildId,
-    userId,
-  });
+  userActivities = userActivities.filter((userActivity: IUserActivity) => userActivity.guildId !== guildId || userActivity.userId !== userId);
 };
 
 /**
@@ -74,7 +73,7 @@ const getUserActivity = async (
  * @returns {Promise<Query>} Response to query.
  */
 const deleteAllGuildUserActivity = async (guildId: string) => {
-  return UserActivityModel.deleteMany({ guildId });
+  userActivities = userActivities.filter((userActivity: IUserActivity) => userActivity.guildId !== guildId);
 };
 
 export default {
