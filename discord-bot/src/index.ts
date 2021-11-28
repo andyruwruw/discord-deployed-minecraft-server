@@ -1,16 +1,9 @@
-// Packages
-import dotenv from 'dotenv';
-
 // Local Imports
 import { CopperBot } from './copper-bot';
-import { DISCORD_INTENTS } from './config';
-
-dotenv.config();
-
-// Retreive secrets from .env file
-const {
+import {
+  DISCORD_INTENTS,
   DISCORD_BOT_TOKEN,
-} = process.env;
+} from './config';
 
 // Crafting a new Copper Bot
 const server = new CopperBot({

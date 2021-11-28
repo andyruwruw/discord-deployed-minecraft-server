@@ -1,15 +1,11 @@
 import mongoose from 'mongoose';
 
 const schema = new mongoose.Schema({
-  serverId: {
+  guildId: {
     type: String,
     required: true,
   },
-  ec2InstanceId: {
-    type: String,
-    required: true,
-  },
-  username: {
+  userId: {
     type: String,
     required: true,
   },
@@ -23,4 +19,4 @@ const schema = new mongoose.Schema({
   },
 });
 
-export const PlayerActivityModel = mongoose.model('PlayerActivityModel', schema);
+export const UserActivityModel = mongoose.model('UserActivityModel', schema);

@@ -1,11 +1,7 @@
 import mongoose from 'mongoose';
 
 const schema = new mongoose.Schema({
-  serverId: {
-    type: String,
-    required: true,
-  },
-  ec2InstanceId: {
+  id: {
     type: String,
     required: true,
   },
@@ -13,14 +9,23 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  guildId: {
+    type: String,
+    required: true,
+  },
+  minecraftUsername: {
+    type: String,
+    required: true,
+  },
   totalHours: {
     type: Number,
     default: 0,
   },
-  role: {
-    type: String,
-    default: 'none',
+  achievements: {
+    type: Array,
+    of: String,
+    default: [],
   },
 });
 
-export const PlayerModel = mongoose.model('PlayerModel', schema);
+export const UserModel = mongoose.model('UserModel', schema);

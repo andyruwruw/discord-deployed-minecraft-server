@@ -1,66 +1,210 @@
+// Local Imports
+import { IBase } from '../../types';
 import { BaseModel } from '../models';
 
-export const getBasesByServer = async (serverId: string) => {
-  return BaseModel.find({ serverId });
-};
-
-export const getBasesByPlayer = async (serverId: string, owner: string) => {
-  return BaseModel.find({
-    serverId,
-    owners: {
-      $in: [ owner ],
-    },
-  });
-};
-
 /**
- * Returns whether a player has a base saved.
+ * Creates a new base.
  *
- * @param {string} serverId Server player belongs to
- * @param {string} owner Player's minecraft username
- * @returns {boolean} Whether the player has a base saved.
+ * @param {string} guildId Discord guild ID.
+ * @param {Array<string>} userIds Owners of the base's Discord IDs.
+ * @param {number} x X coordinates of the base.
+ * @param {number} y y coordinates of the base.
+ * @param {number} z z coordinates of the base.
+ * @returns {Promise<IBase>} The created base.
  */
-export const playerHasBase = async (serverId: string, owner: string) => {
-  return (await BaseModel.find({
-    serverId,
-    owners: {
-      $in: [ owner ],
-    },
-  })).length > 0;
-};
-
-export const createBase = async (
-  serverId: string,
-  ec2InstanceId: string,
-  owners: Array<string>,
-  x: Number,
-  y: Number,
-  z: Number): Promise<Base> => {
+const createBase = async (
+  guildId: string,
+  userIds: Array<string>,
+  x: number,
+  y: number,
+  z: number,
+  name: string = 'Home'): Promise<IBase> => {
   const base = new BaseModel({
-    serverId,
-    ec2InstanceId,
-    owners,
+    guildId,
+    userIds,
+    name,
     x,
     y,
     z,
   });
 
   await base.save();
+  return base.toObject() as IBase;
+};
 
-  return base.toObject() as Base;
+/**
+ * Retrieves all bases for a given guild.
+ *
+ * @param {string} guildId Discord guild ID.
+ * @returns {Promise<Array<IBase>>} The bases.
+ */
+const getGuildBases = async (guildId: string): Promise<Array<IBase>> => {
+  return BaseModel.find({ guildId });
+};
+
+/**
+ * Retrieves all bases for a given user.
+ *
+ * @param {string} guildId Discord guild ID.
+ * @param {string} userId Owner of the base's Discord IDs.
+ * @returns {Promise<Array<IBase>>} The bases.
+ */
+const getUserBases = async (
+  guildId: string,
+  userId: string): Promise<Array<IBase>> => {
+  return BaseModel.find({
+    guildId,
+    userIds: {
+      $contains: userId,
+    },
+  });
+};
+
+/**
+ * Returns whether a user has a base saved.
+ *
+ * @param {string} guildId Discord guild ID.
+ * @param {string} userId Owner of the base's Discord IDs.
+ * @returns {Promise<boolean>} Whether the user has a base saved.
+ */
+const userHasBase = async (
+  guildId: string,
+  userId: string): Promise<boolean> => {
+  return (await BaseModel.find({
+    guildId,
+    userIds: {
+      $contains: userId,
+    },
+  })).length > 0;
+};
+
+/**
+ * Updates a base's name.
+ *
+ * @param {string} guildId Discord guild ID.
+ * @param {string} userId Owner of the base's Discord IDs.
+ * @param {string} baseId ID of the base to update.
+ * @param {string} name New base name.
+ * @returns {Promise<Query>} Response to query.
+ */
+const updateBaseName = async (
+  guildId: string,
+  userId: string,
+  baseId: string,
+  name: string) => {
+  const query = {
+    _id: baseId,
+    guildId,
+    userIds: {
+      $contains: userId,
+    },
+  };
+
+  const update = {
+    $set: {
+      name,
+    },
+  };
+
+  return BaseModel.updateOne(query, update);
+};
+
+/**
+ * Updates a base's coordinates.
+ *
+ * @param {string} guildId Discord guild ID.
+ * @param {string} userId Owner of the base's Discord IDs.
+ * @param {string} baseId ID of the base to update.
+ * @param {number} x New X coordinate.
+ * @param {number} y New Y coordinate.
+ * @param {number} z New Z coordinate.
+ * @returns {Promise<Query>} Response to query.
+ */
+const updateBaseCoordinates = async (
+  guildId: string,
+  userId: string,
+  baseId: string,
+  x: number,
+  y: number,
+  z: number) => {
+  const query = {
+    _id: baseId,
+    guildId,
+    userIds: {
+      $contains: userId,
+    },
+  };
+
+  const update = {
+    $set: {
+      x,
+      y,
+      z,
+    },
+  };
+
+  return BaseModel.updateOne(query, update);
 };
 
 /**
  * Deletes a base from the database.
  *
- * @param {string} serverId Server the base is from.
- * @param {string} owner Username of owner of the base. 
+ * @param {string} guildId Discord guild ID.
+ * @param {string} userId Owner of the base's Discord IDs.
+ * @returns {Promise<Query>} Response to query.
  */
-export const deleteBase = async (serverId: string, owner: string) => {
-  await BaseModel.deleteOne({
-    serverId,
-    owners: {
-      $in: [ owner ],
+const deleteUserBase = async (
+  guildId: string,
+  userId: string,
+  name: string | undefined = undefined) => {
+  const query: Record<string, any> = {
+    guildId,
+    userIds: {
+      $contains: userId,
+    },
+  };
+
+  if (name) {
+    query.name = name;
+  }
+
+  return BaseModel.deleteOne(query);
+};
+
+/**
+ * Deletes all bases from the database for a given user.
+ *
+ * @param {string} guildId Discord guild ID.
+ * @param {string} userId Owner of the base's Discord IDs.
+ * @returns {Promise<Query>} Response to query.
+ */
+const deleteAllUserBases = async (
+  guildId: string,
+  userId: string) => {
+  return BaseModel.deleteMany({
+    guildId,
+    userIds: {
+      $contains: userId,
     },
   });
+};
+
+/**
+ * Deletes all bases from the database for a given guild.
+ *
+ * @param {string} guildId Discord guild ID.
+ * @returns {Promise<Query>} Response to query.
+ */
+const deleteAllGuildBases = async (guildId: string) => {
+  return BaseModel.deleteMany({ guildId});
+};
+
+export default {
+  createBase,
+  getGuildBases,
+  getUserBases,
+  userHasBase,
+  deleteUserBase,
+  deleteAllUserBases,
+  deleteAllGuildBases,
 };

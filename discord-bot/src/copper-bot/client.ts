@@ -2,33 +2,56 @@
 import {
   Client,
   ClientOptions,
+  GuildMember,
   Interaction,
+  MessageReaction,
+  PartialGuildMember,
+  PartialMessageReaction,
+  PartialUser,
+  Role,
+  User,
 } from 'discord.js';
+import { client as WebSocketClient } from 'websocket';
+
 // Local Imports
 import { READY_RESPONSE_STRING } from '../config';
 import { CommandList } from '../copper-bot/commands';
+import { logger } from './logger';
+import { generateWebSocketClient } from '../web-socket';
 
-
-// Our little buddy
+/**
+ * Our little buddy.
+ */
 export class CopperBot extends Client {
+  websocket: WebSocketClient;
+
   /**
    * Instantiates the Copper Bot, calling discord.js' Client constructor.
    *
-   * @param options Options for the client.
+   * @param {ClientOptions} options Options for the client.
    */
   constructor(options: ClientOptions) {
     super(options);
+    
+    // Discord Events
+    this.on('ready', () => this.handleConnect());
+    this.on('error', (error: Error) => this.handleError(error));
+    this.on('interactionCreate', (interaction: Interaction) => this.handleInteraction(interaction));
+    this.on('guildMemberAdd', (member: GuildMember) => this.handleGuildMemberAdded(member));
+    this.on('guildMemberRemove', (member: GuildMember | PartialGuildMember) => this.handleGuildMemberRemove(member));
+    this.on('messageReactionAdd', (messageReaction: MessageReaction | PartialMessageReaction, user: User | PartialUser) => this.handleMessageReactionAdd(messageReaction, user));
+    this.on('roleCreate', (role: Role) => this.handleRoleCreate(role));
 
-    this.on('ready', this.handleConnect);
-    this.on('interactionCreate', this.handleInteraction);
+    this.websocket = generateWebSocketClient();
+
+    // Server Events
+
   }
 
   /**
    * Handles the bot connecting to discord.
    */
-  handleConnect() {
-    console.log(READY_RESPONSE_STRING);
-
+  handleReady() {
     // To get guildId right click server icon or name and at bottom copy id
     const guildId = '911933603691233300';
     const guild = this.guilds.cache.get(guildId);
@@ -52,6 +75,23 @@ export class CopperBot extends Client {
         commandRegister.create(command.commandStructure);
       }
     }
+
+    logger(this, READY_RESPONSE_STRING);
+  }
+
+  /**
+   * Handles client errors.
+   * 
+   * @param {Error} error Error in question.
+   */
+   handleError(error: Error) {
+    logger(this, error.message);
+  }
+
+  /**
+   * Handles the bot connecting to server.
+   */
+  handleConnect() {
   }
 
   /**
@@ -77,5 +117,23 @@ export class CopperBot extends Client {
         });
       }
     }
+  }
+
+  /**
+   * Handles a new user joining a guild.
+   */
+  handleGuildMemberAdded(member: GuildMember) {
+
+  }
+
+  handleGuildMemberRemove(member: GuildMember | PartialGuildMember) {
+  }
+
+  handleMessageReactionAdd(
+    messageReaction: MessageReaction | PartialMessageReaction,
+    user: User | PartialUser): void {
+  }
+
+  handleRoleCreate(role: Role) {
   }
 }

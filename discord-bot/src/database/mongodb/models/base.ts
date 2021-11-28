@@ -1,18 +1,18 @@
 import mongoose from 'mongoose';
 
 const schema = new mongoose.Schema({
-  serverId: {
+  guildId: {
     type: String,
     required: true,
   },
-  ec2InstanceId: {
-    type: String,
-    required: true,
-  },
-  owners: {
+  userIds: {
     type: Array,
     of: String,
     required: true,
+  },
+  name: {
+    type: String,
+    default: 'Home',
   },
   x: {
     type: Number,

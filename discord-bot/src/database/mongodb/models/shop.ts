@@ -1,22 +1,18 @@
 import mongoose from 'mongoose';
 
 const schema = new mongoose.Schema({
-  serverId: {
-    type: String,
-    required: true,
-  },
-  ec2InstanceId: {
+  guildId: {
     type: String,
     required: true,
   },
   name: {
     type: String,
-    required: true,
+    default: 'Unnamed Shop',
   },
-  owner: {
+  userIds: {
     type: Array,
     of: String,
-    default: [],
+    required: true,
   },
   x: {
     type: Number,
@@ -54,6 +50,10 @@ const schema = new mongoose.Schema({
         required: true,
       },
     },
+  },
+  created: {
+    type: Date,
+    default: new Date(),
   },
 });
 
