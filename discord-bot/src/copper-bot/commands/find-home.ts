@@ -1,5 +1,6 @@
+
 // Packages
-import {
+import { 
   ApplicationCommandOptionData,
   CacheType,
   CommandInteractionOptionResolver,
@@ -13,32 +14,32 @@ import {
 // Local Imports
 import { Command } from './command';
 
-const PING_NAME = 'ping';
+const FIND_HOME_NAME = 'findhome';
 
-const PING_DESCRIPTION = 'Replies with pong.';
+const FIND_HOME_DESCRIPTION = 'Displays coordinates of a user\'s home.';
 
-const PING_COMMAND_OPTIONS: ApplicationCommandOptionData[] = [
+const FIND_HOME_COMMAND_OPTIONS: ApplicationCommandOptionData[] = [
   {
-    type: ApplicationCommandOptionTypes.NUMBER,
-    name: 'pongs',
-    description: 'number of pongs to send',
+    type: ApplicationCommandOptionTypes.STRING,
+    name: 'username',
+    description: 'user to get home of',
     required: true,
   },
 ];
 
 /**
- * Basic discord ping command.
+ * Command to find someones home.
  */
-export class Ping extends Command {
+export class FindHome extends Command {
   /**
-   * Instantiates a new Ping command.
+   * Instantiates a new FindHome command.
    */
   constructor() {
     super(
-      PING_NAME,
-      PING_DESCRIPTION,
+      FIND_HOME_NAME,
+      FIND_HOME_DESCRIPTION,
       ApplicationCommandTypes.CHAT_INPUT,
-      PING_COMMAND_OPTIONS,
+      FIND_HOME_COMMAND_OPTIONS,
     );
   }
 
@@ -52,6 +53,7 @@ export class Ping extends Command {
     user: User, /* eslint-disable-line @typescript-eslint/no-unused-vars */
     options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
   ) {
-    return 'pong'.repeat(options.getNumber('pongs')!);
+    let username = options.getString('username');
+    return 'got home of ' + username;
   }
 }
