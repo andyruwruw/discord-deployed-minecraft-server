@@ -4,6 +4,17 @@ import {
   Intents,
   IntentsString,
 } from 'discord.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+export const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
+
+export const DATABASE_TYPE = process.env.DATABASE_TYPE;
+
+export const SERVER_IP = process.env.SERVER_IP;
+
+export const SERVER_WEBSOCKET_PORT = process.env.SERVER_WEBSOCKET_PORT;
 
 // Response to the ready event
 export const READY_RESPONSE_STRING: string = 'Copper Bot is ready to push some buttons!';
