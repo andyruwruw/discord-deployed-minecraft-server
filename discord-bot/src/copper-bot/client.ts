@@ -11,19 +11,44 @@ import {
   Role,
   User,
 } from 'discord.js';
-import { client as WebSocketClient } from 'websocket';
+import {
+  client as WebSocketClient,
+  connection as WebSocketConnection,
+  Message as WebSocketMessage,
+} from 'websocket';
 
 // Local Imports
-import { READY_RESPONSE_STRING } from '../config';
+import {
+  generateWebSocketClient,
+  connectToServer,
+} from '../web-socket';
+import { Database } from '../database/database';
+import { getDatabase } from '../database';
 import { CommandList } from '../copper-bot/commands';
 import { logger } from './logger';
-import { generateWebSocketClient } from '../web-socket';
+import {
+  DATABASE_CONNECTION_SUCCESS,
+  READY_RESPONSE_STRING,
+} from '../config';
 
 /**
  * Our little buddy.
  */
 export class CopperBot extends Client {
+  /**
+   * Websocket client.
+   */
   websocket: WebSocketClient;
+
+  /**
+   * Websocket connections to servers.
+   */
+  connections: Record<string,WebSocketConnection>;
+
+  /**
+   * Database connection and queries.
+   */
+  database: Database;
 
   /**
    * Instantiates the Copper Bot, calling discord.js' Client constructor.
@@ -32,9 +57,13 @@ export class CopperBot extends Client {
    */
   constructor(options: ClientOptions) {
     super(options);
+
+    this.database = getDatabase();
+    this.websocket = generateWebSocketClient();
+    this.connections = {};
     
     // Discord Events
-    this.on('ready', () => this.handleConnect());
+    this.on('ready', () => this.handleReady());
     this.on('error', (error: Error) => this.handleError(error));
     this.on('interactionCreate', (interaction: Interaction) => this.handleInteraction(interaction));
     this.on('guildMemberAdd', (member: GuildMember) => this.handleGuildMemberAdded(member));
@@ -42,10 +71,37 @@ export class CopperBot extends Client {
     this.on('messageReactionAdd', (messageReaction: MessageReaction | PartialMessageReaction, user: User | PartialUser) => this.handleMessageReactionAdd(messageReaction, user));
     this.on('roleCreate', (role: Role) => this.handleRoleCreate(role));
 
-    this.websocket = generateWebSocketClient();
-
     // Server Events
+    this.websocket.on('connect', (connection: WebSocketConnection) => this.handleConnect(connection));
+    this.websocket.on('connectFailed', (error: Error) => this.handleConnectFailed(error));
+    this.connectToDatabase();
+  }
 
+  /**
+   * Connects bot to the database.
+   */
+  async connectToDatabase() {
+    await this.database.connect();
+
+    if (await this.database.isConnected()) {
+      logger(this, DATABASE_CONNECTION_SUCCESS);
+      this.connectToServers();
+    }
+  }
+
+  /**
+   * Connects bot to guild servers.
+   */
+  async connectToServers() {
+    const guilds = await this.database.getGuilds();
+
+    for (let guild of guilds) {
+      connectToServer(
+        this.websocket,
+        guild.ip,
+        guild.port,
+      );
+    }
   }
 
   /**
@@ -84,14 +140,8 @@ export class CopperBot extends Client {
    * 
    * @param {Error} error Error in question.
    */
-  handleError(error: Error) {
+  handleError(error: Error, remoteAddress?: string) {
     logger(this, error.message);
-  }
-
-  /**
-   * Handles the bot connecting to server.
-   */
-  handleConnect() {
   }
 
   /**
@@ -135,5 +185,33 @@ export class CopperBot extends Client {
   }
 
   handleRoleCreate(role: Role) {
+  }
+
+  handleMessage(remoteAddress: string, message: WebSocketMessage) {
+  }
+
+  handleClose(remoteAddress: string, code: number, reason: string) {
+    logger(this, `Connection to  closed: ${code} ${reason}`);
+  }
+
+  /**
+   * Handles the bot connecting to server.
+   */
+  handleConnect(connection: WebSocketConnection) {
+    this.connections[connection.remoteAddress] = connection;
+
+    console.log(`Successfully connected to ${JSON.stringify(connection.remoteAddress)}`);
+
+    connection.on('message', (message: WebSocketMessage) => this.handleMessage(connection.remoteAddress, message));
+    connection.on('close', (code: number, reason: string) => this.handleClose(connection.remoteAddress, code, reason));
+    connection.on('error', (error: Error) => this.handleError(error, connection.remoteAddress));
+  }
+
+  /**
+   * 
+   * @param {Error} error Error in question.
+   */
+  handleConnectFailed(error: Error) {
+    logger(this, `Connection failed: ${error.message}`);
   }
 }

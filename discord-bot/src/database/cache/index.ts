@@ -1,18 +1,28 @@
 // Local Imports
 import queries from './queries';
-import { Database } from '../index';
+import { Database } from '../database';
 
 /**
  * Non-persistant cache database for testing.
  */
 export class CacheDatabase extends Database {
-  base = queries.base;
+  /**
+   * Instantiates CacheDatabase with correct queries.
+   */
+  constructor() {
+    super();
 
-  guild = queries.guild;
+    this.base = queries.base;
+    this.guild = queries.guild;
+    this.shop = queries.shop;
+    this.userActivities = queries.userActivity;
+    this.user = queries.user;
+  }
 
-  shop = queries.shop;
-
-  userActivity = queries.userActivity;
-
-  user = queries.user;
+  /**
+   * Connects to database.
+   */
+   async connect(): Promise<void> {
+    console.log('Connected to cache database for testing purposes, change to MongoDB for live.');
+  }
 }

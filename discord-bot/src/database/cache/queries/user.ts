@@ -111,7 +111,7 @@ const updateUserMinecraftUsername = async (
  * @param {number} totalHours The user's total hours.
  * @returns {Promise<Query>} Response to query.
  */
- const updateUserTotalHours = async (
+const updateUserTotalHours = async (
   guildId: string,
   userId: string,
   totalHours: number) => {
@@ -130,7 +130,7 @@ const updateUserMinecraftUsername = async (
  * @param {string} achievement User's new achievement.
  * @returns {Promise<Query>} Response to query.
  */
- const addUserAchievement = async (
+const addUserAchievement = async (
   guildId: string,
   userId: string,
   achievement: string) => {

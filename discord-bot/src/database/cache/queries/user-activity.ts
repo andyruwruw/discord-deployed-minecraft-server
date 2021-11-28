@@ -1,5 +1,4 @@
 // Local Imports
-import user from 'src/database/mongodb/queries/user';
 import {
   IUserActivity,
   UserActivityQueries,
@@ -60,7 +59,7 @@ const getUserActivity = async (
  * @param {string} userId User's Discord ID.
  * @returns {Promise<Query>} Response to query.
  */
- const deleteAllUserActivity = async (
+const deleteAllUserActivity = async (
   guildId: string,
   userId: string) => {
   userActivities = userActivities.filter((userActivity: IUserActivity) => userActivity.guildId !== guildId || userActivity.userId !== userId);

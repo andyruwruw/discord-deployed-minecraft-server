@@ -3,22 +3,26 @@ import mongoose from 'mongoose';
 
 // Local Imports
 import queries from './queries';
-import { Database } from '../index';
+import { Database } from '../database';
 import { DATABASE_URL } from '../../config';
+
 
 /**
  * Database connection to MongoDB
  */
 export class MongoDatabase extends Database {
-  base = queries.base;
+  /**
+   * Instantiates MongoDatabase with correct queries.
+   */
+  constructor() {
+    super();
 
-  guild = queries.guild;
-
-  shop = queries.shop;
-
-  userActivity = queries.userActivity;
-
-  user = queries.user;
+    this.base = queries.base;
+    this.guild = queries.guild;
+    this.shop = queries.shop;
+    this.userActivities = queries.userActivity;
+    this.user = queries.user;
+  }
 
   /**
    * Connects to database.
@@ -29,5 +33,14 @@ export class MongoDatabase extends Database {
     }
   
     await mongoose.connect(DATABASE_URL as string);
+  }
+
+  /**
+   * Whether the class is connected to the database.
+   *
+   * @returns {Promise<boolean>} Whether the class is connected to the database.
+   */
+  async isConnected(): Promise<boolean> {
+    return mongoose.connection.readyState === 1;
   }
 }

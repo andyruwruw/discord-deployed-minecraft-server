@@ -177,7 +177,7 @@ const updateShopItems = async (
   if (index !== -1) {
     shops[index].items = items;
   }
-}
+};
 
 /**
  * Deletes a shop from the database.

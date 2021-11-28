@@ -56,6 +56,17 @@ const getGuild = async (guildId: string): Promise<IGuild> => {
 };
 
 /**
+ * Retrieves a guild from the database by IP address.
+ *
+ * @param {string} ip Server IP address.
+ * @returns {Promise<IGuild>} Guild object.
+ */
+const getGuildByIp = async (ip: string): Promise<IGuild> => {
+  const matching: Array<IGuild> = guilds.filter((guild: IGuild) => guild.ip === ip);
+  return matching[matching.length - 1];
+};
+
+/**
  * Retrieves all guilds from the database.
  *
  * @returns {Promise<Array<IGuild>>} Guild object.
@@ -455,6 +466,7 @@ const deleteGuild = async (guildId: string) => {
 export default {
   createGuild,
   getGuild,
+  getGuildByIp,
   getGuilds,
   updateGuildIp,
   updateGuildPort,

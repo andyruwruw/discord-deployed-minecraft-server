@@ -84,6 +84,7 @@ export interface BaseQueries {
 export interface GuildQueries {
   createGuild: (guildId: string) => Promise<IGuild>;
   getGuild: (guildId: string) => Promise<IGuild>;
+  getGuildByIp: (ip: string) => Promise<IGuild>;
   getGuilds: () => Promise<Array<IGuild>>;
   updateGuildIp: (guildId: string, ip: string) => Promise<any>;
   updateGuildPort: (guildId: string, port: number) => Promise<any>;

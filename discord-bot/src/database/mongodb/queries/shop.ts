@@ -217,7 +217,7 @@ const updateShopItems = async (
   };
 
   return ShopModel.updateOne(query, update);
-}
+};
 
 /**
  * Deletes a shop from the database.

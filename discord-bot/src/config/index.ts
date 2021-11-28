@@ -6,17 +6,37 @@ import {
 } from 'discord.js';
 import dotenv from 'dotenv';
 
+// Gives us access to process.env variables.
 dotenv.config();
 
-// Environmental Variables
+/**
+ * Discord bot token, secret key.
+ */
 export const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN as string;
-export const DATABASE_TYPE = process.env.DATABASE_TYPE || 'cache';
-export const DATABASE_URL = process.env.DATABASE_URL as string;
 
-// Response to the ready event
+/**
+ * Type of database to use.
+ */
+export const DATABASE_TYPE = process.env.DATABASE_TYPE || 'cache';
+
+/**
+ * URL for connecting with database if needed.
+ */
+export const DATABASE_URL = process.env.DATABASE_URL as string || 'mongodb://localhost:27017/';
+
+/**
+ * Response to database connection.
+ */
+export const DATABASE_CONNECTION_SUCCESS = 'Database connection successful.';
+
+/**
+ * Response to the ready event.
+ */
 export const READY_RESPONSE_STRING: string = 'Copper Bot is ready to push some buttons!';
 
-// Events discord will inform our bot on.
+/**
+ * The default intents for the bot.
+ */
 export const DISCORD_INTENTS: BitFieldResolvable<IntentsString, number> = [
   Intents.FLAGS.GUILDS,
   Intents.FLAGS.GUILD_MESSAGES,
@@ -26,5 +46,15 @@ export const DISCORD_INTENTS: BitFieldResolvable<IntentsString, number> = [
   16, // Intents.FLAGS.GUILD_SCHEDULED_EVENTS 
 ];
 
-// Zero width character, helps avoids conflicting with other bots.
+/**
+ * Zero width character, helps avoids conflicting with other bots.
+ */
 export const RESPONSE_PREFIX = '\u200B';
+
+/**
+ * Database type enum.
+ */
+export const DATABASE_TYPES = {
+  MONGO: 'mongodb',
+  CACHE: 'cache',
+};

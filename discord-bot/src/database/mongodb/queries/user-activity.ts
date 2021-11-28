@@ -58,7 +58,7 @@ const getUserActivity = async (
  * @param {string} userId User's Discord ID.
  * @returns {Promise<Query>} Response to query.
  */
- const deleteAllUserActivity = async (
+const deleteAllUserActivity = async (
   guildId: string,
   userId: string) => {
   return UserActivityModel.deleteMany({
