@@ -12,7 +12,7 @@ export class Pog extends Command {
 
   generateResponse(
     user: User,
-    options: Omit<CommandInteractionOptionResolver<CacheType>, "getMessage" | "getFocused">
+    options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
   ) {
     return 'Champ';
   }

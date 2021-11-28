@@ -14,15 +14,15 @@ export class Ping extends Command {
         type: ApplicationCommandOptionTypes.NUMBER,
         name: 'pongs',
         description: 'number of pongs to send',
-        required: true
-      }]
+        required: true,
+      }],
     );
   }
 
 
   generateResponse(
     user: User,
-    options: Omit<CommandInteractionOptionResolver<CacheType>, "getMessage" | "getFocused">
+    options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
   ) {
     return 'pong'.repeat(options.getNumber('pongs')!);
   }

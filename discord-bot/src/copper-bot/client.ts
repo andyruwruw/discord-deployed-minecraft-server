@@ -2,7 +2,7 @@
 import {
   Client,
   ClientOptions,
-  Interaction
+  Interaction,
 } from 'discord.js';
 // Local Imports
 import { READY_RESPONSE_STRING } from '../config';
@@ -30,7 +30,7 @@ export class CopperBot extends Client {
     console.log(READY_RESPONSE_STRING);
 
     // To get guildId right click server icon or name and at bottom copy id
-    const guildId = "911933603691233300";
+    const guildId = '911933603691233300';
     const guild = this.guilds.cache.get(guildId);
 
     /**
@@ -67,7 +67,7 @@ export class CopperBot extends Client {
     // commandName is the name specified in the 'name' field of a command
     // user is the User object of whoever called the command
     // options are the parameters that are prompted / required when calling the command
-    const {commandName, user, options} = interaction;
+    const { commandName, user, options } = interaction;
 
     for (let command of CommandList) {
       if (command.commandStructure.name === commandName) {

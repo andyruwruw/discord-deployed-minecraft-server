@@ -23,7 +23,7 @@ export class Command {
       description: description,
       type: type,
       options: options,
-    }
+    };
   }
 
   /**
@@ -32,6 +32,6 @@ export class Command {
    */
   generateResponse(
     user: User,
-    options: Omit<CommandInteractionOptionResolver<CacheType>, "getMessage" | "getFocused">
+    options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
   ) { }
 }

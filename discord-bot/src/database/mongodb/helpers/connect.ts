@@ -14,4 +14,4 @@ export const connect = async (): Promise<void> => {
   }
 
   await mongoose.connect(MONGODB_URL as string);
-}
+};

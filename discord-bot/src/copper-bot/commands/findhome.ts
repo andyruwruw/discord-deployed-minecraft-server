@@ -21,7 +21,7 @@ export class FindHome extends Command {
 
   generateResponse(
     user: User,
-    options: Omit<CommandInteractionOptionResolver<CacheType>, "getMessage" | "getFocused">
+    options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
   ) {
     let username = options.getString('username');
     return 'got home of ' + username;
