@@ -13,7 +13,9 @@ export const TYPE = 'status';
  * @param {ScriptServer} minecraftServer Instance of the running minecraft server.
  * @param {connection} socketConnection Connection with discord bot.
  */
-const callback = async (minecraftServer: ScriptServer, socketConnection: connection) => {
+const callback = async (
+  minecraftServer: ScriptServer,
+  socketConnection: connection): Promise<void> => {
   const data = await minecraftServer.rconConnection.util.getOnline();
 
   await socketConnection.send(JSON.stringify({

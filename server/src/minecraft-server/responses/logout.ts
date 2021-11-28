@@ -23,7 +23,10 @@ export interface LogoutEvent extends PlayerEvent {
  * @param {connection} socketConnection Connection with discord bot.
  * @param {LogoutEvent} event Logout event
  */
-const callback = async (minecraftServer: ScriptServer, socketConnection: connection, event: LogoutEvent) => {
+const callback = async (
+  minecraftServer: ScriptServer,
+  socketConnection: connection,
+  event: LogoutEvent) => {
   const start = getStartTime(event.player);
   const time = stopTrackingPlayer(event.player);
 

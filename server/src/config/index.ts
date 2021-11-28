@@ -3,16 +3,14 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const { RCON_PASSWORD } = process.env;
+// Environmental Variables
+export const RCON_PASSWORD = process.env.RCON_PASSWORD;
+export const RCON_PORT = process.env.RCON_PORT;
+export const SERVER_JAR_DIR = process.env.SERVER_JAR_DIR;
+export const SERVER_JAR_NAME = process.env.SERVER_JAR_NAME;
+export const WEBSOCKET_PORT = process.env.WEBSOCKET_PORT;
 
-export const { RCON_PORT } = process.env;
-
-export const { SERVER_JAR_DIR } = process.env;
-
-export const { SERVER_JAR_NAME } = process.env;
-
-export const { WEBSOCKET_PORT } = process.env;
-
+// Java Minecraft arguments for server start.
 export const MINECRAFT_ARGS = [
   '-Xmx10000M',
   '-Xms1000M',

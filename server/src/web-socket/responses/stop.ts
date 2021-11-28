@@ -5,10 +5,10 @@ import { connection } from 'websocket';
 // Local Imports
 import { SocketResponse } from './response';
 
-export const TYPE = 'command';
+export const TYPE = 'stop';
 
 /**
- * Runs a command string on the server terminal.
+ * Starts the minecraft server.
  *
  * @param {ScriptServer} minecraftServer Instance of the running minecraft server.
  * @param {connection} socketConnection Connection with discord bot.
@@ -18,7 +18,7 @@ const callback = async (
   minecraftServer: ScriptServer,
   socketConnection: connection,
   command: string): Promise<void> => {
-  minecraftServer.javaServer.send(command);
+  minecraftServer.stop();
 };
 
-export const Command = new SocketResponse(TYPE, callback);
+export const Stop = new SocketResponse(TYPE, callback);

@@ -14,7 +14,10 @@ export const TYPE = 'player-position';
  * @param {connection} socketConnection Connection with discord bot.
  * @param {string} playerName Name of the player.
  */
-const callback = async (minecraftServer: ScriptServer, socketConnection: connection, playerName: string) => {
+const callback = async (
+  minecraftServer: ScriptServer, 
+  socketConnection: connection, 
+  playerName: string): Promise<void> => {
   if (await minecraftServer.rconConnection.util.isOnline(playerName)) {
     const data = await minecraftServer.rconConnection.util.getLocation(playerName);
 
