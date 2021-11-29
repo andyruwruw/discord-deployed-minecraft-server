@@ -22,14 +22,19 @@ import {
   generateWebSocketClient,
   connectToServer,
 } from '../web-socket';
-import { Database } from '../database/database';
-import { getDatabase } from '../database';
-import { CommandList } from '../copper-bot/commands';
-import { logger } from './logger';
 import {
   DATABASE_CONNECTION_SUCCESS,
   READY_RESPONSE_STRING,
 } from '../config';
+import {
+  Command,
+  CommandList,
+} from '../copper-bot/commands';
+import { Database } from '../database/database';
+import { getDatabase } from '../database';
+import { logger } from './logger';
+import { IGuild } from '../database/types';
+import { reduceInteraction } from './commands/helpers/reduce-interaction';
 
 /**
  * Our little buddy.
@@ -49,6 +54,16 @@ export class CopperBot extends Client {
    * Database connection and queries.
    */
   database: Database;
+
+  /**
+   * Guilds the bot is connected to.
+   */
+  databaseGuilds: Array<IGuild> = [];
+
+  /**
+   * Whether the Discord bot is connected to Discord.
+   */
+  ready: boolean = false;
 
   /**
    * Instantiates the Copper Bot, calling discord.js' Client constructor.
@@ -85,7 +100,12 @@ export class CopperBot extends Client {
 
     if (await this.database.isConnected()) {
       logger(this, DATABASE_CONNECTION_SUCCESS);
+      
       this.connectToServers();
+
+      if (this.ready) {
+        this.registerCommands();
+      }
     }
   }
 
@@ -93,9 +113,9 @@ export class CopperBot extends Client {
    * Connects bot to guild servers.
    */
   async connectToServers() {
-    const guilds = await this.database.getGuilds();
+    this.databaseGuilds = await this.database.getGuilds();
 
-    for (let guild of guilds) {
+    for (let guild of this.databaseGuilds) {
       connectToServer(
         this.websocket,
         guild.ip,
@@ -107,10 +127,16 @@ export class CopperBot extends Client {
   /**
    * Handles the bot connecting to discord.
    */
-  handleReady() {
+  async handleReady() {
+    this.ready = true;
+
+    if (await this.database.isConnected()) {
+      this.registerCommands();
+    }
+
     // To get guildId right click server icon or name and at bottom copy id
-    const guildId = '911933603691233300';
-    const guild = this.guilds.cache.get(guildId);
+    // const guildId = '911933603691233300';
+    // const guild = this.guilds.cache.get(guildId);
 
     /**
      * This is used to register slash commands for the bot to use them
@@ -118,21 +144,37 @@ export class CopperBot extends Client {
      * Guild commands are only usable on the server (guild) specified by {guildId}
      * Application commands are accessable on all servers the bot is on, but take about an hour to deploy fully
      */
-    let commandRegister; 
+    // let commandRegister; 
 
-    if (guild) {
-      commandRegister = guild.commands;
-    } else if (this.application) {
-      commandRegister = this.application.commands;
-    }
+    // if (guild) {
+    //   commandRegister = guild.commands;
+    // } else if (this.application) {
+    //   commandRegister = this.application.commands;
+    // }
 
-    if (commandRegister) {
-      for (let command of CommandList) {
-        commandRegister.create(command.commandStructure);
-      }
-    }
+    // if (commandRegister) {
+    //   for (let command of CommandList) {
+    //     commandRegister.create(command.commandStructure);
+    //   }
+    // }
 
     logger(this, READY_RESPONSE_STRING);
+  }
+
+  /**
+   * Registers slash commands with Discord.
+   */
+  registerCommands() {
+    for (let databaseGuild of this.databaseGuilds) {
+      const guild = this.guilds.cache.get(databaseGuild.id);
+
+      if (guild) {
+        for (let command of CommandList) {
+          console.log(command.create);
+          guild.commands.create(command.create());
+        }
+      }
+    }
   }
 
   /**
@@ -153,20 +195,22 @@ export class CopperBot extends Client {
     if (!interaction.isCommand()) {
       return;
     }
+    
+    // Gets subcommand or command object.
+    let command = reduceInteraction(interaction);
 
-    // commandName is the name specified in the 'name' field of a command
-    // user is the User object of whoever called the command
-    // options are the parameters that are prompted / required when calling the command
-    const { commandName, user, options } = interaction;
-
-    for (let command of CommandList) {
-      if (command.commandStructure.name === commandName) {
-        interaction.reply({
-          content: command.generateResponse(user, options),
-          ephemeral: true, // Means only shown to person who calls command
-        });
-      }
+    if (!command) {
+      return;
     }
+    
+    const {
+      user,
+    } = interaction;
+
+    interaction.reply({
+      content: await command.execute(),
+      ephemeral: true, // Means only shown to person who calls command
+    });
   }
 
   /**
@@ -187,10 +231,10 @@ export class CopperBot extends Client {
   handleRoleCreate(role: Role) {
   }
 
-  handleMessage(remoteAddress: string, message: WebSocketMessage) {
+  handleMessage(message: WebSocketMessage, remoteAddress: string) {
   }
 
-  handleClose(remoteAddress: string, code: number, reason: string) {
+  handleClose(code: number, reason: string, remoteAddress: string) {
     logger(this, `Connection to  closed: ${code} ${reason}`);
   }
 
@@ -202,13 +246,14 @@ export class CopperBot extends Client {
 
     console.log(`Successfully connected to ${JSON.stringify(connection.remoteAddress)}`);
 
-    connection.on('message', (message: WebSocketMessage) => this.handleMessage(connection.remoteAddress, message));
-    connection.on('close', (code: number, reason: string) => this.handleClose(connection.remoteAddress, code, reason));
+    connection.on('message', (message: WebSocketMessage) => this.handleMessage(message, connection.remoteAddress));
+    connection.on('close', (code: number, reason: string) => this.handleClose(code, reason, connection.remoteAddress));
     connection.on('error', (error: Error) => this.handleError(error, connection.remoteAddress));
   }
 
   /**
-   * 
+   * Handles the bot failing to connect to server.
+   *
    * @param {Error} error Error in question.
    */
   handleConnectFailed(error: Error) {
