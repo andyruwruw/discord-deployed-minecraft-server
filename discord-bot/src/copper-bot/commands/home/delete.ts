@@ -12,6 +12,7 @@ import { APPLICATION_COMMAND_OPTION_TYPES } from '../../../config';
 
 // Local Imports
 import { Command } from '../command';
+import { Database } from '../../../database/database';
 
 const NAME = 'delete';
 
@@ -33,6 +34,7 @@ const OPTIONS: ApplicationCommandOptionData[] = [
 const callback = async (
   client: Client,
   connection: WebSocketConnection,
+  database: Database,
   user: User,
   options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
 ): Promise<any> => {
@@ -41,7 +43,7 @@ const callback = async (
 const response = async (
   data: any,
   options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
-): Promise<any> => {
+): Promise<DiscordResponse> => {
 };
 
 export const DeleteHome = new Command(

@@ -7,8 +7,10 @@ import {
   CommandInteractionOptionResolver,
   User,
 } from 'discord.js';
+import { Database } from '../../database/database';
 import { connection as WebSocketConnection } from 'websocket';
 import { DiscordResponse } from '../responses';
+import { IGuild } from 'src/database/types';
 
 export class Command {
   /**
@@ -72,6 +74,7 @@ export class Command {
     type?: number,
     options?: Array<ApplicationCommandOptionData>,
     subCommands?: Command[],
+    pendingCallback?: Function,
   ) {
     this.name = name;
     this.description = description;
@@ -104,27 +107,27 @@ export class Command {
   /**
    * Executes command callback.
    *
-   * @param {Client} client Discord bot client.
    * @param {WebSocketConnection} connection Connection to user's server.
+   * @param {Database} database Database connection proxy class.
+   * @param {IGuild} guild Database guild object.
    * @param {User} user User that executed the command.
-   * @param {any[]} args Any arguments passed to the command.
+   * @param {Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>} options Options from the interaction
    * @returns {Promise<any>} Promise of callback function.
    */
   async execute(
-    client: Client,
     connection: WebSocketConnection,
+    database: Database,
+    guild: IGuild,
     user: User,
     options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
-    args: any[],
   ): Promise<DiscordResponse> {
-    const data = await this.callback(
-      client,
+    return this.callback(
       connection,
+      database,
+      guild,
       user,
-      ...args,
+      options,
     );
-
-    return this.response(data, options);
   }
 
   /**

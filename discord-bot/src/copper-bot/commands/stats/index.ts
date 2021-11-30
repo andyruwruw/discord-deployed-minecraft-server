@@ -13,6 +13,7 @@ import { ApplicationCommandTypes } from 'discord.js/typings/enums';
 import { Command } from '../command';
 import { AchievementStats } from './achievements';
 import { PlaytimeStats } from './playtime';
+import { Database } from '../../../database/database';
 
 const NAME = 'stats';
 
@@ -32,6 +33,7 @@ const SUB_COMMANDS = [
 const callback = async (
   client: Client,
   connection: WebSocketConnection,
+  database: Database,
   user: User,
   options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
 ): Promise<any> => {
@@ -40,7 +42,7 @@ const callback = async (
 const response = async (
   data: any,
   options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
-): Promise<any> => {
+): Promise<DiscordResponse> => {
 };
 
 export const Stats = new Command(

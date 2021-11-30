@@ -35,6 +35,7 @@ import { getDatabase } from '../database';
 import { logger } from './logger';
 import { IGuild } from '../database/types';
 import { reduceInteraction } from './commands/helpers/reduce-interaction';
+import { PendingCommand } from './pending-command';
 
 /**
  * Our little buddy.
@@ -64,6 +65,11 @@ export class CopperBot extends Client {
    * Whether the Discord bot is connected to Discord.
    */
   ready: boolean = false;
+
+  /**
+   * List of pending commands.
+   */
+  pending: Array<PendingCommand> = [];
 
   /**
    * Instantiates the Copper Bot, calling discord.js' Client constructor.
@@ -134,30 +140,6 @@ export class CopperBot extends Client {
       this.registerCommands();
     }
 
-    // To get guildId right click server icon or name and at bottom copy id
-    // const guildId = '911933603691233300';
-    // const guild = this.guilds.cache.get(guildId);
-
-    /**
-     * This is used to register slash commands for the bot to use them
-     * There are two types of commands, Guild and Application
-     * Guild commands are only usable on the server (guild) specified by {guildId}
-     * Application commands are accessable on all servers the bot is on, but take about an hour to deploy fully
-     */
-    // let commandRegister; 
-
-    // if (guild) {
-    //   commandRegister = guild.commands;
-    // } else if (this.application) {
-    //   commandRegister = this.application.commands;
-    // }
-
-    // if (commandRegister) {
-    //   for (let command of CommandList) {
-    //     commandRegister.create(command.commandStructure);
-    //   }
-    // }
-
     logger(this, READY_RESPONSE_STRING);
   }
 
@@ -165,13 +147,16 @@ export class CopperBot extends Client {
    * Registers slash commands with Discord.
    */
   registerCommands() {
-    for (let databaseGuild of this.databaseGuilds) {
-      const guild = this.guilds.cache.get(databaseGuild.id);
+    for (let command of CommandList) {
+      const commandObject = command.create();
 
-      if (guild) {
-        for (let command of CommandList) {
-          console.log(command.create);
-          guild.commands.create(command.create());
+      this.application?.commands.create(commandObject);
+
+      for (let databaseGuild of this.databaseGuilds) {
+        const guild = this.guilds.cache.get(databaseGuild.id);
+
+        if (guild) {
+          guild.commands.create(commandObject);
         }
       }
     }
@@ -207,41 +192,83 @@ export class CopperBot extends Client {
       user,
     } = interaction;
 
-    interaction.reply({
-      content: await command.execute(),
-      ephemeral: true, // Means only shown to person who calls command
-    });
+    const guild: IGuild = await this.database.getGuild(interaction.guildId);
+
+    const data = await command.execute(
+      this.connections[guild.ip],
+      this.database,
+      guild,
+      user,
+      interaction.options,
+    );
+
+    // interaction.reply({
+    //   content: ,
+    //   ephemeral: true, // Means only shown to person who calls command
+    // });
   }
 
   /**
    * Handles a new user joining a guild.
    */
-  handleGuildMemberAdded(member: GuildMember) {
-
+  async handleGuildMemberAdded(member: GuildMember) {
+    await this.database.createUser(
+      member.user.id,
+      member.user.username,
+      member.guild.id,
+    );
   }
 
-  handleGuildMemberRemove(member: GuildMember | PartialGuildMember) {
+  /**
+   * Handles a user leaving a guild.
+   *
+   * @param {GuildMember | PartialGuildMember} member Member in question.
+   */
+  async handleGuildMemberRemove(member: GuildMember | PartialGuildMember) {
+    await this.database.deleteAllUserBases(
+      member.guild.id,
+      member.user.id,
+    );
+
+    await this.database.deleteAllUserShops(
+      member.guild.id,
+      member.user.id,
+    );
+
+    await this.database.deleteAllUserActivity(
+      member.guild.id,
+      member.user.id,
+    );
+    
+    await this.database.deleteUser(
+      member.guild.id,
+      member.user.id,
+    );
   }
 
+  /**
+   * Handles a user reacting to a message.
+   *
+   * @param {MessageReaction | PartialMessageReaction} messageReaction Reaction in question.
+   * @param {User | PartialUser} user User that reacted.
+   */
   handleMessageReactionAdd(
     messageReaction: MessageReaction | PartialMessageReaction,
     user: User | PartialUser): void {
   }
 
+  /**
+   * Handles a new role being created.
+   *
+   * @param {Role} role The role in question
+   */
   handleRoleCreate(role: Role) {
-  }
-
-  handleMessage(message: WebSocketMessage, remoteAddress: string) {
-  }
-
-  handleClose(code: number, reason: string, remoteAddress: string) {
-    logger(this, `Connection to  closed: ${code} ${reason}`);
   }
 
   /**
    * Handles the bot connecting to server.
    */
-  handleConnect(connection: WebSocketConnection) {
+   handleConnect(connection: WebSocketConnection) {
     this.connections[connection.remoteAddress] = connection;
 
     console.log(`Successfully connected to ${JSON.stringify(connection.remoteAddress)}`);
@@ -258,5 +285,25 @@ export class CopperBot extends Client {
    */
   handleConnectFailed(error: Error) {
     logger(this, `Connection failed: ${error.message}`);
+  }
+
+  /**
+   * Handles a new message sent from the server.
+   *
+   * @param {WebSocketMessage} message Message sent.
+   * @param {string} remoteAddress Address of the server.
+   */
+  handleMessage(message: WebSocketMessage, remoteAddress: string) {
+  }
+
+  /**
+   * Handles the lost of connection to a server.
+   *
+   * @param {number} code HTML code for the reason of the disconnect.
+   * @param {string} reason Reason the server disconnected.
+   * @param {string} remoteAddress IP of the server that disconnected.
+   */
+  handleClose(code: number, reason: string, remoteAddress: string) {
+    logger(this, `Connection to  closed: ${code} ${reason}`);
   }
 }

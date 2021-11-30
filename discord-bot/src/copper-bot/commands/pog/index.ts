@@ -11,6 +11,7 @@ import { ApplicationCommandTypes } from 'discord.js/typings/enums';
 
 // Local Imports
 import { Command } from '../command';
+import { Database } from '../../../database/database';
 
 const NAME = 'pog';
 
@@ -25,6 +26,7 @@ const OPTIONS: ApplicationCommandOptionData[] = [];
 const callback = async (
   client: Client,
   connection: WebSocketConnection,
+  database: Database,
   user: User,
   options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
 ): Promise<any> => {
@@ -33,7 +35,7 @@ const callback = async (
 const response = async (
   data: any,
   options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
-): Promise<any> => {
+): Promise<DiscordResponse> => {
 };
 
 export const Pog = new Command(

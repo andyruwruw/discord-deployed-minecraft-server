@@ -34,6 +34,7 @@ const SUB_COMMANDS = [
 const callback = async (
   client: Client,
   connection: WebSocketConnection,
+  database: Database,
   user: User,
   options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
 ): Promise<any> => {
@@ -42,7 +43,7 @@ const callback = async (
 const response = async (
   data: any,
   options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
-): Promise<any> => {
+): Promise<DiscordResponse> => {
 };
 
 export const Home = new Command(
