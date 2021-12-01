@@ -34,6 +34,20 @@ export const DATABASE_CONNECTION_SUCCESS = 'Database connection successful.';
  */
 export const READY_RESPONSE_STRING: string = 'Copper Bot is ready to push some buttons!';
 
+export const DEFAULT_COLOR: number = 0xd9823b;
+
+export const ACTION_ROW_TYPE = 1;
+
+export const BUTTON_STYLE = {
+  PRIMARY: 1,
+  SECONDARY: 2,
+  SUCCESS: 3,
+  DESTRUCTIVE: 4,
+  LINK: 5,
+};
+
+export const DEFAULT_DIMENSION = 'minecraft:overworld';
+
 /**
  * The default intents for the bot.
  */

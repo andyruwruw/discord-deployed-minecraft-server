@@ -1,3 +1,4 @@
+// Packages
 import mongoose from 'mongoose';
 
 const schema = new mongoose.Schema({
@@ -43,55 +44,55 @@ const schema = new mongoose.Schema({
   },
   adminRoleId: {
     type: String,
-    defautl: 'unknown',
+    default: 'unknown',
   },
   onlineRoleId: {
     type: String,
-    defautl: 'unknown',
+    default: 'unknown',
   },
-  offlineRoleId: {
+  mostDeathsRoleId: {
     type: String,
-    defautl: 'unknown',
+    default: 'unknown',
   },
   playtimeLeaderRoleId: {
     type: String,
-    defautl: 'unknown',
+    default: 'unknown',
   },
   playtimeTier1RoleId: {
     type: String,
-    defautl: 'unknown',
+    default: 'unknown',
   },
   playtimeTier2RoleId: {
     type: String,
-    defautl: 'unknown',
+    default: 'unknown',
   },
   playtimeTier3RoleId: {
     type: String,
-    defautl: 'unknown',
+    default: 'unknown',
   },
   playtimeTier4RoleId: {
     type: String,
-    defautl: 'unknown',
+    default: 'unknown',
   },
   playtimeTier5RoleId: {
     type: String,
-    defautl: 'unknown',
+    default: 'unknown',
   },
   playtimeTier6RoleId: {
     type: String,
-    defautl: 'unknown',
+    default: 'unknown',
   },
   playtimeTier7RoleId: {
     type: String,
-    defautl: 'unknown',
+    default: 'unknown',
   },
   achievementsLeaderRoleId: {
     type: String,
-    defautl: 'unknown',
+    default: 'unknown',
   },
   achievementsMaxedRoleId: {
     type: String,
-    defautl: 'unknown',
+    default: 'unknown',
   },
   joined: {
     type: Date,

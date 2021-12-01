@@ -4,6 +4,7 @@ import {
   BaseQueries,
 } from '../../types';
 import { BaseModel } from '../models';
+import { DEFAULT_DIMENSION } from '../../../config';
 
 /**
  * Creates a new base.
@@ -21,6 +22,7 @@ const createBase = async (
   x: number,
   y: number,
   z: number,
+  dimension: string = DEFAULT_DIMENSION,
   name: string = 'Home'): Promise<IBase> => {
   const base = new BaseModel({
     guildId,
@@ -29,6 +31,7 @@ const createBase = async (
     x,
     y,
     z,
+    dimension,
   });
 
   await base.save();

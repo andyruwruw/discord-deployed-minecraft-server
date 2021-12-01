@@ -12,6 +12,7 @@ import {
   UserActivityQueries,
   UserQueries,
 } from './types';
+import { DEFAULT_DIMENSION } from '../config';
 
 /**
  * Generic database interface.
@@ -61,6 +62,7 @@ export class Database implements BaseQueries, GuildQueries, ShopQueries, UserAct
    * @param {number} x X coordinates of the base.
    * @param {number} y y coordinates of the base.
    * @param {number} z z coordinates of the base.
+   * @param {string} dimension Dimension of the base.
    * @returns {Promise<IBase>} The created base.
    */
   async createBase(
@@ -69,6 +71,7 @@ export class Database implements BaseQueries, GuildQueries, ShopQueries, UserAct
     x: number,
     y: number,
     z: number,
+    dimension: string = DEFAULT_DIMENSION,
     name: string | undefined): Promise<IBase> {
     return (this.base as BaseQueries).createBase(
       guildId,
@@ -76,6 +79,7 @@ export class Database implements BaseQueries, GuildQueries, ShopQueries, UserAct
       x,
       y,
       z,
+      dimension,
       name,
     );
   }
@@ -637,6 +641,7 @@ export class Database implements BaseQueries, GuildQueries, ShopQueries, UserAct
     x: number,
     y: number,
     z: number,
+    dimension: string = DEFAULT_DIMENSION,
     items: IShopItem[] | undefined,
     name: string | undefined,
     description: string | undefined): Promise<IShop> {
@@ -646,6 +651,7 @@ export class Database implements BaseQueries, GuildQueries, ShopQueries, UserAct
       x,
       y,
       z,
+      dimension,
       items,
       name,
       description,

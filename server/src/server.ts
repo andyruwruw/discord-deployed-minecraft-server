@@ -28,8 +28,6 @@ import { generateMinecraftServer } from './minecraft-server';
 import { generateWebSocketServer } from './web-socket/index';
 import { autoConfigureServer } from './utils/auto-configure-server';
 
-
-
 export interface ServerConfig {
   minecraftServer?: any,
   webSocketServer?: any,
@@ -129,7 +127,7 @@ export class Server {
       this.scheduledRestart = false;
 
       this.createMinecraftServer();
-      this.start();
+      this.assignListeners();
     }
   }
 
@@ -181,7 +179,13 @@ export class Server {
 
       if (data.type in responses) {
         const messageType: SocketResponse = responses[data.type];
-        messageType.execute((this.minecraftServer as ScriptServer), this.socketConnection as connection, data.args);
+        messageType.execute(
+          this,
+          (this.minecraftServer as ScriptServer),
+          this.socketConnection as connection,
+          data.context,
+          data.args,
+        );
       }
     } catch (error) {
       console.error(error);

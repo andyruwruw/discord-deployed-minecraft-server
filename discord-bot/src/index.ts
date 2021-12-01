@@ -1,5 +1,5 @@
 // Local Imports
-import { CopperBot } from './copper-bot';
+import { CopperBot } from './copper-golem';
 import {
   DISCORD_INTENTS,
   DISCORD_BOT_TOKEN,

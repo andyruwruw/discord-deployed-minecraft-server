@@ -3,7 +3,12 @@ import { ScriptServer } from '@scriptserver/core';
 import { connection } from 'websocket';
 
 // Local Imports
-import { SocketResponse } from './response';
+import {
+  SocketResponse,
+  ContextObject,
+} from './response';
+import { Server } from '../../server';
+
 
 export const TYPE = 'player-position';
 
@@ -12,28 +17,34 @@ export const TYPE = 'player-position';
  *
  * @param {ScriptServer} minecraftServer Instance of the running minecraft server.
  * @param {connection} socketConnection Connection with discord bot.
- * @param {string} playerName Name of the player.
+ * @param {string} player Name of the player.
  */
 const callback = async (
+  server: Server,
   minecraftServer: ScriptServer, 
   socketConnection: connection, 
-  playerName: string): Promise<void> => {
-  if (await minecraftServer.rconConnection.util.isOnline(playerName)) {
-    const data = await minecraftServer.rconConnection.util.getLocation(playerName);
+  context: ContextObject,
+  player: string): Promise<void> => {
+  const type = 'id' in context ? context['id'] : TYPE;
+  
+  if (await minecraftServer.rconConnection.util.isOnline(player)) {
+    const data = await minecraftServer.rconConnection.util.getLocation(player);
 
     return socketConnection.send(JSON.stringify({
-      type: TYPE,
-      username: playerName,
+      type,
+      player,
       online: true,
       location: data,
+      context,
     }));
   }
 
   return socketConnection.send(JSON.stringify({
-    type: TYPE,
-    username: playerName,
+    type,
+    player,
     online: false,
     location: null,
+    context,
   }));
 };
 

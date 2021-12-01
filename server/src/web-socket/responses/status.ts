@@ -3,7 +3,11 @@ import { ScriptServer } from '@scriptserver/core';
 import { connection } from 'websocket';
 
 // Local Imports
-import { SocketResponse } from './response';
+import {
+  SocketResponse,
+  ContextObject,
+} from './response';
+import { Server } from '../../server';
 
 export const TYPE = 'status';
 
@@ -14,14 +18,18 @@ export const TYPE = 'status';
  * @param {connection} socketConnection Connection with discord bot.
  */
 const callback = async (
+  server: Server,
   minecraftServer: ScriptServer,
-  socketConnection: connection): Promise<void> => {
+  socketConnection: connection,
+  context: ContextObject): Promise<void> => {
   const data = await minecraftServer.rconConnection.util.getOnline();
+  const type = 'id' in context ? context['id'] : TYPE;
 
   await socketConnection.send(JSON.stringify({
-    type: TYPE,
+    type,
     online: data.online,
     players: data.players,
+    context,
   }));
 };
 

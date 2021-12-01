@@ -3,8 +3,11 @@ import { ScriptServer } from '@scriptserver/core';
 import { connection } from 'websocket';
 
 // Local Imports
-import { SocketResponse } from './response';
-import { generateMinecraftServer } from '../../minecraft-server';
+import {
+  SocketResponse,
+  ContextObject,
+} from './response';
+import { Server } from '../../server';
 
 export const TYPE = 'start';
 
@@ -16,12 +19,12 @@ export const TYPE = 'start';
  * @param {Array<any>} args Command as string to be run.
  */
 const callback = async (
+  server: Server,
   minecraftServer: ScriptServer,
   socketConnection: connection,
+  context: ContextObject,
   command: string): Promise<void> => {
-  if (minecraftServer === null) {
-    minecraftServer = await generateMinecraftServer();
-  }
+  server.start();
 };
 
 export const Start = new SocketResponse(TYPE, callback);

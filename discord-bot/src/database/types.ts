@@ -9,6 +9,7 @@ interface MinecraftLocation {
   x: number;
   y: number;
   z: number;
+  dimension: string;
   created: Date;
 }
 
@@ -27,7 +28,7 @@ export interface IGuild {
   logsChannelId: string;
   adminRoleId: string;
   onlineRoleId: string;
-  offlineRoleId: string;
+  mostDeathsRoleId: string;
   playtimeLeaderRoleId: string;
   playtimeTier1RoleId: string;
   playtimeTier2RoleId: string;
@@ -70,7 +71,7 @@ export interface IUser {
 }
 
 export interface BaseQueries {
-  createBase: (guildId: string, userIds: Array<string>, x: number, y: number, z: number, name?: string) => Promise<IBase>;
+  createBase: (guildId: string, userIds: Array<string>, x: number, y: number, z: number, dimension: string, name?: string) => Promise<IBase>;
   getGuildBases: (guildId: string) => Promise<Array<IBase>>;
   getUserBases: (guildId: string, userId: string) => Promise<Array<IBase>>;
   userHasBase: (guildId: string, userId: string) => Promise<boolean>;
@@ -112,7 +113,7 @@ export interface GuildQueries {
 }
 
 export interface ShopQueries {
-  createShop: (guildId: string, userIds: Array<string>, x: number, y: number, z: number, items?: Array<IShopItem>, name?: string, description?: string) => Promise<IShop>;
+  createShop: (guildId: string, userIds: Array<string>, x: number, y: number, z: number, dimension: string, items?: Array<IShopItem>, name?: string, description?: string) => Promise<IShop>;
   getGuildShops: (guildId: string) => Promise<Array<IShop>>;
   getUserShops: (guildId: string, userId: string) => Promise<Array<IShop>>;
   userHasShop: (guildId: string, userId: string) => Promise<boolean>;

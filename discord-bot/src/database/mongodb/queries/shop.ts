@@ -5,6 +5,7 @@ import {
   ShopQueries,
 } from '../../types';
 import { ShopModel } from '../models';
+import { DEFAULT_DIMENSION } from '../../../config';
 
 /**
  * Creates a new shop.
@@ -25,6 +26,7 @@ const createShop = async (
   x: number,
   y: number,
   z: number,
+  dimension: string = DEFAULT_DIMENSION,
   items: Array<IShopItem> = [],
   name: string = 'Unnamed Shop',
   description: string = ''): Promise<IShop> => {
