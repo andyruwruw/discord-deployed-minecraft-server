@@ -35,7 +35,7 @@ import { logger } from './logger';
 import { IGuild } from '../database/types';
 import { reduceInteraction } from './commands/helpers/reduce-interaction';
 import { DiscordResponse } from './responses';
-import { getResponse } from 'src/web-socket/responses/helpers/get-response';
+import { getResponse } from 'src/web-socket/callbacks/helpers/get-response';
 import { WebSocketMessageData } from 'src/web-socket/types';
 
 /**
@@ -193,7 +193,6 @@ export class CopperBot extends Client {
 
     const data = await command.execute(
       this.connections[guild.ip],
-      this.database,
       guild,
       user as User,
       interaction.options,
@@ -294,11 +293,13 @@ export class CopperBot extends Client {
    * @param {WebSocketMessage} message Message sent.
    * @param {string} remoteAddress Address of the server.
    */
-  handleMessage(message: WebSocketMessage, remoteAddress: string) {
+  async handleMessage(message: WebSocketMessage, remoteAddress: string) {
     const connection = this.connections[remoteAddress];
 
     if (message.type === 'utf8') {
       const data: WebSocketMessageData = JSON.parse((message as IUtf8Message).utf8Data) as WebSocketMessageData;
+
+      const guild: IGuild = await this.database.getGuildByIp(remoteAddress);
 
       const response = getResponse(data.type);
 
@@ -307,7 +308,7 @@ export class CopperBot extends Client {
           data,
           this,
           connection,
-          this.database
+          guild,
         );
       }
     }

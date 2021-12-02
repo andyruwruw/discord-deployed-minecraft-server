@@ -15,6 +15,11 @@ import { CreateHome } from './create';
 import { DeleteHome } from './delete';
 import { FindHomes } from './find';
 
+/**
+ * Database Instance
+ */
+ const database = new Database();
+
 const NAME = 'home';
 
 const DESCRIPTION = 'Create and find other people\'s home coordinates.';
@@ -34,7 +39,6 @@ const SUB_COMMANDS = [
 const callback = async (
   client: Client,
   connection: WebSocketConnection,
-  database: Database,
   user: User,
   options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
   isDm: boolean,

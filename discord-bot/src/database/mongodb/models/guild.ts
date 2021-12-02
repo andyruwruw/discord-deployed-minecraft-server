@@ -42,6 +42,10 @@ const schema = new mongoose.Schema({
     type: String,
     default: 'unknown',
   },
+  achievementsChannelId: {
+    type: String,
+    default: 'unknown',
+  },
   adminRoleId: {
     type: String,
     default: 'unknown',

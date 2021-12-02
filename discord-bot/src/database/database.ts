@@ -373,6 +373,22 @@ export class Database implements BaseQueries, GuildQueries, ShopQueries, UserAct
   }
 
   /**
+   * Updates a guild's achievements channel ID.
+   *
+   * @param {string} guildId Discord guild ID.
+   * @param {string} channelId Discord channel ID.
+   * @returns {Promise<Query>} Response to query.
+   */
+  async updateGuildAchievementsChannel(
+    guildId: string,
+    channelId: string): Promise<any> {
+    return (this.guild as GuildQueries).updateGuildAchievementsChannel(
+      guildId,
+      channelId,
+    );
+  }
+
+  /**
    * Updates a guild's commands channel ID.
    *
    * @param {string} guildId Discord guild ID.

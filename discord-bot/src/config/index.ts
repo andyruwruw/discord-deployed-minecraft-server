@@ -34,10 +34,19 @@ export const DATABASE_CONNECTION_SUCCESS = 'Database connection successful.';
  */
 export const READY_RESPONSE_STRING: string = 'Copper Bot is ready to push some buttons!';
 
+/**
+ * Default color for Discord components.
+ */
 export const DEFAULT_COLOR: number = 0xd9823b;
 
+/**
+ * Discord component type for an Action Row.
+ */
 export const ACTION_ROW_TYPE = 1;
 
+/**
+ * Keys for Discord Button component types.
+ */
 export const BUTTON_STYLE = {
   PRIMARY: 1,
   SECONDARY: 2,
@@ -46,6 +55,9 @@ export const BUTTON_STYLE = {
   LINK: 5,
 };
 
+/**
+ * Default minecraft dimension.
+ */
 export const DEFAULT_DIMENSION = 'minecraft:overworld';
 
 /**
@@ -73,6 +85,9 @@ export const DATABASE_TYPES = {
   CACHE: 'cache',
 };
 
+/**
+ * Discord application command option types.
+ */
 export const APPLICATION_COMMAND_OPTION_TYPES = {
   SUB_COMMAND: 1,
   SUB_COMMAND_GROUP: 2,

@@ -13,6 +13,11 @@ import { Command } from '../command';
 import { Database } from '../../../database/database';
 import { IGuild } from '../../../database/types';
 
+/**
+ * Database Instance
+ */
+ const database = new Database();
+
 const NAME = 'register';
 
 const DESCRIPTION = 'Register your Minecraft account with the Discord bot to play!';
@@ -32,7 +37,6 @@ const OPTIONS: ApplicationCommandOptionData[] = [
 
 const callback = async (
   connection: WebSocketConnection,
-  database: Database,
   guild: IGuild,
   user: User,
   options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,

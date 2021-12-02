@@ -28,7 +28,6 @@ const OPTIONS: ApplicationCommandOptionData[] = [
 const callback = async (
   client: Client,
   connection: WebSocketConnection,
-  database: Database,
   user: User,
   options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
   isDm: boolean,

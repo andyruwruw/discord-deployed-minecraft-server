@@ -26,6 +26,7 @@ export interface IGuild {
   commandListChannelId: string;
   commandsChannelId: string;
   logsChannelId: string;
+  achievementsChannelId: string;
   adminRoleId: string;
   onlineRoleId: string;
   mostDeathsRoleId: string;
@@ -90,6 +91,7 @@ export interface GuildQueries {
   updateGuildIp: (guildId: string, ip: string) => Promise<any>;
   updateGuildPort: (guildId: string, port: number) => Promise<any>;
   updateGuildGeneralChannel: (guildId: string, channelId: string) => Promise<any>;
+  updateGuildAchievementsChannel: (guildId: string, channelId: string) => Promise<any>;
   updateGuildBaseChannel: (guildId: string, channelId: string) => Promise<any>;
   updateGuildShopsChannel: (guildId: string, channelId: string) => Promise<any>;
   updateGuildEventsChannel: (guildId: string, channelId: string) => Promise<any>;

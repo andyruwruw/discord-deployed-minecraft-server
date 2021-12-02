@@ -8,8 +8,13 @@ import {
   WebSocketMessageData,
   WebSocketPlayerPositionMessage,
 } from '../types';
-import { WebSocketReponse } from './response';
+import { WebSocketCallback } from './callback';
 import { Database } from '../../database/database';
+
+/**
+ * Database Instance
+ */
+ const database = new Database();
 
 /**
  * Name of the websocket response.
@@ -28,7 +33,6 @@ const callback = async (
     message: WebSocketMessageData,
     client: Client,
     connection: WebSocketConnection,
-    database: Database,
 ): Promise<any> => {
     const {
       online,
@@ -66,7 +70,7 @@ const callback = async (
     }
 };
 
-export const CreateHomeResolution = new WebSocketReponse(
+export const CreateHomeResolution = new WebSocketCallback(
     NAME,
     callback,
 );

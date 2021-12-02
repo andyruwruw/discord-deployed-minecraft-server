@@ -116,7 +116,6 @@ export class Command {
    * Executes command callback.
    *
    * @param {WebSocketConnection} connection Connection to user's server.
-   * @param {Database} database Database connection proxy class.
    * @param {IGuild} guild Database guild object.
    * @param {User} user User that executed the command.
    * @param {Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>} options Options from the interaction
@@ -124,7 +123,6 @@ export class Command {
    */
   async execute(
     connection: WebSocketConnection,
-    database: Database,
     guild: IGuild,
     user: User,
     options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
@@ -133,7 +131,6 @@ export class Command {
   ): Promise<DiscordResponse> {
     return this.callback(
       connection,
-      database,
       guild,
       user,
       options,

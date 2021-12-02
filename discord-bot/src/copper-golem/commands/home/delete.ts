@@ -14,6 +14,11 @@ import { APPLICATION_COMMAND_OPTION_TYPES } from '../../../config';
 import { Command } from '../command';
 import { Database } from '../../../database/database';
 
+/**
+ * Database Instance
+ */
+ const database = new Database();
+
 const NAME = 'delete';
 
 const DESCRIPTION = 'Delete a saved home coordinates.';
@@ -31,10 +36,20 @@ const OPTIONS: ApplicationCommandOptionData[] = [
   },
 ];
 
+/**
+ * Callback run on command.
+ *
+ * @param {WebSocketConnection} connection Connection to guild's server.
+ * @param {IGuild} guild Database entry for the guild.
+ * @param {User} user User that ran the command.
+ * @param {Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>} options Interaction options.
+ * @param {boolean} isDm Whether this command was sent via a DM.
+ * @param {string | null} channelId The channel ID used to send this command, or null if DM.
+ * @returns {any} Data to be used in response.
+ */
 const callback = async (
   client: Client,
   connection: WebSocketConnection,
-  database: Database,
   user: User,
   options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
   isDm: boolean,

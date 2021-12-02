@@ -111,6 +111,27 @@ const updateGuildGeneralChannel = async (
 };
 
 /**
+ * Updates a guild's achievements channel ID.
+ *
+ * @param {string} guildId Discord guild ID.
+ * @param {string} channelId Discord channel ID.
+ * @returns {Promise<Query>} Response to query.
+ */
+ const updateGuildAchievementsChannel = async (
+  guildId: string,
+  channelId: string) => {
+  const query = { id: guildId };
+
+  const update = {
+    $set: {
+      achievementsChannelId: channelId,
+    },
+  };
+
+  return GuildModel.updateOne(query, update);
+};
+
+/**
  * Updates a guild's base channel ID.
  *
  * @param {string} guildId Discord guild ID.
@@ -527,6 +548,7 @@ export default {
   updateGuildIp,
   updateGuildPort,
   updateGuildGeneralChannel,
+  updateGuildAchievementsChannel,
   updateGuildBaseChannel,
   updateGuildShopsChannel,
   updateGuildEventsChannel,

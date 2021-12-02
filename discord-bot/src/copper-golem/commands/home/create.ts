@@ -15,7 +15,12 @@ import { Database } from '../../../database/database';
 import { IGuild, IUser } from '../../../database/types';
 import { Context } from '../../context';
 import { generateResponse } from '../../responses/home/create';
-import { NAME as RESOLUTION_NAME } from '../../../web-socket/responses/create-home-resolution';
+import { NAME as RESOLUTION_NAME } from '../../../web-socket/callbacks/create-home-resolution';
+
+/**
+ * Database Instance
+ */
+const database = new Database();
 
 /**
  * Name of the command.
@@ -53,7 +58,6 @@ const OPTIONS: ApplicationCommandOptionData[] = [
  * Callback run on command.
  *
  * @param {WebSocketConnection} connection Connection to guild's server.
- * @param {Database} database Connection to the bot's database.
  * @param {IGuild} guild Database entry for the guild.
  * @param {User} user User that ran the command.
  * @param {Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>} options Interaction options.
@@ -63,7 +67,6 @@ const OPTIONS: ApplicationCommandOptionData[] = [
  */
 const callback = async (
   connection: WebSocketConnection,
-  database: Database,
   guild: IGuild,
   user: User,
   options: Omit<CommandInteractionOptionResolver<CacheType>, 'getMessage' | 'getFocused'>,
