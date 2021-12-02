@@ -27,6 +27,7 @@ export const generateMinecraftServer = () => {
       args: MINECRAFT_ARGS,
     },
     rconConnection: {
+      host: 'localhost',
       port: parseInt(RCON_PORT as string, 10),
       password: RCON_PASSWORD,
     },

@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc --build",
-    "clean": "tsc --build --clean",
-    "start": "tsc --build && nodemon --exec babel-node dist/index.js",
+    "clean": "rimraf ./dist && echo 'All clean now!'",
+    "start": "tsc --build && nodemon --exec babel-node dist/src/index.js",
     "test": "jest --colors",
     "test:verbose": "jest --verbose --colors",
     "lint": "eslint . --ext .ts",
@@ -20,6 +20,7 @@
     "@babel/node": "^7.16.0",
     "@babel/preset-env": "^7.16.4",
     "@types/jest": "^27.0.3",
+    "@types/uuid": "^8.3.3",
     "@types/websocket": "^1.0.4",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
@@ -29,6 +30,7 @@
     "eslint-plugin-import": "^2.25.3",
     "jest": "^27.3.1",
     "nodemon": "^2.0.15",
+    "rimraf": "^3.0.2",
     "ts-jest": "^27.0.7",
     "typescript": "^4.5.2"
   },
@@ -37,6 +39,7 @@
     "discord.js": "^13.3.1",
     "dotenv": "^10.0.0",
     "mongoose": "^6.0.13",
+    "uuid": "^8.3.2",
     "websocket": "^1.0.34"
   }
 }

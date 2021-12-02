@@ -20,7 +20,10 @@ export interface LoginEvent extends PlayerEvent {
  * @param {connection} socketConnection Connection with discord bot.
  * @param {LoginEvent} event Login event
  */
-const callback = async (minecraftServer: ScriptServer, socketConnection: connection, event: LoginEvent) => {
+const callback = async (
+  minecraftServer: ScriptServer,
+  socketConnection: connection,
+  event: LoginEvent) => {
   startTrackingPlayer(event.player);
 
   await socketConnection.send(JSON.stringify({

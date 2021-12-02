@@ -1,6 +1,16 @@
 // Packages
 import { ScriptServer } from '@scriptserver/core';
+import { Server } from 'src/server';
 import { connection } from 'websocket';
+
+export interface ContextObject {
+  id?: string;
+  guildId?: string;
+  userId?: string;
+  isDm?: boolean;
+  channelId?: string;
+  args?: Record<string, any>;
+}
 
 /**
  * Defines a response.
@@ -35,12 +45,17 @@ export class SocketResponse {
    * @returns Promise of callback functions.
    */
   async execute(
+    server: Server,
     mincraftServer: ScriptServer,
     socketConnection: connection,
-    args: string[] = []): Promise<void> {
+    context: ContextObject = {},
+    args: string[] = [],
+  ): Promise<void> {
     return this.callback(
+      server,
       mincraftServer,
       socketConnection,
+      context,
       ...args,
     );
   }

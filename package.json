@@ -18,5 +18,10 @@
   "bugs": {
     "url": "https://github.com/andyruwruw/discord-deployed-minecraft-server/issues"
   },
-  "homepage": "https://github.com/andyruwruw/discord-deployed-minecraft-server#readme"
+  "homepage": "https://github.com/andyruwruw/discord-deployed-minecraft-server#readme",
+  "dependencies": {
+    "@vercel/node": "^1.12.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
 }

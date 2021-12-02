@@ -1,24 +1,7 @@
-declare module 'mcquery';
-
 interface MessageComponents {
   mention: string;
   key: string;
   args: string[];
-}
-
-interface Base {
-  serverId: String;
-  ec2InstanceId: String;
-  owners: Array<String>;
-  x: String;
-  y: String;
-  z: String;
-  created: Date,
-}
-
-interface Ec2Instance {
-  serverId: String;
-  ec2InstanceId: String;
 }
 
 interface PlayerActivity {
@@ -45,17 +28,13 @@ interface ServerUptime {
 }
 
 interface StoreItem {
-  id: String;
-  quantity: String;
-  priceId: String;
-  priceQuanity: String;
+  
 }
 
 interface Shop {
-  serverId: String;
-  ec2InstanceId: String;
+  guildId: String;
   name: String,
-  owners: Array<String>;
+  userIds: Array<String>;
   x: String;
   y: String;
   z: String;

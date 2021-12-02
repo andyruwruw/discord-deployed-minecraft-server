@@ -19,9 +19,14 @@ import {
   Logout,
   LogoutEvent,
 } from './minecraft-server/responses';
+import {
+  CONSOLE_DEFAULT_PREFIX,
+  EULA_CONSOLE_REGEX,
+} from './config';
 import SocketResponse, { Responses } from './web-socket/responses';
 import { generateMinecraftServer } from './minecraft-server';
 import { generateWebSocketServer } from './web-socket/index';
+import { autoConfigureServer } from './utils/auto-configure-server';
 
 export interface ServerConfig {
   minecraftServer?: any,
@@ -33,13 +38,35 @@ export interface ServerConfig {
  * Maintains the minecraft and websocket server instances and their interactions.
  */
 export class Server {
+  /**
+   * Configuration for server instances, mostly used for testing purposes. 
+   */
+  config: ServerConfig;
+
+  /**
+   * Whether the server is ready to start.
+   */
   ready = false;
 
+  /**
+   * Internal minecraft server.
+   */
   minecraftServer: ScriptServer | null;
 
+  /**
+   * Internal websocket server.
+   */
   websocket: WebSocketServer | null;
 
+  /**
+   * Connection with Discord bot.
+   */
   socketConnection?: connection;
+
+  /**
+   * Whether server stop was scheduled for restart.
+   */
+  scheduledRestart: boolean = false;
 
   /**
    * Starts internal servers and event listeners.
@@ -47,10 +74,11 @@ export class Server {
    * @param {ServerConfig} config Configuration for server instances, mostly used for testing purposes. 
    */
   constructor(config: ServerConfig = {}) {
+    this.config = config;
     this.minecraftServer = null;
     this.websocket = null;
 
-    this.createServers(config);
+    this.createServers();
   }
 
   /**
@@ -58,11 +86,18 @@ export class Server {
    * 
    * @param {ServerConfig} config Configuration for server instances, mostly used for testing purposes. 
    */
-  async createServers(config: ServerConfig = {}): Promise<void> {
-    this.minecraftServer = 'minecraftServer' in config ? config.minecraftServer : await generateMinecraftServer();
-    this.websocket = 'webSocketServer' in config ? config.webSocketServer : await generateWebSocketServer('webSocketPort' in config ? config.webSocketPort : undefined);
+  async createServers(): Promise<void> {
+    await this.createMinecraftServer();
+    this.websocket = 'webSocketServer' in this.config ? this.config.webSocketServer : await generateWebSocketServer('webSocketPort' in this.config ? this.config.webSocketPort : undefined);
     
     this.assignListeners();
+  }
+
+  /**
+   * Creates internal minecraft server.
+   */
+  async createMinecraftServer(): Promise<void> {
+    this.minecraftServer = 'minecraftServer' in this.config ? this.config.minecraftServer : await generateMinecraftServer();
   }
 
   /**
@@ -73,29 +108,49 @@ export class Server {
     (this.websocket as WebSocketServer).on('request', (socketRequest: request) => this.handleRequest(socketRequest));
     
     // Adding minecraft event listeners.
+    (this.minecraftServer as ScriptServer).javaServer.on('stop', () => this.handleStop());
     (this.minecraftServer as ScriptServer).javaServer.on('login', (event: LoginEvent) => this.handleLogin(event));
     (this.minecraftServer as ScriptServer).javaServer.on('logout', (event: LogoutEvent) => this.handleLogout(event));
     (this.minecraftServer as ScriptServer).javaServer.on('chat', (event: ChatEvent) => this.handleChat(event));
     (this.minecraftServer as ScriptServer).javaServer.on('achievement', (event: AchievementEvent) => this.handleAchievement(event));
+    (this.minecraftServer as ScriptServer).javaServer.on('console', (message: string) => this.handleConsole(message));
 
     this.start();
     this.ready = true;
   }
 
   /**
-   * Starts internal servers.
+   * Handles the server stopping.
+   */
+  handleStop(): void {
+    if (this.scheduledRestart) {
+      this.scheduledRestart = false;
+
+      this.createMinecraftServer();
+      this.assignListeners();
+    }
+  }
+
+  /**
+   * Starts internal minecraft server.
    */
   start(): void {
     (this.minecraftServer as ScriptServer).start();
   }
 
   /**
-   * Stops internal servers.
+   * Stops internal minecraft server.
    */
   stop(): void {
     (this.minecraftServer as ScriptServer).stop();
-    (this.websocket as WebSocketServer).closeAllConnections();
-    (this.websocket as WebSocketServer).shutDown();
+  }
+
+  /**
+   * Restarts the internal minecraft server.
+   */
+  restart(): void {
+    this.scheduledRestart = true;
+    this.stop();
   }
 
   /**
@@ -124,12 +179,29 @@ export class Server {
 
       if (data.type in responses) {
         const messageType: SocketResponse = responses[data.type];
-        messageType.execute((this.minecraftServer as ScriptServer), this.socketConnection as connection, data.args);
+        messageType.execute(
+          this,
+          (this.minecraftServer as ScriptServer),
+          this.socketConnection as connection,
+          data.context,
+          data.args,
+        );
       }
     } catch (error) {
       console.error(error);
     }
   };
+
+  /**
+   * Handles the Java server's output.
+   *
+   * @param {string} message Message in question.
+   */
+  handleConsole(message: string): void {
+    if (message.match(EULA_CONSOLE_REGEX) !== null) {
+      autoConfigureServer(this);
+    }
+  }
 
   /**
    * Handles player login event from the minecraft server.
@@ -175,6 +247,6 @@ export class Server {
    * @param {string} description Reason for close.
    */
   handleClose(reasonCode: number, description: string): void {
-    console.log(`Connection Error ${reasonCode}: Connection with Discord Bot has closed unexpectedly, ${description}`);
+    console.log(CONSOLE_DEFAULT_PREFIX, `Connection Error ${reasonCode}: Connection with Discord Bot has closed unexpectedly, ${description}`);
   }
 }

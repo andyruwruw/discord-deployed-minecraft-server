@@ -19,7 +19,11 @@ export interface ChatEvent extends PlayerEvent {
  * @param {connection} socketConnection Connection with discord bot.
  * @param {LoginEvent} event Login event
  */
-const callback = async (minecraftServer: ScriptServer, socketConnection: connection, event: ChatEvent) => {
+const callback = async (
+  minecraftServer: ScriptServer, 
+  socketConnection: connection, 
+  event: ChatEvent,
+) => {
   await socketConnection.send(JSON.stringify({
     type: TYPE,
     player: event.player,

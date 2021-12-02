@@ -1,6 +1,5 @@
 export { BaseModel } from './base';
-export { Ec2InstanceModel } from './ec2-instance';
-export { PlayerActivityModel } from './player-activity';
-export { PlayerModel } from './player';
-export { ServerUptimeModel } from './server-uptime';
+export { GuildModel } from './guild';
 export { ShopModel } from './shop';
+export { UserActivityModel } from './user-activity';
+export { UserModel } from './user';

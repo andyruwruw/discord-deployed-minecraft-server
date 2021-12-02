@@ -1,18 +1,22 @@
+// Packages
 import mongoose from 'mongoose';
 
+// Local Imports
+import { DEFAULT_DIMENSION } from '../../../config';
+
 const schema = new mongoose.Schema({
-  serverId: {
+  guildId: {
     type: String,
     required: true,
   },
-  ec2InstanceId: {
-    type: String,
-    required: true,
-  },
-  owners: {
+  userIds: {
     type: Array,
     of: String,
     required: true,
+  },
+  name: {
+    type: String,
+    default: 'Home',
   },
   x: {
     type: Number,
@@ -25,6 +29,10 @@ const schema = new mongoose.Schema({
   z: {
     type: Number,
     required: true,
+  },
+  dimension: {
+    type: String,
+    default: DEFAULT_DIMENSION,
   },
   created: {
     type: Date,

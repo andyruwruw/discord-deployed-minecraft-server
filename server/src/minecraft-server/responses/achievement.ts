@@ -19,7 +19,10 @@ export interface AchievementEvent extends PlayerEvent {
  * @param {connection} socketConnection Connection with discord bot.
  * @param {LoginEvent} event Login event
  */
-const callback = async (minecraftServer: ScriptServer, socketConnection: connection, event: AchievementEvent) => {
+const callback = async (
+  minecraftServer: ScriptServer,
+  socketConnection: connection,
+  event: AchievementEvent) => {
   await socketConnection.send(JSON.stringify({
     type: TYPE,
     player: event.player,
