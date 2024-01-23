@@ -1,1 +1,0 @@
-export { CopperBot } from './client';

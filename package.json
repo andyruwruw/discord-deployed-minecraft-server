@@ -1,22 +1,34 @@
 {
-  "name": "discord-deployed-minecraft-server",
+  "name": "discord-managed-minecraft-server",
   "version": "1.0.0",
-  "description": "Discord Deployed Minecraft Server",
-  "main": "index.js",
-  "scripts": {},
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/andyruwruw/discord-deployed-minecraft-server.git"
+  "description": "<p align=\"center\">\r   <img src=\"https://raw.githubusercontent.com/andyruwruw/discord-managed-minecraft-server/main/documentation/images/banner.gif?token=ALDKK3UUONYOK3HVDBQ6SILBVH3QE\"></img>\r </p>",
+  "main": "babel.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "minecraft",
-    "server",
-    "discord"
-  ],
   "author": "Andrew Young",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/andyruwruw/discord-deployed-minecraft-server/issues"
+  "license": "ISC",
+  "dependencies": {
+    "@scriptserver/command": "^2.0.4",
+    "@scriptserver/core": "^2.0.4",
+    "@scriptserver/essentials": "^2.0.4",
+    "@scriptserver/event": "^2.0.5",
+    "@scriptserver/util": "^2.0.5",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.2",
+    "http": "^0.0.1-security",
+    "mongoose": "^8.1.0",
+    "tslib": "^2.6.2",
+    "uuid": "^9.0.1",
+    "websocket": "^1.0.34"
   },
-  "homepage": "https://github.com/andyruwruw/discord-deployed-minecraft-server#readme"
+  "devDependencies": {
+    "@babel/cli": "^7.23.4",
+    "@babel/core": "^7.23.7",
+    "@babel/node": "^7.22.19",
+    "@babel/preset-env": "^7.23.8",
+    "@babel/preset-typescript": "^7.23.3",
+    "@types/node": "^20.11.5",
+    "@types/uuid": "^9.0.7"
+  }
 }
