@@ -6,7 +6,9 @@ import mongoose, {
 
 // Local Imports
 import {
-  PlayerDataAccessObject
+  PlayerDataAccessObject,
+  ChannelDataAccessObject,
+  RoleDataAccessObject,
 } from './daos';
 import { Database } from '../database';
 import { Monitor } from '../../helpers/monitor';
@@ -25,6 +27,8 @@ export class MongoDatabase extends Database {
     super();
 
     this.players = new PlayerDataAccessObject();
+    this.channels = new ChannelDataAccessObject();
+    this.roles = new RoleDataAccessObject();
   }
 
   /**

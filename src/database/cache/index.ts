@@ -1,6 +1,8 @@
 // Local Imports
 import {
   PlayerDataAccessObject,
+  ChannelDataAccessObject,
+  RoleDataAccessObject,
 } from './daos';
 import { Database } from '../database';
 
@@ -15,6 +17,8 @@ export class CacheDatabase extends Database {
     super();
 
     this.players = new PlayerDataAccessObject();
+    this.channels = new ChannelDataAccessObject();
+    this.roles = new RoleDataAccessObject();
   }
 
   /**

@@ -1,7 +1,9 @@
 /* eslint @typescript-eslint/no-unused-vars: "off" */
 // Types
 import {
-  Player
+  Channel,
+  Player,
+  Role
 } from '../types/tables';
 import { DataAccessObjectInterface } from '../types/database';
 import { DataAccessObject } from './dao';
@@ -14,6 +16,16 @@ export class Database {
    * Data access object for Player.
    */
   players: DataAccessObjectInterface<Player> = new DataAccessObject<Player>();
+
+  /**
+   * Data access object for Channel.
+   */
+  channels: DataAccessObjectInterface<Channel> = new DataAccessObject<Channel>();
+
+  /**
+   * Data access object for Role.
+   */
+  roles: DataAccessObjectInterface<Role> = new DataAccessObject<Role>();
 
   /**
    * Connects to database.

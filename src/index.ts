@@ -1,19 +1,21 @@
 // Local Imports
 import { getDatabase } from './database';
-import { MincraftServer } from './minecraft';
+import { MinecraftServer } from './minecraft';
 import { DiscordBot } from './discord';
 
 // Types
 import { Database } from './database/database';
+import { DISCORD_INTENTS } from './config/discord';
+import { Environment } from './helpers/environment';
 
 /**
  * Runs all connections.
  */
-class Server {
+export class Server {
   /**
    * Minecraft server wrapper.
    */
-  static Minecraft: MincraftServer;
+  static Minecraft: MinecraftServer;
 
   /**
    * Discord connection wrapper.
@@ -29,12 +31,16 @@ class Server {
    * Starts the server.
    */
   static start() {
-    Server.Minecraft = new MincraftServer();
-    Server.Discord = new DiscordBot();
+    Server.Minecraft = new MinecraftServer();
+    Server.Discord = new DiscordBot({
+      intents: DISCORD_INTENTS,
+    });
     Server.Database = getDatabase();
 
     Server.Minecraft.start();
     Server.Database.connect();
+    // Logging bot into Discord.
+    Server.Discord.login(Environment.getDiscordBotToken());
   }
 }
 

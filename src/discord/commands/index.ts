@@ -13,9 +13,11 @@ import {
   ApplicationCommandOptionData,
   ClientApplication,
   CommandInteraction,
+  Guild,
   GuildResolvable,
   Interaction,
   Message,
+  OAuth2Guild,
 } from 'discord.js';
 
 // Local Imports
@@ -24,8 +26,9 @@ import {
   MESSAGE_COMMANDS_REGISTER_START,
 } from '../../config/messages';
 import { Command } from './generic/command';
-import { DiscordBot } from '../discord-bot';
+import { DiscordBot } from '../';
 import { Monitor } from '../../helpers/monitor';
+import { AssignCommand } from './assign/assign-command';
 
 /**
  * Manages all commands and routes interactions to correct command.
@@ -41,9 +44,7 @@ export class CommandManager {
    */
   static instantiateCommands() {
     // General Commands
-    CommandManager._commands[HelpCommand.key] = new HelpCommand();
-    CommandManager._commands[ForecastCommand.key] = new ForecastCommand();
-    CommandManager._commands[ViewCommand.key] = new ViewCommand();
+    CommandManager._commands[AssignCommand.key] = new AssignCommand();
   }
 
   /**
@@ -53,13 +54,18 @@ export class CommandManager {
    * @returns {Promise<void>} Promise of action.
    */
   static async handleInteraction(interaction: Interaction): Promise<void> {
+    console.log('hello');
     if (!interaction.isCommand()) {
+      console.log('not command');
       return;
     }
 
     const key = interaction.commandName;
 
+    console.log(key);
+
     if (key in CommandManager._commands) {
+      console.log('running');
       await CommandManager._commands[key].execute(interaction as CommandInteraction);
       return;
     }
@@ -86,57 +92,20 @@ export class CommandManager {
         Monitor.Layer.UPDATE,
       );
 
-      // Retrieve registered application commands.
-      const applicationCommands = await (client.application as ClientApplication).commands.fetch();
+      // await CommandManager._processApplicationCommands(client);
 
-      const tracker = CommandManager._createCommandStatusTracker();
-      const promises = [] as Promise<void>[];
+      const guilds = await Promise.all((await client.guilds.fetch()).map(async (guild: OAuth2Guild) => {
+        return guild.fetch();
+      }));
 
-      // Go through each registered command.
-      for (let i = 0; i < applicationCommands.size; i += 1) {
-        // If defined, process that command.
-        if (applicationCommands.at(i) !== undefined) {
-          const command = applicationCommands.at(i) as ApplicationCommand<{ guild: GuildResolvable }>;
+      const promises = [];
 
-          // Mark this command as checked and check it.
-          if (command.name in tracker) {
-            tracker[command.name] = true;
-          }
-          promises.push(CommandManager._processApplicationCommand(
-            client,
-            command,
-          ));
-        }
+      for (let i = 0; i < guilds.length; i += 1) {
+        promises.push(CommandManager._processGuildCommands(guilds[i]));
       }
 
-      // Wait for all commands to be checked.
       await Promise.all(promises);
-
-      // Clear our promises.
-      promises.splice(0, promises.length);
-
-      // Check all commands to see if any weren't addressed.
-      const commandKeys = Object.keys(tracker);
-
-      for (let i = 0; i < commandKeys.length; i += 1) {
-        if (!tracker[commandKeys[i]]) {
-          Monitor.log(
-            CommandManager,
-            `${commandKeys[i]} not found, creating`,
-            Monitor.Layer.UPDATE,
-          );
-
-          // Create unchecked commands.
-          promises.push(CommandManager._createCommandFromKey(
-            client,
-            commandKeys[i],
-          ));
-        }
-      }
-
-      // Wait for all outstanding commands to be created.
-      await Promise.all(promises);
-
+      
       Monitor.log(
         CommandManager,
         MESSAGE_COMMANDS_REGISTERED,
@@ -152,18 +121,130 @@ export class CommandManager {
   }
 
   /**
-   * Processes an Application command checking it to existing records.
+   * Processes all application commands.
+   * 
+   * @param {DiscordBot} client Discord bot client.
+   */
+  static async _processApplicationCommands(client: DiscordBot): Promise<void> {
+    // Retrieve registered application commands.
+    const applicationCommands = await (client.application as ClientApplication).commands.fetch();
+
+    const tracker = CommandManager._createCommandStatusTracker();
+    const promises = [] as Promise<void>[];
+
+    // Go through each registered command.
+    for (let i = 0; i < applicationCommands.size; i += 1) {
+      // If defined, process that command.
+      if (applicationCommands.at(i) !== undefined) {
+        const command = applicationCommands.at(i) as ApplicationCommand<{ guild: GuildResolvable }>;
+
+        // Mark this command as checked and check it.
+        if (command.name in tracker) {
+          tracker[command.name] = true;
+        }
+        promises.push(CommandManager._processCommand(
+          command,
+          client,
+        ));
+      }
+    }
+
+    // Wait for all commands to be checked.
+    await Promise.all(promises);
+
+    // Clear our promises.
+    promises.splice(0, promises.length);
+
+    // Check all commands to see if any weren't addressed.
+    const commandKeys = Object.keys(tracker);
+
+    for (let i = 0; i < commandKeys.length; i += 1) {
+      if (!tracker[commandKeys[i]]) {
+        Monitor.log(
+          CommandManager,
+          `Command: "${commandKeys[i]}" not found. Creating now.`,
+          Monitor.Layer.UPDATE,
+        );
+
+        // Create unchecked commands.
+        promises.push(CommandManager._createCommandFromKey(
+          commandKeys[i],
+          client,
+        ));
+      }
+    }
+
+    // Wait for all outstanding commands to be created.
+    await Promise.all(promises);
+  }
+
+  /**
+   * Processes all guild commands.
+   * 
+   * @param {Guild} guild Guild to process.
+   */
+  static async _processGuildCommands(guild: Guild): Promise<void> {
+    const commands = await guild.commands.fetch();
+
+    const tracker = CommandManager._createCommandStatusTracker();
+    const promises = [] as Promise<void>[];
+
+    for (let j = 0; j < commands.size; j += 1) {
+      // If defined, process that command.
+      if (commands.at(j) !== undefined) {
+        const command = commands.at(j) as ApplicationCommand<{ guild: GuildResolvable }>;
+
+        // Mark this command as checked and check it.
+        if (command.name in tracker) {
+          tracker[command.name] = true;
+        }
+        promises.push(CommandManager._processCommand(
+          command,
+          null,
+          guild
+        ));
+      }
+    }
+
+    // Check all commands to see if any weren't addressed.
+    const commandKeys = Object.keys(tracker);
+
+    for (let i = 0; i < commandKeys.length; i += 1) {
+      if (!tracker[commandKeys[i]]) {
+        Monitor.log(
+          CommandManager,
+          `Command: "${commandKeys[i]}" not found. Creating now.`,
+          Monitor.Layer.UPDATE,
+        );
+
+        // Create unchecked commands.
+        promises.push(CommandManager._createCommandFromKey(
+          commandKeys[i],
+          null,
+          guild,
+        ));
+      }
+    }
+
+    // Wait for all outstanding commands to be created.
+    await Promise.all(promises);
+  }
+
+  /**
+   * Processes a command checking it to existing records.
    *
-   * @param {DiscordBot} client The Discord.js client.
    * @param {ApplicationCommand<{ guild: GuildResolvable }>} command The command in question.
+   * @param {DiscordBot | null} [client = null] The Discord.js client.
+   * @param {Guild | null} [guild = null] The Discord guild.
    * @returns {Promise<void>} Promise of the action.
    */
-  static async _processApplicationCommand(
-    client: DiscordBot,
+  static async _processCommand(
     command: ApplicationCommand<{ guild: GuildResolvable }>,
+    client = null as DiscordBot | null,
+    guild = null as Guild | null,
   ): Promise<void> {
     if (command.name in CommandManager._commands
-      && CommandManager._applicationCommandMatches(
+      && CommandManager._commandMatches(
         command,
         CommandManager._commands[command.name],
       )) {
@@ -175,12 +256,17 @@ export class CommandManager {
       Monitor.Layer.UPDATE,
     );
 
-    await (client.application as ClientApplication).commands.delete(command.id);
+    if (client !== null) {
+      await (client.application as ClientApplication).commands.delete(command.id);
+    } else {
+      await (guild as Guild).commands.delete(command.id);
+    }
 
     if (command.name in CommandManager._commands) {
       await CommandManager._createCommandFromKey(
-        client,
         command.name,
+        client,
+        guild,
       );
     }
   }
@@ -188,15 +274,23 @@ export class CommandManager {
   /**
    * Creates a command off the key.
    *
-   * @param {DiscordBot} client The Discord.js client.
    * @param {string} key Key of the command to create. 
+   * @param {DiscordBot | null} [client = null] The Discord.js client.
+   * @param {Guild | null} [guild = null] The Discord guild.
    * @returns {Promise<void>} Promise of the action.
    */
   static async _createCommandFromKey(
-    client: DiscordBot,
     key: string,
+    client = null as DiscordBot | null,
+    guild = null as Guild | null,
   ): Promise<void> {
-    await (client.application as ClientApplication).commands.create(CommandManager._commands[key].create());
+    const data = CommandManager._commands[key].create();
+
+    if (client !== null) {
+      await (client.application as ClientApplication).commands.create(data);
+    } else {
+      await (guild as Guild).commands.create(data);
+    }
 
     return;
   }
@@ -208,7 +302,7 @@ export class CommandManager {
    * @param {Command} command Command in question.
    * @returns {boolean} Whether the commands are the same.
    */
-  static _applicationCommandMatches(
+  static _commandMatches(
     applicationCommand: ApplicationCommand,
     command: Command,
   ): boolean {

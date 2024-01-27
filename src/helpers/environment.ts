@@ -12,7 +12,14 @@ export class Environment {
    */
   static generateSecret = (Math.random() + 1).toString(36).substring(7);
 
-  
+  /**
+   * Retrieves discord bot token.
+   *
+   * @returns {string} Discord token.
+   */
+  static getDiscordBotToken(): string {
+    return process.env.DISCORD_BOT_TOKEN as string | '';
+  }
 
   /**
    * Retrieves Discord application ID.
@@ -29,7 +36,7 @@ export class Environment {
    * @returns {string} Server jar directory.
    */
   static getServerJarDirectory(): string {
-    return process.env.SERVER_JAR_DIRECTORY as string || './';
+    return process.env.SERVER_JAR_DIRECTORY as string || '.';
   }
 
   /**
@@ -47,7 +54,7 @@ export class Environment {
    * @returns {number} RCON minecraft port.
    */
   static getRconPort(): number {
-    return parseInt(process.env.RCON_PORT as string, 10) || 3000;
+    return parseInt(process.env.RCON_PORT as string, 10) || 25575;
   }
 
   /**

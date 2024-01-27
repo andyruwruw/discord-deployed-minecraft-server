@@ -6,6 +6,15 @@ import {
   Message,
 } from 'discord.js';
 
+// Local Imports
+import {
+  ErrorHandler,
+  InteractionHandler,
+  MessageCreateHandler,
+  ReadyHandler,
+} from './handlers';
+import { Handler } from './handlers/handler';
+
 /**
  * Our little buddy.
  */
@@ -19,13 +28,14 @@ export class DiscordBot extends Client {
     super(options);
 
     // Connect handlers.
+    Handler.setClient(this);
     this._setEventHandlers();
   }
 
   /**
    * Assigns event listeners for Discord and websockets.
    */
-  _setEventHandlers() {
+  _setEventHandlers(): void {
     // Discord Events
     this.on('ready', (client: Client) => ReadyHandler.execute(client));
     this.on('error', (error: Error) => ErrorHandler.execute(error));

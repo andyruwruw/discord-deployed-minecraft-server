@@ -1,2 +1,16 @@
 node_modules
 .env
+
+src/minecraft/libraries
+src/minecraft/logs
+src/minecraft/versions
+src/minecraft/world
+src/minecraft/banned-ips.json
+src/minecraft/banned-players.json
+src/minecraft/eula.txt
+src/minecraft/ops.json
+src/minecraft/server.jar
+src/minecraft/server.properties
+src/minecraft/usercache.json
+src/minecraft/whitelist.json
+json

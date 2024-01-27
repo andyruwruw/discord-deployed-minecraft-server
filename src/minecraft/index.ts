@@ -7,23 +7,43 @@ import {
 import { useEssentials } from '@scriptserver/essentials';
 import { useEvent } from '@scriptserver/event';
 import { useUtil } from '@scriptserver/util';
-import { useCommand } from '@scriptserver/command';
+import { CommandEvent, useCommand } from '@scriptserver/command';
+import { Channel, TextChannel } from 'discord.js';
 
 // Local Imports
 import {
+  EULA_CONSOLE_REGEX,
   MINECRAFT_ARGS,
   RCON_HOST,
-} from '../config';
+} from '../config/minecraft';
+import { editServerProperties } from '../utils/edit-server-properties';
+import { approveEula } from '../utils/edit-eula';
 import { Environment } from '../helpers/environment';
+import { Server } from '../';
+
+// Types
+import { 
+  MinecraftChatEvent,
+  MinecraftLoginEvent,
+  MinecraftLogoutEvent,
+  MinecraftAchievementEvent,
+} from '../types';
+import { DiscordReferences } from 'src/discord/references';
+import { DISCORD_CHANNEL } from 'src/config/discord';
 
 /**
  * Maintains the minecraft.
  */
-export class MincraftServer {
+export class MinecraftServer {
   /**
    * Internal minecraft server.
    */
-  server: ScriptServer;
+  server: ScriptServer | null;
+
+  /**
+   * Active sessions.
+   */
+  sessions: Record<string, number>;
 
   /**
    * Instantiates a new minecraft server wrapper.
@@ -40,7 +60,7 @@ export class MincraftServer {
       await this._createServer();
     }
 
-    await this.server.start();
+    await (this.server as ScriptServer).start();
   }
 
   /**
@@ -49,6 +69,21 @@ export class MincraftServer {
   async stop(): Promise<void> {
     if (this.server) {
       await this.server.stop();
+
+      this.server = null;
+    }
+  }
+
+  /**
+   * Runs a command on the server.
+   *
+   * @param {string} command Command to run.
+   */
+  async runCommand(command: string): Promise<void> {
+    try {
+      this.server?.javaServer.send(command);
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -87,7 +122,7 @@ export class MincraftServer {
   _generateServerConfig(): DeepPartial<Config> {
     return {
       javaServer: {
-        path: Environment.getServerJarDirectory(),
+        path: __dirname,
         jar: Environment.getServerJarName(),
         args: MINECRAFT_ARGS,
       },
@@ -125,14 +160,12 @@ export class MincraftServer {
    * Handles the server starting.
    */
   _handleStart(): void {
-
   }
 
   /**
    * Handles the server stopping.
    */
   _handleStop(): void {
-
   }
 
   /**
@@ -141,7 +174,6 @@ export class MincraftServer {
    * @param {MinecraftChatEvent} event The chat event.
    */
   _handleChat(event: MinecraftChatEvent): void {
-
   }
 
   /**
@@ -149,8 +181,21 @@ export class MincraftServer {
    *
    * @param {MinecraftLoginEvent} event The login event.
    */
-  _handleLogin(event: MinecraftLoginEvent): void {
+  async _handleLogin(event: MinecraftLoginEvent): Promise<void> {
+    try {
+      const member = await DiscordReferences.getPlayer(
+        '',
+        event.player,
+      );
 
+      const player = await Server.Database.players.findOne({
+        minecraft: event.player,
+      });
+
+      this.sessions[event.player] = Date.now();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   /**
@@ -159,7 +204,16 @@ export class MincraftServer {
    * @param {MinecraftLogoutEvent} event The logout event.
    */
   _handleLogout(event: MinecraftLogoutEvent): void {
+    try {
+      console.log(event.player);
 
+      const start = this.sessions[event.player];
+      const duration = Date.now() - start;
+
+      delete this.sessions[event.player];
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   /**
@@ -176,7 +230,41 @@ export class MincraftServer {
    *
    * @param {string} message Message from console. 
    */
-  _handleConsole(message: string): void {
+  async _handleConsole(message: string): Promise<void> {
+    try {
+      if (!message.length) {
+        return;
+      }
+  
+      if (message.match(EULA_CONSOLE_REGEX) !== null) {
+        this._handleFirstBoot();
+      }
 
+      const channel = await DiscordReferences.getChannel(DISCORD_CHANNEL.CONSOLE);
+  
+      if (channel) {
+        (channel as TextChannel).send({
+          content: message,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  /**
+   * Handles server first start and EULA approval.
+   */
+  async _handleFirstBoot(): Promise<void> {
+    this.stop();
+
+    const promises = [
+      approveEula(),
+      editServerProperties(),
+    ];
+
+    await Promise.all(promises);
+
+    this.start();
   }
 }

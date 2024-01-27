@@ -4,7 +4,13 @@
   "description": "<p align=\"center\">\r   <img src=\"https://raw.githubusercontent.com/andyruwruw/discord-managed-minecraft-server/main/documentation/images/banner.gif?token=ALDKK3UUONYOK3HVDBQ6SILBVH3QE\"></img>\r </p>",
   "main": "babel.config.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc --build",
+    "start": "nodemon --config nodemon.json src/index.ts",
+    "clean": "rimraf ./dist && rimraf src/minecraft/libraries && rimraf src/minecraft/logs && rimraf src/minecraft/versions && rimraf src/minecraft/world && rimraf src/minecraft/banned-ips.json && rimraf src/minecraft/banned-players.json && rimraf src/minecraft/eula.txt && rimraf src/minecraft/ops.json && rimraf src/minecraft/server.properties && rimraf src/minecraft/usercache.json && rimraf src/minecraft/whitelist.json",
+    "test": "jest --colors",
+    "test:verbose": "jest --verbose --colors",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "author": "Andrew Young",
   "license": "ISC",
@@ -18,6 +24,8 @@
     "dotenv": "^16.3.2",
     "http": "^0.0.1-security",
     "mongoose": "^8.1.0",
+    "nodemon": "^3.0.3",
+    "rimraf": "^5.0.5",
     "tslib": "^2.6.2",
     "uuid": "^9.0.1",
     "websocket": "^1.0.34"
@@ -29,6 +37,7 @@
     "@babel/preset-env": "^7.23.8",
     "@babel/preset-typescript": "^7.23.3",
     "@types/node": "^20.11.5",
-    "@types/uuid": "^9.0.7"
+    "@types/uuid": "^9.0.7",
+    "ts-node": "^10.9.2"
   }
 }

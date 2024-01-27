@@ -7,6 +7,25 @@ import {
   IntentsBitField,
 } from 'discord.js';
 
+// Types
+import {
+  ChannelType,
+  RoleType,
+} from '../types/tables';
+
+/**
+ * The default intents for the bot.
+ */
+export const DISCORD_INTENTS: number[] = [
+  IntentsBitField.Flags.Guilds,
+  IntentsBitField.Flags.GuildMessages,
+  IntentsBitField.Flags.GuildMessageReactions,
+  IntentsBitField.Flags.DirectMessages,
+  IntentsBitField.Flags.DirectMessageReactions,
+  IntentsBitField.Flags.GuildScheduledEvents,
+  IntentsBitField.Flags.MessageContent,
+];
+
 /**
  * Discord application command option types.
  */
@@ -63,26 +82,44 @@ export const COMPONENT_TYPE: Record<string, ComponentType> = {
 export const DEFAULT_COLOR: number = 0xd9823b;
 
 /**
- * The default intents for the bot.
- */
-export const DISCORD_INTENTS: number[] = [
-  IntentsBitField.Flags.Guilds,
-  IntentsBitField.Flags.GuildMessages,
-  IntentsBitField.Flags.GuildMessageReactions,
-  IntentsBitField.Flags.DirectMessages,
-  IntentsBitField.Flags.DirectMessageReactions,
-  IntentsBitField.Flags.GuildScheduledEvents,
-];
-
-/**
  * Generates Invite Link
  *
  * @param {string} clientId Discord bot Id.
  * @returns {string} Invite link.
  */
-export const INVITE_LINK = (clientId: string) => (`https://discord.com/api/oauth2/authorize?client_id=${clientId}&permissions=1644972469495&scope=bot%20applications.commands`);
+export const INVITE_LINK = (clientId: string): string => (`https://discord.com/api/oauth2/authorize?client_id=${clientId}&permissions=1644972469495&scope=bot%20applications.commands`);
 
 /**
  * Zero width character, helps avoids conflicting with other bots.
  */
 export const RESPONSE_PREFIX = '\u200B';
+
+/**
+ * Discord role enum.
+ */
+export const DISCORD_ROLE = {
+  OP: 'op',
+  ONLINE: 'online',
+  DIRT: 'dirt',
+  DIAMOND: 'diamond',
+  WOOD: 'wood',
+  STONE: 'stone',
+  IRON: 'iron',
+  GOLD: 'gold',
+  NETHERITE: 'netherite',
+  MOST_PLAYTIME: 'most-playtime',
+  MOST_ACHIEVEMENTS: 'most-achievements',
+  ALL_ACHIEVEMENTS: 'all-achievements',
+  MOST_DEATHS: 'most-deaths',
+} as Record<string, RoleType>;
+
+/**
+ * Discord channel enum.
+ */
+export const DISCORD_CHANNEL = {
+  BROADCAST: 'broadcast',
+  CONSOLE: 'console',
+  BULLETIN_BOARD: 'bulletin-board',
+  GENERAL: 'general',
+  WHITELIST: 'whitelist',
+} as Record<string, ChannelType>;

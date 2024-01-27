@@ -49,6 +49,36 @@ export class Monitor {
   };
 
   /**
+   * Retrieves name of source.
+   *
+   * @param {any} source Message source. 
+   * @returns {string} Name of source.
+   */
+  static _getSourceName(source: any): string {
+    return typeof source === 'string' ? source : source.name;
+  }
+
+  /**
+   * Print a statement to the console.
+   *
+   * @param {string} text Text to be printed.
+   * @param {number} layer Layer to print text to.
+   */
+  static _formatMessage(
+    source: any,
+    text: string,
+    layer = 0,
+  ) {
+    const nameFormat = STD_OUT_MONITOR_LAYER_NAME_FORMATING[`${layer}`];
+    const textFormat = STD_OUT_MONITOR_LAYER_MESSAGE_FORMATING[`${layer}`];
+
+    return [
+      `${nameFormat}[${Monitor._getSourceName(source)}]:${STD_OUT_ESCAPE_CODE_RESET}`,
+      `${textFormat}${text}${STD_OUT_ESCAPE_CODE_RESET}`,
+    ]
+  }
+
+  /**
    * Print a statement to the console.
    *
    * @param {string} text Text to be printed.
@@ -60,10 +90,11 @@ export class Monitor {
     layer = 0,
   ) {
     if (Monitor._shouldLog(layer)) {
-      console.log(
-        `${STD_OUT_MONITOR_LAYER_NAME_FORMATING[`${layer}`]}[${source.name}]:${STD_OUT_ESCAPE_CODE_RESET}`,
-        `${STD_OUT_MONITOR_LAYER_MESSAGE_FORMATING[`${layer}`]}${text}${STD_OUT_ESCAPE_CODE_RESET}`,
-      );
+      console.log(...Monitor._formatMessage(
+        source,
+        text,
+        layer,
+      ));
     }
   }
 
@@ -79,10 +110,11 @@ export class Monitor {
     layer = 0,
   ) {
     if (Monitor._shouldLog(layer)) {
-      console.trace(
-        `${STD_OUT_MONITOR_LAYER_NAME_FORMATING[`${layer}`]}[${source.name}]:${STD_OUT_ESCAPE_CODE_RESET}`,
-        `${STD_OUT_MONITOR_LAYER_MESSAGE_FORMATING[`${layer}`]}${text}${STD_OUT_ESCAPE_CODE_RESET}`,
-      );
+      console.trace(...Monitor._formatMessage(
+        source,
+        text,
+        layer,
+      ));
     }
   }
 

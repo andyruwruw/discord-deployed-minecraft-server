@@ -1,7 +1,5 @@
-/**
- * Host for RCON.
- */
-export const RCON_HOST = 'localhost';
+// Types
+import { RoleType } from '../types/tables';
 
 /**
  * Database type enum.
@@ -13,27 +11,19 @@ export const DATABASE_TYPE = {
 };
 
 /**
- * Arguments for minecraft server.
+ * Separates server consoles from Minecraft server.
  */
-export const MINECRAFT_ARGS = [
-  '-Xmx10000M',
-  '-Xms1000M',
-  '-XX:+UseG1GC',
-  '-XX:+ParallelRefProcEnabled',
-  '-XX:MaxGCPauseMillis=200',
-  '-XX:+UnlockExperimentalVMOptions',
-  '-XX:+DisableExplicitGC',
-  '-XX:+AlwaysPreTouch',
-  '-XX:G1NewSizePercent=40',
-  '-XX:G1MaxNewSizePercent=50',
-  '-XX:G1HeapRegionSize=16M',
-  '-XX:G1ReservePercent=15',
-  '-XX:G1HeapWastePercent=5',
-  '-XX:G1MixedGCCountTarget=4',
-  '-XX:InitiatingHeapOccupancyPercent=20',
-  '-XX:G1MixedGCLiveThresholdPercent=90',
-  '-XX:G1RSetUpdatingPauseTimePercent=5',
-  '-XX:SurvivorRatio=32',
-  '-XX:+PerfDisableSharedMem',
-  '-XX:MaxTenuringThreshold=1',
-] as string[];
+export const CONSOLE_DEFAULT_PREFIX = '[CopperBot Server]';
+
+/**
+ * How many hours per role.
+ */
+export const HOURS_PER_ROLE = {
+  dirt: 0,
+  wood: 2,
+  stone: 4,
+  iron: 8,
+  gold: 16,
+  diamond: 32,
+  netherite: 64,
+} as Record<RoleType, number>;

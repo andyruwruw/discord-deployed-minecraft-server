@@ -20,8 +20,6 @@ Discord Managed Minecraft Server allows you to connect your minecraft server to 
 
 The Bot uses roles to designate who is online, has the most achievements, or has spent the most amount of hours on the server.
 
-Players can also set their home coordinates and shop details to the Bot and easily query their friend's.
-
 # Table of Contents
 
 - [Features](#features)
@@ -34,8 +32,6 @@ Players can also set their home coordinates and shop details to the Bot and easi
   - Add plays who join the Discord server automatically to the Minecraft server whitelist.
 - Players
   - See who's logged in from Discord based on roles.
-  - Use in-game or Discord commands to set your home coordinates or search for other people's homes.
-  - Register your shop and stock / prices with discord to allow other server members to search for specific items and view prices / coordinates.
   - Race other server members to collect all achievements with Discord keeping track of who's winning.
   - Recieve roles for hours spent online and view graphs of what times you most login.
 
