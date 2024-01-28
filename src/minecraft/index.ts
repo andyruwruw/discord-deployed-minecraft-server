@@ -12,11 +12,23 @@ import { Channel, TextChannel } from 'discord.js';
 
 // Local Imports
 import {
+  DEATH_MESSAGE,
+  DEATH_MESSAGE_KEYS,
   EULA_CONSOLE_REGEX,
   MINECRAFT_ARGS,
+  NOT_PLAYER_MESSAGE,
   RCON_HOST,
 } from '../config/minecraft';
+import {
+  DISCORD_CHANNEL,
+  DISCORD_ROLE,
+} from '../config/discord';
+import {
+  RANK_TITLES,
+  getRoleForHours,
+} from '../config';
 import { editServerProperties } from '../utils/edit-server-properties';
+import { DiscordReferences } from '../discord/references';
 import { approveEula } from '../utils/edit-eula';
 import { Environment } from '../helpers/environment';
 import { Server } from '../';
@@ -28,8 +40,6 @@ import {
   MinecraftLogoutEvent,
   MinecraftAchievementEvent,
 } from '../types';
-import { DiscordReferences } from 'src/discord/references';
-import { DISCORD_CHANNEL } from 'src/config/discord';
 
 /**
  * Maintains the minecraft.
@@ -188,9 +198,29 @@ export class MinecraftServer {
         event.player,
       );
 
+      if (member) {
+        const onlineRole = await DiscordReferences.getRole(DISCORD_ROLE.ONLINE);
+
+        if (onlineRole) {
+          await member.roles.add(onlineRole.id);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    try {
       const player = await Server.Database.players.findOne({
         minecraft: event.player,
       });
+
+      if (player) {
+        await Server.Database.players.update({
+          minecraft: event.player,
+        }, {
+          logins: player.logins + 1,
+        });
+      }
 
       this.sessions[event.player] = Date.now();
     } catch (error) {
@@ -203,14 +233,97 @@ export class MinecraftServer {
    *
    * @param {MinecraftLogoutEvent} event The logout event.
    */
-  _handleLogout(event: MinecraftLogoutEvent): void {
+  async _handleLogout(event: MinecraftLogoutEvent): Promise<void> {
+    let member;
+
     try {
-      console.log(event.player);
+      member = await DiscordReferences.getPlayer(
+        '',
+        event.player,
+      );
 
-      const start = this.sessions[event.player];
-      const duration = Date.now() - start;
+      if (member) {
+        const onlineRole = await DiscordReferences.getRole(DISCORD_ROLE.ONLINE);
 
-      delete this.sessions[event.player];
+        if (onlineRole) {
+          await member.roles.remove(onlineRole.id);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    try {
+      if (event.player in this.sessions) {
+        const start = this.sessions[event.player];
+        const duration = (Date.now() - start) / 1000 / 60 / 60;
+
+        delete this.sessions[event.player];
+
+        const player = await Server.Database.players.findOne({
+          minecraft: event.player,
+        });
+  
+        if (player) {
+          await Server.Database.players.update({
+            minecraft: event.player,
+          }, {
+            hours: player.hours + duration,
+          });
+
+          const highestPlayer = await Server.Database.players.find(
+            {},
+            {},
+            {
+              hours: -1,
+            },
+            0,
+            2,
+          );
+
+          const previous = getRoleForHours(player.hours);
+          const next = getRoleForHours(player.hours + duration);
+
+          if (next !== previous) {
+            const oldRank = await DiscordReferences.getRole(previous);
+            const rankRole = await DiscordReferences.getRole(next);
+            
+            if (member && rankRole) {
+              if (oldRank) {
+                await member.roles.remove(oldRank.id);
+              }
+              
+              await member.roles.add(rankRole.id);
+
+              const broadcastChannel = await DiscordReferences.getChannel(DISCORD_CHANNEL.broadcast);
+
+              if (broadcastChannel) {
+                await broadcastChannel.send({
+                  content: `${member.displayName} just ranked up to ${RANK_TITLES[next]} with ${Math.round(player.hours + duration)} hours.`,
+                });
+              }
+            }
+          }
+
+          if (highestPlayer.length > 0
+            && highestPlayer[0].minecraft === event.player
+            && member) {
+            const highestRank = await DiscordReferences.getRole(DISCORD_ROLE.MOST_PLAYTIME);
+
+            if (highestRank) {
+              await member.roles.add(highestRank.id);
+
+              if (highestPlayer.length > 1) {
+                const second = await DiscordReferences.getPlayer(highestPlayer[1].minecraft);
+              
+                if (second) {
+                  await second.roles.remove(highestRank.id);
+                }
+              }
+            }
+          }
+        }
+      }
     } catch (error) {
       console.log(error);
     }
@@ -221,8 +334,54 @@ export class MinecraftServer {
    *
    * @param {MincraftAchievementEvent} event The achivement event.
    */
-  _handleAchievement(event: MinecraftAchievementEvent): void {
+  async _handleAchievement(event: MinecraftAchievementEvent): Promise<void> {
+    try {
+      const player = await Server.Database.players.findOne({
+        minecraft: event.player,
+      });
 
+      if (player) {
+        await Server.Database.players.update({
+          minecraft: event.player,
+        }, {
+          achievements: player.achievements + 1,
+        });
+      }
+
+      const mostAchievements = await Server.Database.players.find(
+        {},
+        {},
+        {
+          achievements: -1,
+        },
+        0,
+        2,
+      );
+
+      if (mostAchievements.length
+        && mostAchievements[0].minecraft === event.player) {
+        const member = await DiscordReferences.getPlayer(
+          '',
+          event.player,
+        );
+
+        const mostAchievementsRank = await DiscordReferences.getRole(DISCORD_ROLE.MOST_ACHIEVEMENTS);
+
+        if (mostAchievementsRank && member) {
+          await member.roles.add(mostAchievementsRank.id);
+
+          if (mostAchievements.length > 1) {
+            const second = await DiscordReferences.getPlayer(mostAchievements[1].minecraft);
+          
+            if (second) {
+              await second.roles.remove(mostAchievementsRank.id);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   /**
@@ -238,6 +397,59 @@ export class MinecraftServer {
   
       if (message.match(EULA_CONSOLE_REGEX) !== null) {
         this._handleFirstBoot();
+      }
+
+      if (NOT_PLAYER_MESSAGE.test(message)
+        && DEATH_MESSAGE.test(message)) {
+        const match = message.match(DEATH_MESSAGE);
+
+        if (match) {
+          const username = match[DEATH_MESSAGE_KEYS.PLAYER];
+
+          const player = await Server.Database.players.findOne({
+            minecraft: username,
+          });
+
+          if (player) {
+            await Server.Database.players.update({
+              minecraft: username,
+            }, {
+              deaths: player.deaths + 1,
+            });
+          }
+
+          const mostDeaths = await Server.Database.players.find(
+            {},
+            {},
+            {
+              deaths: -1,
+            },
+            0,
+            2,
+          );
+    
+          if (mostDeaths.length
+            && mostDeaths[0].minecraft === username) {
+            const member = await DiscordReferences.getPlayer(
+              '',
+              username,
+            );
+    
+            const mostDeathsRank = await DiscordReferences.getRole(DISCORD_ROLE.MOST_DEATHS);
+    
+            if (mostDeathsRank && member) {
+              await member.roles.add(mostDeathsRank.id);
+    
+              if (mostDeaths.length > 1) {
+                const second = await DiscordReferences.getPlayer(mostDeaths[1].minecraft);
+              
+                if (second) {
+                  await second.roles.remove(mostDeathsRank.id);
+                }
+              }
+            }
+          }
+        }
       }
 
       const channel = await DiscordReferences.getChannel(DISCORD_CHANNEL.CONSOLE);
