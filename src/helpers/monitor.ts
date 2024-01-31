@@ -5,6 +5,8 @@
 
 // Local Imports
 import { Environment } from './environment';
+import { DISCORD_CHANNEL } from '../config/discord';
+import { DiscordReferences } from '../discord/discord-references';
 
 /**
  * StOut escape code for resetting formatting.
@@ -84,17 +86,33 @@ export class Monitor {
    * @param {string} text Text to be printed.
    * @param {number} layer Layer to print text to.
    */
-  static log(
+  static async log(
     source: any,
     text: string,
     layer = 0,
   ) {
     if (Monitor._shouldLog(layer)) {
-      console.log(...Monitor._formatMessage(
-        source,
-        text,
-        layer,
-      ));
+      try {
+        const channel = await DiscordReferences.getChannel(DISCORD_CHANNEL.CONSOLE);
+
+        if (channel) {
+          await channel.send({
+            content: text,
+          });
+        }
+
+        console.log(...Monitor._formatMessage(
+          source,
+          text,
+          layer,
+        ));
+      } catch (error) {
+        console.log(...Monitor._formatMessage(
+          source,
+          text,
+          layer,
+        ));
+      }
     }
   }
 
@@ -104,17 +122,33 @@ export class Monitor {
    * @param {string} text Text to be printed.
    * @param {number} layer Layer to print text to.
    */
-  static trace(
+  static async trace(
     source: any,
     text: string,
     layer = 0,
   ) {
     if (Monitor._shouldLog(layer)) {
-      console.trace(...Monitor._formatMessage(
-        source,
-        text,
-        layer,
-      ));
+      try {
+        const channel = await DiscordReferences.getChannel(DISCORD_CHANNEL.CONSOLE);
+
+        if (channel) {
+          await channel.send({
+            content: text,
+          });
+        }
+
+        console.trace(...Monitor._formatMessage(
+          source,
+          text,
+          layer,
+        ));
+      } catch (error) {
+        console.trace(...Monitor._formatMessage(
+          source,
+          text,
+          layer,
+        ));
+      }
     }
   }
 

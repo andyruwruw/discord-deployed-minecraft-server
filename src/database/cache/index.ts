@@ -3,6 +3,8 @@ import {
   PlayerDataAccessObject,
   ChannelDataAccessObject,
   RoleDataAccessObject,
+  PlayerAchievementDataAccessObject,
+  SettingsDataAccessObject,
 } from './daos';
 import { Database } from '../database';
 
@@ -16,9 +18,11 @@ export class CacheDatabase extends Database {
   constructor() {
     super();
 
-    this.players = new PlayerDataAccessObject();
     this.channels = new ChannelDataAccessObject();
+    this.players = new PlayerDataAccessObject();
+    this.playerAchievements = new PlayerAchievementDataAccessObject();
     this.roles = new RoleDataAccessObject();
+    this.settings = new SettingsDataAccessObject();
   }
 
   /**

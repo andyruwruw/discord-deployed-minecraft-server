@@ -14,6 +14,24 @@ import {
 } from '../types/tables';
 
 /**
+ * Default color for Discord components.
+ */
+export const DEFAULT_COLOR = 0xd9823b;
+
+/**
+ * Zero width character, helps avoids conflicting with other bots.
+ */
+export const RESPONSE_PREFIX = '\u200B';
+
+/**
+ * Generates Invite Link
+ *
+ * @param {string} clientId Discord bot Id.
+ * @returns {string} Invite link.
+ */
+export const INVITE_LINK = (clientId: string): string => (`https://discord.com/api/oauth2/authorize?client_id=${clientId}&permissions=1644972469495&scope=bot%20applications.commands`);
+
+/**
  * The default intents for the bot.
  */
 export const DISCORD_INTENTS: number[] = [
@@ -24,6 +42,9 @@ export const DISCORD_INTENTS: number[] = [
   IntentsBitField.Flags.DirectMessageReactions,
   IntentsBitField.Flags.GuildScheduledEvents,
   IntentsBitField.Flags.MessageContent,
+  IntentsBitField.Flags.GuildModeration,
+  IntentsBitField.Flags.GuildMembers,
+  IntentsBitField.Flags.GuildPresences,
 ];
 
 /**
@@ -75,24 +96,6 @@ export const COMPONENT_TYPE: Record<string, ComponentType> = {
   MENTIONABLE_SELECT: 7,
   CHANNEL_SELECT: 8,
 };
-
-/**
- * Default color for Discord components.
- */
-export const DEFAULT_COLOR: number = 0xd9823b;
-
-/**
- * Generates Invite Link
- *
- * @param {string} clientId Discord bot Id.
- * @returns {string} Invite link.
- */
-export const INVITE_LINK = (clientId: string): string => (`https://discord.com/api/oauth2/authorize?client_id=${clientId}&permissions=1644972469495&scope=bot%20applications.commands`);
-
-/**
- * Zero width character, helps avoids conflicting with other bots.
- */
-export const RESPONSE_PREFIX = '\u200B';
 
 /**
  * Discord role enum.

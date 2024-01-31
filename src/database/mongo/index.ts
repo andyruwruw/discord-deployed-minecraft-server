@@ -9,10 +9,14 @@ import {
   PlayerDataAccessObject,
   ChannelDataAccessObject,
   RoleDataAccessObject,
+  PlayerAchievementDataAccessObject,
+  SettingsDataAccessObject,
 } from './daos';
+import { MESSAGE_DATABASE_CONNECTION_SUCCESS } from '../../config/messages';
+import { DatabaseUrlMissingError } from '../../errors/database-url-missing';
+import { Environment } from '../../helpers/environment';
 import { Database } from '../database';
 import { Monitor } from '../../helpers/monitor';
-import { Environment } from '../../helpers/environment';
 
 mongoose.set('strictQuery', false);
 
@@ -26,9 +30,11 @@ export class MongoDatabase extends Database {
   constructor() {
     super();
 
-    this.players = new PlayerDataAccessObject();
     this.channels = new ChannelDataAccessObject();
+    this.players = new PlayerDataAccessObject();
+    this.playerAchievements = new PlayerAchievementDataAccessObject();
     this.roles = new RoleDataAccessObject();
+    this.settings = new SettingsDataAccessObject();
   }
 
   /**
@@ -36,7 +42,7 @@ export class MongoDatabase extends Database {
    */
   async connect(): Promise<void> {
     if (!Environment.getDatabaseUrl()) {
-      throw new Error('Missing database URL!');
+      throw new DatabaseUrlMissingError();
     }
 
     const authorizedUrl = Environment.getDatabaseUrl()
@@ -53,7 +59,7 @@ export class MongoDatabase extends Database {
 
     Monitor.log(
       MongoDatabase,
-      'Database connection successfully made.',
+      MESSAGE_DATABASE_CONNECTION_SUCCESS,
       Monitor.Layer.UPDATE,
     );
   }
@@ -64,6 +70,6 @@ export class MongoDatabase extends Database {
    * @returns {boolean} Whether the class is connected to the database.
    */
   isConnected(): boolean {
-    return connection && 'readyState' in connection ? connection.readyState === 1 : false;
+    return (connection && 'readyState' in connection) ? connection.readyState === 1 : false;
   }
 }

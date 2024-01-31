@@ -1,3 +1,6 @@
+// Types
+import { Player } from '../types/tables';
+
 /**
  * Response to database connection.
  */
@@ -91,3 +94,70 @@ export const MESSAGE_USED_ABSTRACT_COMMAND_ERROR = 'Attempted to use Abstract Co
  * Message when server approves EULA.
  */
 export const EULA_APPROVED ='EULA approved, you\'re welcome!';
+
+/**
+ * Broadcast message for user getting an achievement.
+ *
+ * @param {string} username User's username.
+ * @param {string} achievement Achievement gained.
+ * @returns {string} Broadcast message.
+ */
+export const ACHIEVEMENT_BROADCAST = (
+  username: string,
+  achievement: string,
+): string => (`${username} just got "${achievement}"`);
+
+/**
+ * Broadcast message for playtime leaderboard.
+ *
+ * @param {Player[]} players Players with top playtime.
+ * @returns {string} Broadcast message. 
+ */
+export const PLAYTIME_LEADBOARD_BROADCAST = (players: Player[]): string => {
+  let message = '**New Playtime Leaderboard**\n';
+
+  for (let i = 0; i < players.length; i += 1) {
+    const hours = Math.round(players[i].hours * 10) / 10;
+
+    message = message.concat(`${players[i].minecraft}: *${hours} Hours*\n`);
+  }
+
+  return message;
+}
+
+/**
+ * Broadcast message for achievement leaderboard.
+ *
+ * @param {Player[]} players Players with top achievements.
+ * @returns {string} Broadcast message. 
+ */
+export const ACHIEVEMENT_LEADBOARD_BROADCAST = (players: Player[]): string => {
+  let message = '**New Achievements Leaderboard**\n';
+
+  for (let i = 0; i < players.length; i += 1) {
+    message = message.concat(`${players[i].minecraft}: *${players[i].achievements} Achievements*\n`);
+  }
+
+  return message;
+}
+
+/**
+ * Broadcast message for deaths leaderboard.
+ *
+ * @param {Player[]} players Players with top deaths.
+ * @returns {string} Broadcast message. 
+ */
+export const DEATHS_LEADBOARD_BROADCAST = (players: Player[]): string => {
+  let message = '**New Deaths Leaderboard**\n';
+
+  for (let i = 0; i < players.length; i += 1) {
+    message = message.concat(`${players[i].minecraft}: *${players[i].deaths} Deaths*\n`);
+  }
+
+  return message;
+}
+
+/**
+ * Message for when the server is up.
+ */
+export const SERVER_START = 'The server is back up and running! Connect via "peoplewhoarent.cool".';

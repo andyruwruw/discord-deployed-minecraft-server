@@ -1,34 +1,54 @@
-export interface MinecraftPlayerEvent {
+// Packages
+import { Client } from 'discord.js';
+
+/**
+ * Basic Dictionary.
+ */
+export type Dictionary<T> = Record<string, T>;
+
+/**
+ * Discord bot.
+ */
+export type DiscordBotInterface = Client;
+
+/**
+ * Minecraft server wrapper.
+ */
+export interface MinecraftServerInterface {
   /**
-   * Player this event is about.
+   * Starts the server.
    */
-  player: string;
+  start: () => Promise<void>;
+
+  /**
+   * Stops the server.
+   */
+  stop: () => Promise<void>;
+
+  /**
+   * Runs a command on the server.
+   *
+   * @param {string} command Command to run.
+   */
+  runCommand(command: string): Promise<void>;
 }
 
-export interface MinecraftChatEvent extends MinecraftPlayerEvent {
+/**
+ * Playtime ranks.
+ */
+export interface PlaytimeRank {
   /**
-   * Message sent.
+   * ID of the rank.
    */
-  message: string;
-}
+  id: RankRoleType;
 
-export interface MinecraftLoginEvent extends MinecraftPlayerEvent {
   /**
-   * Player's IP address.
+   * Hours per rank.
    */
-  ip: string;
-}
+  hours: number;
 
-export interface MinecraftLogoutEvent extends MinecraftPlayerEvent {
   /**
-   * Reason for logout.
+   * Name of the rank.
    */
-  reason: string;
-}
-
-export interface MinecraftAchievementEvent extends MinecraftPlayerEvent {
-  /**
-   * Achievement gained.
-   */
-  achievement: string;
+  name: string;
 }

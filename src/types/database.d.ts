@@ -1,3 +1,12 @@
+/**
+ * Types intended for using MongoDB, a NoSQL database.
+ */
+
+import { PlayerAchievement, ServerSettings, Session } from "./tables";
+
+/**
+ * Single database row.
+ */
 export interface DatabaseRow {
   /**
    * Database Unique Identifier.
@@ -8,86 +17,207 @@ export interface DatabaseRow {
 /**
  * Database column types.
  */
-export type DatabaseColumnTypes = string | number | boolean | any[] | null | undefined;
-
-export interface AdvancedQuery {
-  $eq?: DatabaseColumnTypes;
-
-  $gt?: DatabaseColumnTypes;
-
-  $gte?: DatabaseColumnTypes;
-
-  $in?: DatabaseColumnTypes[];
-
-  $lt?: DatabaseColumnTypes;
-
-  $lte?: DatabaseColumnTypes;
-
-  $ne?: DatabaseColumnTypes;
-
-  $nin?: DatabaseColumnTypes[];
-
-  $not?: AdvancedQuery;
-
-  $exists?: boolean;
-
-  $type?: string | string[];
-
-  $mod?: [number, number];
-
-  $regex?: RegExp;
-
-  $options?: string;
-
-  $all?: DatabaseColumnTypes[];
-
-  $elemMatch?: AdvancedQuery;
-
-  $size?: number;
-}
-
-export interface JSONQuery {
-  required?: string[];
-
-  properties?: Dictionary<JSONQuery>;
-
-  bsonType?: string;
-
-  description?: string;
-}
-
-export interface TextQuery {
-  $search: string;
-
-  $language?: string;
-
-  $caseSensitive?: boolean;
-
-  $diacriticSensitive?: boolean;
-}
+export type DatabaseColumnTypes = string
+| number
+| boolean
+| any[]
+| null
+| undefined;
 
 /**
  * Object defining a query filter.
  */
 export interface QueryConditions {
+  /**
+   * Any key for column selection.
+   */
   [key: string]: DatabaseColumnTypes | AdvancedQuery;
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/and/
+   */
   $and?: QueryConditions[];
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/nor/
+   */
   $nor?: QueryConditions[];
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/or/
+   */
   $or?: QueryConditions[];
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/expr/
+   */
   $expr?: AdvancedQuery;
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/jsonSchema/
+   */
   $jsonSchema?: JSONQuery;
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/text/
+   */
   $text?: TextQuery;
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/where/
+   *
+   * @returns {boolean}
+   */
   $where?: () => boolean;
 }
 
+/**
+ * Advanced query for finding rows.
+ */
+export interface AdvancedQuery {
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/eq/
+   */
+  $eq?: DatabaseColumnTypes;
+
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/gt/
+   */
+  $gt?: DatabaseColumnTypes;
+
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/gte/
+   */
+  $gte?: DatabaseColumnTypes;
+
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/in/
+   */
+  $in?: DatabaseColumnTypes[];
+
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/lt/
+   */
+  $lt?: DatabaseColumnTypes;
+
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/lte/
+   */
+  $lte?: DatabaseColumnTypes;
+
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/ne/
+   */
+  $ne?: DatabaseColumnTypes;
+
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/nin/
+   */
+  $nin?: DatabaseColumnTypes[];
+
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/not/
+   */
+  $not?: AdvancedQuery;
+
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/exists/
+   */
+  $exists?: boolean;
+
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/type/
+   */
+  $type?: string | string[];
+
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/mod/
+   */
+  $mod?: [number, number];
+
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/regex/
+   */
+  $regex?: RegExp;
+
+  /**
+   * Supports $regex, see https://www.mongodb.com/docs/manual/reference/operator/query/regex/
+   */
+  $options?: string;
+
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/all/
+   */
+  $all?: DatabaseColumnTypes[];
+
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/elemMatch/
+   */
+  $elemMatch?: AdvancedQuery;
+
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/query/size/
+   */
+  $size?: number;
+}
+
+/**
+ * JSON query for finding rows. See https://www.mongodb.com/docs/manual/reference/operator/query/jsonSchema/.
+ */
+export interface JSONQuery {
+  /**
+   * Object's property set must contain all the specified elements in the array.
+   */
+  required?: string[];
+
+  /**
+   * A valid JSON Schema where each value is also a valid JSON Schema object.
+   */
+  properties?: Dictionary<JSONQuery>;
+
+  /**
+   * Accepts same string aliases used for the $type operator.
+   */
+  bsonType?: string;
+
+  /**
+   * A string that describes the schema and has no effect on validation. Starting in MongoDB 5.1, if the description field is specified, MongoDB includes the description in the error output when a document fails validation.
+   */
+  description?: string;
+}
+
+/**
+ * Text query for finding rows. See https://www.mongodb.com/docs/manual/reference/operator/query/text/
+ */
+export interface TextQuery {
+  /**
+   * 	A string of terms that MongoDB parses and uses to query the text index. MongoDB performs a logical OR search of the terms unless specified as a phrase.
+   */
+  $search: string;
+
+  /**
+   * Optional. The language that determines the list of stop words for the search and the rules for the stemmer and tokenizer. If not specified, the search uses the default language of the index.
+   */
+  $language?: string;
+
+  /**
+   * A boolean flag to enable or disable case sensitive search.
+   */
+  $caseSensitive?: boolean;
+
+  /**
+   * A boolean flag to enable or disable diacritic sensitive search against version 3 text indexes. Defaults to false; i.e. the search defers to the diacritic insensitivity of the text index.
+   */
+  $diacriticSensitive?: boolean;
+}
+
+/**
+ * See https://www.mongodb.com/docs/manual/reference/operator/update/
+ */
 export interface AdvancedUpdate {
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/update/each/#mongodb-update-up.-each
+   */
   $each?: DatabaseColumnTypes[];
 }
 
@@ -95,26 +225,59 @@ export interface AdvancedUpdate {
  * Object defining a query update.
  */
 export interface QueryUpdate {
+  /**
+   * Updates to specific columns by key.
+   */
   [key: string]: DatabaseColumnTypes | AdvancedUpdate | QueryUpdate;
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/update/addToSet/
+   */
   $addToSet?: QueryUpdate;
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/update/pop/
+   */
   $pop?: QueryUpdate;
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/update/pull/
+   */
   $pull?: QueryUpdate;
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/update/push/
+   */
   $push?: QueryUpdate;
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/update/sort/
+   */
   $sort?: QueryConditions;
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/update/inc/
+   */
   $inc?: QueryUpdate;
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/update/min/
+   */
   $min?: QueryUpdate;
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/update/max/
+   */
   $max?: QueryUpdate;
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/update/mul/
+   */
   $mul?: QueryUpdate;
 
+  /**
+   * See https://www.mongodb.com/docs/manual/reference/operator/update/setOnInsert/
+   */
   $setOnInsert?: QueryUpdate;
 }
 
@@ -122,6 +285,9 @@ export interface QueryUpdate {
  * Object defining how to sort results.
  */
 export interface QuerySort {
+  /**
+   * Column and ascending or descending.
+   */
   [key: string]: number;
 }
 
@@ -129,24 +295,52 @@ export interface QuerySort {
  * Update defining a query projection.
  */
 export interface QueryProjection {
+  /**
+   * What fields to keep or remove.
+   */
   [key: string]: boolean;
 }
 
+/**
+ * Placeholder in case MariaDB is prefered.
+ */
 interface MariaDBQuery {
+  /**
+   * Inject dynamic.
+   */
   namedPlaceholders: boolean;
+
+  /**
+   * The query.
+   */
   sql: string;
 }
 
+/**
+ * Parameters for named placeholders.
+ */
 interface MariaDbParams {
+  /**
+   * Placeholder keys and values.
+   */
   [key: string]: string | number | boolean | null;
 }
 
+/**
+ * A query with parameters.
+ */
 export type MariaDbQuery = Array<IMariaDBQuery | IMariaDbParams>;
 
 /**
  * SQL Column Types.
  */
-export type SqlColumnTypes = `int(${number})` | 'bigint' | 'smallint' | `varchar(${number})` | `decimal(${number},${number})` | 'text' | 'boolean';
+export type SqlColumnTypes = `int(${number})`
+| 'bigint'
+| 'smallint'
+| `varchar(${number})`
+| `decimal(${number},${number})`
+| 'text'
+| 'boolean';
 
 /**
  * Column values references to external tables.
@@ -171,8 +365,7 @@ export interface ColumnReference {
 /**
  * Advanced options for SQL columns.
  */
-export interface ColumnOptions
-  extends Record<string, (boolean | number | string | null | undefined | ColumnReference)> {
+export interface ColumnOptions extends Dictionary<boolean | number | string | null | undefined | ColumnReference> {
   /**
    * Whether the column can be null.
    */
@@ -203,19 +396,6 @@ export interface ColumnOptions
    */
   autoIncrement: boolean;
 }
-
-export interface MariaDbQueryTemplate {
-  namedPlaceholders: true,
-  sql: string;
-}
-
-export interface MariaDbQueryParameters {
-  [key: string]: DatabaseColumnTypes;
-}
-
-export type MariaDbQuery = Array<MariaDbQueryTemplate | MariaDbQueryParameters>;
-
-export type AnnotationType = 'interval' | 'single' | 'section' | 'random' | 'continuous';
 
 /**
  * Basic data access object.
@@ -333,4 +513,59 @@ export interface DataAccessObjectInterface<T> {
     update: QueryUpdate = {},
     insertNew = true,
   ) => Promise<number>;
+}
+
+/**
+ * Database instance which holds DAOs.
+ */
+export interface DatabaseInterface {
+  /**
+   * Data access object for Channel.
+   */
+  channels: DataAccessObjectInterface<Channel>;
+
+  /**
+   * Data access object for Player.
+   */
+  players: DataAccessObjectInterface<Player>;
+
+  /**
+   * Data access object for player achievements.
+   */
+  playerAchievements: DataAccessObjectInterface<PlayerAchievement>;
+
+  /**
+   * Data access object for Role.
+   */
+  roles: DataAccessObjectInterface<Role>;
+
+  /**
+   * Data access object for Session.
+   */
+  sessions: DataAccessObjectInterface<Session>;
+
+  /**
+   * Data access object for server settings.
+   */
+  settings: DataAccessObjectInterface<ServerSettings>;
+
+  /**
+   * Connects to database.
+   */
+  connect: () => Promise<void>;
+
+  /**
+   * Whether or not the database is connected.
+   *
+   * @returns {boolean} Whether or not the database is connected.
+   */
+  isConnected: () => boolean;
+
+  /**
+   * Get's a data access object.
+   * 
+   * @param {string} name Name of data access object.
+   * @returns {DataAccessObjectInterface} Data access object.
+   */
+  getDao: (name: string) => DataAccessObject<any>;
 }

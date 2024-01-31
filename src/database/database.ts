@@ -1,31 +1,51 @@
 /* eslint @typescript-eslint/no-unused-vars: "off" */
+// Local Imports
+import { DataAccessObject } from './dao';
+
 // Types
 import {
   Channel,
   Player,
-  Role
+  PlayerAchievement,
+  Role,
+  ServerSettings,
+  Session
 } from '../types/tables';
 import { DataAccessObjectInterface } from '../types/database';
-import { DataAccessObject } from './dao';
 
 /**
  * Abstract Database interface, only implement inherited classes.
  */
 export class Database {
   /**
-   * Data access object for Player.
-   */
-  players: DataAccessObjectInterface<Player> = new DataAccessObject<Player>();
-
-  /**
    * Data access object for Channel.
    */
   channels: DataAccessObjectInterface<Channel> = new DataAccessObject<Channel>();
 
   /**
+   * Data access object for Player.
+   */
+  players: DataAccessObjectInterface<Player> = new DataAccessObject<Player>();
+
+  /**
+   * Data access object for player achievements.
+   */
+  playerAchievements: DataAccessObjectInterface<PlayerAchievement> = new DataAccessObject<PlayerAchievement>();
+
+  /**
    * Data access object for Role.
    */
   roles: DataAccessObjectInterface<Role> = new DataAccessObject<Role>();
+
+  /**
+   * Data access object for Role.
+   */
+  sessions: DataAccessObjectInterface<Session> = new DataAccessObject<Session>();
+
+  /**
+   * Data access object for server settings.
+   */
+  settings: DataAccessObjectInterface<ServerSettings> = new DataAccessObject<ServerSettings>();
 
   /**
    * Connects to database.

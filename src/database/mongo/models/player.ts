@@ -15,7 +15,17 @@ const schema = new Schema({
     required: true,
   },
 
+  achievementUpdate: {
+    type: Number,
+    default: 0,
+  },
+
   achievements: {
+    type: Number,
+    default: 0,
+  },
+
+  deathUpdate: {
     type: Number,
     default: 0,
   },
@@ -26,6 +36,11 @@ const schema = new Schema({
   },
 
   logins: {
+    type: Number,
+    default: 0,
+  },
+
+  hoursUpdate: {
     type: Number,
     default: 0,
   },

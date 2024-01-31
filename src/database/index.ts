@@ -12,9 +12,8 @@ let DatabaseInstace: DatabaseClass | null = null;
 
 /**
  * Generates database based on environmental variables.
- *
  */
-const initializeDatabase = async (): Promise<void> => {
+const initializeDatabase = (): void => {
   if (!DatabaseInstace) {
     if (Environment.getDatabaseType() === DATABASE_TYPE.MONGO
       || Environment.getDatabaseType() === DATABASE_TYPE.MONGO_LOCAL) {

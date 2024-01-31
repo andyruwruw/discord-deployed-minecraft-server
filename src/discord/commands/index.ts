@@ -29,6 +29,7 @@ import { Command } from './generic/command';
 import { DiscordBot } from '../';
 import { Monitor } from '../../helpers/monitor';
 import { AssignCommand } from './assign/assign-command';
+import { WhitelistCommand } from './whitelist/whitelist';
 
 /**
  * Manages all commands and routes interactions to correct command.
@@ -45,6 +46,7 @@ export class CommandManager {
   static instantiateCommands() {
     // General Commands
     CommandManager._commands[AssignCommand.key] = new AssignCommand();
+    CommandManager._commands[WhitelistCommand.key] = new WhitelistCommand();
   }
 
   /**
@@ -54,18 +56,13 @@ export class CommandManager {
    * @returns {Promise<void>} Promise of action.
    */
   static async handleInteraction(interaction: Interaction): Promise<void> {
-    console.log('hello');
     if (!interaction.isCommand()) {
-      console.log('not command');
       return;
     }
 
     const key = interaction.commandName;
 
-    console.log(key);
-
     if (key in CommandManager._commands) {
-      console.log('running');
       await CommandManager._commands[key].execute(interaction as CommandInteraction);
       return;
     }

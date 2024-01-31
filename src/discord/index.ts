@@ -8,11 +8,11 @@ import {
 
 // Local Imports
 import {
-  ErrorHandler,
-  InteractionHandler,
-  MessageCreateHandler,
-  ReadyHandler,
-} from './handlers';
+  DiscordErrorHandler,
+  DiscordInteractionHandler,
+  DiscordMessageCreateHandler,
+  DiscordReadyHandler,
+} from '../handlers';
 import { Handler } from './handlers/handler';
 
 /**
@@ -36,10 +36,25 @@ export class DiscordBot extends Client {
    * Assigns event listeners for Discord and websockets.
    */
   _setEventHandlers(): void {
-    // Discord Events
-    this.on('ready', (client: Client) => ReadyHandler.execute(client));
-    this.on('error', (error: Error) => ErrorHandler.execute(error));
-    this.on('interactionCreate', (interaction: Interaction) => InteractionHandler.execute(interaction));
-    this.on('messageCreate', (message: Message) => MessageCreateHandler.execute(message));
+    // When the Discord bot is ready.
+    this.on(
+      'ready',
+      (client: Client) => (DiscordReadyHandler.execute(client)),
+    );
+    // On a Discord bot error.
+    this.on(
+      'error',
+      (error: Error) => (DiscordErrorHandler.execute(error)),
+    );
+    // On a Discord interaction.
+    this.on(
+      'interactionCreate',
+      (interaction: Interaction) => (DiscordInteractionHandler.execute(interaction)),
+    );
+    // On a Discord message.
+    this.on(
+      'messageCreate',
+      (message: Message) => (DiscordMessageCreateHandler.execute(message)),
+    );
   }
 }

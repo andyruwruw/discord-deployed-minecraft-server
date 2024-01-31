@@ -4,12 +4,13 @@ import { MinecraftServer } from './minecraft';
 import { DiscordBot } from './discord';
 
 // Types
-import { Database } from './database/database';
 import { DISCORD_INTENTS } from './config/discord';
 import { Environment } from './helpers/environment';
+import { Database } from './database/database';
+import { Handler } from './handlers/handler';
 
 /**
- * Runs all connections.
+ * Runs all processes.
  */
 export class Server {
   /**
@@ -30,17 +31,21 @@ export class Server {
   /**
    * Starts the server.
    */
-  static start() {
+  static start(): void {
+    // Instantiate various processes
     Server.Minecraft = new MinecraftServer();
-    Server.Discord = new DiscordBot({
-      intents: DISCORD_INTENTS,
-    });
+    Server.Discord = new DiscordBot({ intents: DISCORD_INTENTS });
     Server.Database = getDatabase();
 
+    // Start them each.
     Server.Minecraft.start();
     Server.Database.connect();
-    // Logging bot into Discord.
     Server.Discord.login(Environment.getDiscordBotToken());
+
+    // Assign static references.
+    Handler.setMinecraft(Server.Minecraft);
+    Handler.setDiscord(Server.Discord);
+    Handler.setDatabase(Server.Database);
   }
 }
 

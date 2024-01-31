@@ -3,7 +3,7 @@
  *
  * @returns {string} Rcon password.
  */
-export const rconPassword = () => {
+export const randomPassword = () => {
   var result = '';
   var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   var charactersLength = characters.length;
