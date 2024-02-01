@@ -40,21 +40,11 @@ export class DatabaseReferences {
    */
   static async getServerSettings(): Promise<ServerSettings | null> {
     try {
-      console.trace('1');
       if (!DatabaseReferences.Settings) {
-        console.log('2');
         let settings = await Server.Database.settings.findOne({});
-
-        console.log('3');
-        console.log(Server.Database.settings);
-        console.log(settings);
-
-        console.log('4');
 
         if (!settings) {
           await Server.Database.settings.insert(ServerProperties.Export());
-
-          console.log('5');
 
           settings = await Server.Database.settings.findOne({});
         }
